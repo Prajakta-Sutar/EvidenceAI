@@ -142,4 +142,13 @@ async def chat():
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
     print(result["category"])
-    return response.content
+    if result["category"] != "Relevant":
+        print(result["response"])
+        return result["response"]
+    else:
+        if result["clarification"] == "True":
+            print(result["response"])
+            return result["response"]
+        else:
+            print("Going for powerful model")
+    return 0
