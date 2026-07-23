@@ -25,9 +25,8 @@ classifier_llm = ChatOpenAI(
 
 
 @app.get("/")
-async def chat():
-    user = input("Ask Question :")
-    user_question = {"question": user}
+def classifier(question: str):
+    user_question = {"question": question}
     modified_prompt = classifier_prompt.invoke(user_question)
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
