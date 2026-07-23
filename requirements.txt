@@ -2,6 +2,8 @@ fastapi
 openai
 langchain
 langchain-openai
-dotenv
+python-dotenv
 chromadb
 sentence-transformers==4.1.0
+langchain_community
+langchain_text_splitters
