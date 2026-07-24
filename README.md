@@ -8,4 +8,7 @@
   - Irrelevant questions are handled separately
   - Ambiguous questions request clarification
   - Relevant questions currently not processed
-- 🚧 Working on retrieval pipeline 
+- 🚧 Working on retrieval pipeline
+  - Pipeline is working properly
+  - Assistant model is ansering the questions but quality of response is low.
+  
