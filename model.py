@@ -1,11 +1,13 @@
 import os 
 import json
 from fastapi import FastAPI 
-from openai import OpenAI
+from openai import OpenAI 
 from dotenv import load_dotenv
+from database import retriever
 from langchain_openai import ChatOpenAI
 from prompts.classifier_prompt import classifier_prompt
-from database import retriever
+from prompts.assistant_prompt import assistant_prompt
+
 
 
 # Get the OpenAI API to access the LLM and embedding model
@@ -29,19 +31,10 @@ assistant_llm = ChatOpenAI(
 )
 
 def assistant(question):
-    context = retriever(question)
-    response = assistant_llm.invoke(
-        f"""
-        You are Prajakta's AI Portfolio assistant. 
-        You reply to recruiter's questions professionally. 
-        If you cannot find any evidence for the questions recruter is 
-        asking, then inform recruter Prajakta do not have the 
-        experience. 
-        Do not create fake results.
-        Use this evidence : {context}
-        To answer this question or query : {question}
-        """
-    )
+    context = retriever(question) 
+    inputs = {"question": question, "context":context}
+    agumented_prompt = assistant_prompt.invoke(inputs)
+    response = assistant_llm.invoke(agumented_prompt)
     return response.content
 
 
