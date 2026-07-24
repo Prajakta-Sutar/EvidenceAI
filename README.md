@@ -11,4 +11,5 @@
 - 🚧 Working on retrieval pipeline
   - Pipeline is working properly
   - Assistant model is ansering the questions but quality of response is low.
+  - Retriever is pulling correct information, but incomplete. Need to revise chunking.
   
