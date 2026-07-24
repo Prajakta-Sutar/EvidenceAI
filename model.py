@@ -7,6 +7,8 @@ from database import retriever
 from langchain_openai import ChatOpenAI
 from prompts.classifier_prompt import classifier_prompt
 from prompts.assistant_prompt import assistant_prompt
+from prompts.analyst_prompt import analyst_prompt
+
 
 
 
@@ -30,11 +32,22 @@ assistant_llm = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
+
+def analyst(project):
+    with open(project, "r") as f:
+        repository_file = f.read() 
+    repository = {'project': repository_file}
+    modified_prompt = analyst_prompt.invoke(repository)
+    response = assistant_llm.invoke(modified_prompt)
+    print(response.content)
+    return response.content
+
 def assistant(question):
     context = retriever(question) 
     inputs = {"question": question, "context":context}
     agumented_prompt = assistant_prompt.invoke(inputs)
     response = assistant_llm.invoke(agumented_prompt)
+    print(response.content)
     return response.content
 
 
@@ -53,5 +66,4 @@ def classifier(question: str):
             return result["response"]
         else:
             return assistant(question) 
-
 

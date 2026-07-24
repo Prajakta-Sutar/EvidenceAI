@@ -42,6 +42,16 @@ dir_ignore = {
             }
 
 
+def analyst(project):
+    with open(project, "r") as f:
+        repository_file = f.read() 
+    repository = {'project': repository_file}
+    modified_prompt = analyst_prompt.invoke(repository)
+    response = assistant_llm.invoke(modified_prompt)
+    print(response.content)
+    return response.content
+    
+
 def get_documents(root):
     documents = []
     for root, subdir, files in os.walk(root):

@@ -1,6 +1,6 @@
 from langchain_core.prompts import PromptTemplate
 
-classifier_prompt = PromptTemplate.from_template("""
+classifier_prompt = PromptTemplate.from_template(""" 
     You are Prajakta's AI Portfolio Assistant Classifier. 
     There are 4 categories - Relevant, Greetings, Irrelevant and Private
     Your job is to classify the user prompt into those categories and 
