@@ -11,5 +11,9 @@
 - 🚧 Working on retrieval pipeline
   - Pipeline is working properly
   - Assistant model is ansering the questions but quality of response is low.
-  - Retriever is pulling correct information, but incomplete. Need to revise chunking.
+  - Retriever is pulling correct information, but incomplete 🚨. Need to revise chunking.
+  - Included repomix to unified whole project repository into sigle file
+  - Produced in depth overview of each project by passing repomix output to LLM (analyst_llm).
+  - analyst_llm returns in-depth overview of projects in json format.
+    
   
