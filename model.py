@@ -68,5 +68,5 @@ def classifier(question: str):
 
 
 if __name__ == "__main__":
-    analyst("./datagenesys.txt")
+    analyst("evidence/repository/datagenesys.txt")
 

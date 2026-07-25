@@ -61,9 +61,44 @@ analyst_prompt = PromptTemplate.from_template(
     -File path
     - Purpose
     - Main classes/functions/components
+        - For each main component/class/function:
+            - use name of main componenet/class/function as shown in code
+            - Provide a short description of its responsibility
     - Technologies used
     - Imports/dependencies
     - Relationship with other files
+
+    For example :
+    {{
+        "file_path": "dataScience/datagenisys/nan_handler.py",
+        "purpose": "Handles missing values and drops columns with excessive missingness.",
+        "main_classes_functions_components": [
+            {{
+            "name": "NaN_handler",
+            "type": "function",
+            "description": "Processes missing values in a dataset using imputation strategies and performs column cleaning based on missing value thresholds."
+            }},
+            {{
+            "name": "remove_high_missing_columns",
+            "type": "function",
+            "description": "Identifies and removes columns that contain missing values above the configured threshold."
+            }}
+        ],
+        "technologies_used": [
+            "sklearn.impute.SimpleImputer",
+            "NumPy",
+            "pandas"
+        ],
+        "imports_dependencies": [
+            "from sklearn.impute import SimpleImputer",
+            "import numpy as np",
+            "import pandas as pd"
+        ],
+        "relationships_with_other_files": [
+            "Called by views.get_dataset before encoding and modeling."
+        ]
+        }}
+
 
     4. Skills Demonstrated
     Extract skills shown by the code:
