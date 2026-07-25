@@ -40,7 +40,6 @@ def analyst(project):
     modified_prompt = analyst_prompt.invoke(repository)
     response = assistant_llm.invoke(modified_prompt)
     print(response.content)
-    return response.content
 
 def assistant(question):
     context = retriever(question) 
@@ -66,4 +65,8 @@ def classifier(question: str):
             return result["response"]
         else:
             return assistant(question) 
+
+
+if __name__ == "__main__":
+    analyst("./datagenesys.txt")
 

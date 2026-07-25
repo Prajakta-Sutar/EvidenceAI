@@ -2,7 +2,7 @@ from langchain_core.prompts import PromptTemplate
 
 analyst_prompt = PromptTemplate.from_template(
     """
-    Repository : {Project}
+    Repository : {project}
     You are Senior Software Engineer analysing the project repository. 
     Analyze the project repository provid above. 
     
@@ -29,22 +29,32 @@ analyst_prompt = PromptTemplate.from_template(
     - External APIs
     - Communication flow between these components
 
+
     For each technology or architectural decision provide:
         - Technology name
         - Supporting file path(s)
         - Evidence explaining why this technology is used
 
-        Example:
+        Create a separate evidence entry for each supporting file.
+        Do not combine multiple files into a single evidence explanation.
 
-        {
-        "backend": {
-            "technology": "FastAPI",
-            "evidence": {
-            "file": "main.py",
-            "reason": "Creates FastAPI application instance and defines API routes"
-            }
-        }
-        }
+        For Example:
+
+        {{
+        "frontend": {{
+            "technology": "React",
+            "evidence": [
+                {{
+                    "file": "src/App.js",
+                    "reason": "Defines the main React component and configures application routing."
+                }},
+                {{
+                    "file": "src/channels.js",
+                    "reason": "Implements a React functional component for displaying and managing channel data."
+                }}
+            ]
+        }}
+        }}
 
     3. File-Level Analysis
     For each important file:
@@ -73,7 +83,6 @@ analyst_prompt = PromptTemplate.from_template(
         - Explanation
 
     
-
     5. Project Relationship Map
     Explain:
     - Which files import/use other files
