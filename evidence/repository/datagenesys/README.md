@@ -1,12 +1,14 @@
 # DataPredictify
-
+## Overview 
 Link to presentation video - https://usaskca1-my.sharepoint.com/:v:/g/personal/jrg814_usask_ca/IQDOHUAELvQaTIke4jNAFSVmAa8oaPsX4Fm3VhYB6yIsVLw?e=R8Apm9
 
 Data Predictify is a data science project where I apply my computer science skills to build predictive models using Kaggle’s Alzheimer’s Disease Dataset. The project focuses on analyzing the data, applying machine learning techniques, and predicting the progression of Alzheimer’s disease. Key aspects include data preprocessing, feature engineering, model selection, and performance evaluation, with the aim of generating valuable insights into the disease's progression.I have developed this website to show the resuls of data processing,visualization and predictive model.
 
+## Technology Stack
 For the data science project, the backend is built using Django with Python, providing a robust framework for web development. Data manipulation and analysis are handled with Pandas, enabling efficient data processing and transformation. Scikit-learn is utilized for building machine learning models, while Seaborn and Matplotlib are used for data visualization, allowing for clear and insightful graphical representations of the results. This combination of technologies ensures a seamless workflow for data analysis and model development.
 
-------------------------------------------------------------
+
+## Citation for the dataset
 Citation for the dataset  -  Alzheimer’s Disease Dataset
 
 @misc{rabie_el_kharoua_2024,
@@ -18,9 +20,7 @@ author={Rabie El Kharoua},
 year={2024}
 }
 
------------------------------------------------------------
-
-
+## How to run the application
 To run the application, plaese ensure that you have python3 in your system . 
 After cloning the git repository, navigate through directories using ` cd dataGenisys/dataScience/ ` .
 To ensure that you are in correct directory, plaese make sure file `manage.py` is in the current directory. 

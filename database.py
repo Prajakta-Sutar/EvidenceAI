@@ -1,10 +1,13 @@
 import os 
 import chromadb
+from tree_sitter import Parser
+from bs4 import BeautifulSoup
+from tree_sitter_language_pack import get_language
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
-
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -27,13 +30,6 @@ database = database_client.get_or_create_collection(
 print("Database created !\n")
 
 
-
-# Splitter to chunk the documents into smaller parts
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=150
-    )
-
 dir_ignore = {
                 ".git",
                 "node_modules",
@@ -41,55 +37,83 @@ dir_ignore = {
                 "dist"
             }
 
-
-def analyst(project):
-    with open(project, "r") as f:
-        repository_file = f.read() 
-    repository = {'project': repository_file}
-    modified_prompt = analyst_prompt.invoke(repository)
-    response = assistant_llm.invoke(modified_prompt)
-    print(response.content)
-    return response.content
-    
-
 def get_documents(root):
     documents = []
     for root, subdir, files in os.walk(root):
         subdir[:] = [
             d for d in subdir if d not in dir_ignore
         ]
-
         for file in files:
             path = os.path.join(root, file)
             documents.append(path)
-
     return documents
 
 
-def build_database():
-    file_paths = get_documents("evidence")
-    for path in file_paths:
-        print(path)
-        if path.endswith(".pdf"):
-            doc = PyPDFLoader(path).load()
-        else:
-            doc = TextLoader(path,encoding="utf-8").load()
-        
-        chunks = splitter.split_documents(doc)
-        for start in range(0, len(chunks), 100):
-            batch = chunks[start: start+100]
-            database.add(
-                documents=[chunk.page_content for chunk in batch],
-                metadatas=[{"source": path} for chunk in batch],
-                ids=[f"{path}_{i+start}" for i in range(len(batch))]
-            )
+def create_tree(path, language):
+    current_language = get_language(language)
+    parser = Parser()
+    parser.set_language(current_language)
 
+    with open(path, "r", encoding="utf-8") as f:
+        code = f.read()
+    tree = parser.parse(bytes(code, "utf8"))
+    return tree.root_node
+
+
+
+
+chunk_at = [  ("#", "title"), ("##", "section"),]
+
+markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on = chunk_at
+)
+
+
+def build_database():
+    project_docs = get_documents("evidence/repository")
+    chunks = None
+    for path in project_docs:
+        if path.endswith(".py"):
+            treenode = create_tree(path, "python")
+        elif path.endswith(".js"):
+            treenode = create_tree(path, "javascript")
+        elif path.endswith(".html"):
+            with open(path, "r",  encoding="utf-8") as f:
+                html_file = f.read()
+            soup = BeautifulSoup(html_file, "html.parser")
+            scripts = []
+            for script in soup.findAll("script"):
+                if script.string:
+                    script.append(script.string)
+
+            for script in soup.findAll("script"):
+                scripts.decompose()
+            chunks = str(soup)
+    
+        elif path.endswith(".md"):
+            with open(path, "r", encoding="utf-8") as f:
+                markdown_text = f.read()
+            chunks = markdown_splitter(markdown_text)
+
+        elif path.endswith(".json") or path.endswith(".yml") \
+            or path.endswith("dockerfile") or path.endswith(".css"):
+            with open(path, "r", encoding="utf-8") as f:
+                document = f.read()
+            chunks = document
+        else:
+            continue
+        
+
+
+"""
 def retriever(question : str):
     retrived_chunks = database.query(
         query_texts = [question], 
         n_results = 5
     ) 
     return "\n".join(retrived_chunks["documents"][0])
+
+"""
 
 if __name__ == "__main__":
     build_database()
