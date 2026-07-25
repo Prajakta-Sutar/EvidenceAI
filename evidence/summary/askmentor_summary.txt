@@ -1,19 +1,20 @@
+
 {
   "project_overview": {
     "project_name": "AskMentor",
-    "problem_statement": "A desktop-focused discussion forum and mentoring community for computer science topics. It enables users to create discussion channels, post and reply to content, message other users directly, search for people/channels/posts, and manage profiles.",
-    "main_focus": "A social discussion platform centered on topic-based channels, threaded posts/replies, direct messaging, search, and profile management.",
+    "problem_statement": "A desktop-oriented discussion forum for computer science topics where users can create channels, publish posts and replies, attach files, search content and people, manage profiles, and send direct messages.",
+    "main_focus": "Community discussion and networking around technical topics with forum-style channels, threaded posts, direct messaging, search, and profile management.",
     "main_features": [
       "User signup and login",
       "Channel creation and browsing",
-      "Threaded posts and nested replies",
-      "Like/dislike reactions on posts",
+      "Threaded posts and replies within channels",
+      "File uploads attached to posts and messages",
+      "Post likes and dislikes",
       "Direct messaging between connected users",
-      "File uploads attached to posts, replies, and messages",
       "Search for posts, people, and channels",
-      "Editable user profile with avatar and social media links",
-      "Admin deletion of channels, posts, and users",
-      "Suggested popular users and channels"
+      "Profile editing and avatar selection",
+      "Social media link management on profiles",
+      "Admin deletion of channels, posts, and users"
     ]
   },
   "architecture": {
@@ -22,135 +23,114 @@
       "evidence": [
         {
           "file": "frontend/src/index.js",
-          "reason": "Bootstraps the application with ReactDOM.createRoot and renders the root <App /> component."
+          "reason": "Creates the React root with ReactDOM.createRoot and renders the App component inside React.StrictMode."
         },
         {
           "file": "frontend/src/App.js",
-          "reason": "Defines the top-level React component and uses React hooks plus React Router for SPA navigation."
+          "reason": "Defines the top-level React component that sets up routing, state, and authentication flow."
         },
         {
           "file": "frontend/src/homepage.js",
-          "reason": "Implements a React functional component for the landing page, login, and signup flows."
+          "reason": "Implements a React functional component for the landing page and auth modals."
         },
         {
           "file": "frontend/src/channels.js",
-          "reason": "Implements a React functional component for channel browsing, posting, replies, and related interactions."
+          "reason": "Implements a React functional component for channel browsing, posts, replies, and admin actions."
         },
         {
           "file": "frontend/src/messages.js",
-          "reason": "Implements a React functional component for direct messaging and message history."
+          "reason": "Implements a React functional component for direct messages and conversation UI."
         },
         {
           "file": "frontend/src/profile.js",
-          "reason": "Implements a React functional component for profile editing and viewing popular users/channels."
+          "reason": "Implements a React functional component for user profile viewing and editing."
         }
       ]
     },
-    "routing": {
+    "frontend_routing": {
       "technology": "react-router-dom",
       "evidence": [
         {
           "file": "frontend/src/App.js",
-          "reason": "Uses BrowserRouter, Routes, Route, and Navigate to define application navigation and access control."
+          "reason": "Uses BrowserRouter, Routes, Route, and Navigate to define protected application routes."
         },
         {
-          "file": "frontend/src/navlink.js",
-          "reason": "Uses useLocation and useNavigate for navigation and route-aware top navigation/search behavior."
+          "file": "frontend/src/homepage.js",
+          "reason": "Uses useNavigate to route authenticated users to the channels page after signup/login."
         },
         {
           "file": "frontend/src/channels.js",
-          "reason": "Uses useNavigate and useLocation to navigate between channels and deep-link to searched posts."
+          "reason": "Uses useNavigate and useLocation to navigate to messages/profile and to consume state passed from search/navigation."
         },
         {
           "file": "frontend/src/messages.js",
-          "reason": "Uses useLocation and useNavigate to open messages for selected users and navigate back to channels."
+          "reason": "Uses useLocation and useNavigate to initialize a conversation from navigation state and to jump back to channels."
+        },
+        {
+          "file": "frontend/src/navlink.js",
+          "reason": "Uses useLocation and useNavigate to drive top navigation and search result navigation."
         },
         {
           "file": "frontend/src/profile.js",
-          "reason": "Uses useNavigate to open channels or messages from profile-related actions."
+          "reason": "Uses useNavigate to jump from profile activity to related posts or messages."
         }
       ]
     },
-    "ui_components": {
-      "technology": "React Bootstrap / Bootstrap",
+    "frontend_ui": {
+      "technology": "React-Bootstrap / Bootstrap",
       "evidence": [
         {
           "file": "frontend/src/homepage.js",
-          "reason": "Imports and uses Modal, Form, Carousel, Stack, and Button from react-bootstrap for authentication UI."
+          "reason": "Imports Bootstrap CSS and uses Modal, Form, Carousel, Stack, and Button components from react-bootstrap."
         },
         {
           "file": "frontend/src/channels.js",
-          "reason": "Uses Button, Stack, Modal, Form, ListGroup, Offcanvas, Image, Nav, Overlay, Popover, Badge, and FloatingLabel for the forum UI."
+          "reason": "Imports Button, Stack, Modal, Form, ListGroup, Offcanvas, Image, Nav, Overlay, Popover, Badge, and FloatingLabel from react-bootstrap."
         },
         {
           "file": "frontend/src/messages.js",
-          "reason": "Uses Stack, ListGroup, Image, Nav, Overlay, Popover, and Badge for the messaging interface."
+          "reason": "Imports Stack, ListGroup, Image, Nav, Overlay, Popover, Badge from react-bootstrap and Bootstrap CSS."
         },
         {
           "file": "frontend/src/navlink.js",
-          "reason": "Uses Stack, Button, Modal, Form, Nav, and ListGroup for global navigation and search UI."
+          "reason": "Uses Stack, Button, Modal, Form, Nav, ListGroup from react-bootstrap for navigation and search UI."
         },
         {
           "file": "frontend/src/profile.js",
-          "reason": "Uses ListGroup, Button, Stack, Nav, Modal, Form, Row, Col, InputGroup, Offcanvas, and Image to build the profile page."
+          "reason": "Uses ListGroup, Button, Stack, Nav, Modal, Form, Row, Col, InputGroup, Offcanvas, Image from react-bootstrap."
+        },
+        {
+          "file": "frontend/package.json",
+          "reason": "Declares bootstrap and react-bootstrap as dependencies."
         }
       ]
     },
-    "http_client": {
-      "technology": "Axios",
+    "frontend_http": {
+      "technology": "axios",
       "evidence": [
         {
           "file": "frontend/src/homepage.js",
-          "reason": "Sends login and signup requests to backend endpoints."
+          "reason": "Sends signup and login requests to backend endpoints using axios.post."
         },
         {
           "file": "frontend/src/channels.js",
-          "reason": "Fetches channels, posts, user details, connections, and sends requests for creating/deleting content and file uploads."
+          "reason": "Uses axios extensively to fetch channels/posts, create posts and replies, upload files, like/dislike posts, and manage admin actions."
         },
         {
           "file": "frontend/src/messages.js",
-          "reason": "Fetches user details, connections, conversations, and sends new messages and file uploads."
+          "reason": "Uses axios to load user details, connections, message history, and to send new messages with file uploads."
         },
         {
           "file": "frontend/src/navlink.js",
-          "reason": "Performs search requests for posts, people, and channels."
+          "reason": "Uses axios to run search requests for posts, people, and channels."
         },
         {
           "file": "frontend/src/profile.js",
-          "reason": "Fetches profile data, popular users/channels, and sends profile/media update requests."
-        }
-      ]
-    },
-    "frontend_build_styles": {
-      "technology": "Create React App tooling, CSS, Google Fonts, Material Symbols",
-      "evidence": [
-        {
-          "file": "frontend/public/index.html",
-          "reason": "Contains CRA template markup and imports Google Material Symbols and the 'Spicy Rice' font used by the UI."
+          "reason": "Uses axios for profile retrieval, editing, media management, and admin user deletion."
         },
         {
-          "file": "frontend/src/index.css",
-          "reason": "Defines base application styling and font smoothing rules."
-        },
-        {
-          "file": "frontend/src/homepage.css",
-          "reason": "Defines landing page and login/signup modal styling."
-        },
-        {
-          "file": "frontend/src/channels.css",
-          "reason": "Defines layout and interaction styling for the channels page."
-        },
-        {
-          "file": "frontend/src/messages.css",
-          "reason": "Defines message bubbles, layout, and input area styling."
-        },
-        {
-          "file": "frontend/src/profile.css",
-          "reason": "Defines the profile page layout and edit-state styling."
-        },
-        {
-          "file": "frontend/src/App.css",
-          "reason": "Contains default CRA application styles, although the app uses custom CSS heavily."
+          "file": "frontend/package.json",
+          "reason": "Declares axios as a dependency."
         }
       ]
     },
@@ -159,7 +139,15 @@
       "evidence": [
         {
           "file": "server.js",
-          "reason": "Creates an Express app, registers middleware, and defines REST endpoints for authentication, channels, posts, messages, search, and profile actions."
+          "reason": "Creates an Express app, configures middleware, defines HTTP routes, and listens on port 4000."
+        },
+        {
+          "file": "package.json",
+          "reason": "Declares express, body-parser, cors, multer, and mysql2 as backend dependencies."
+        },
+        {
+          "file": "dockerfile",
+          "reason": "Builds a Node.js runtime image that starts server.js, confirming the backend runs on Node."
         }
       ]
     },
@@ -168,7 +156,11 @@
       "evidence": [
         {
           "file": "server.js",
-          "reason": "Uses body-parser to parse JSON and URL-encoded bodies, cors to allow cross-origin requests, and multer to handle in-memory file uploads."
+          "reason": "Uses bodyParser.urlencoded/json for request parsing, cors for cross-origin access, and multer memoryStorage for file uploads."
+        },
+        {
+          "file": "package.json",
+          "reason": "Declares body-parser, cors, and multer as dependencies."
         }
       ]
     },
@@ -177,16 +169,28 @@
       "evidence": [
         {
           "file": "server.js",
-          "reason": "Creates a MySQL connection pool, initializes database and tables, and performs all persistence/query operations against MySQL."
+          "reason": "Creates a MySQL connection pool with mysql2, creates the postForum database, and defines tables for users, media, channels, posts, files, and messages."
+        },
+        {
+          "file": "package.json",
+          "reason": "Declares mysql2 as a dependency."
+        },
+        {
+          "file": "docker-compose.yml",
+          "reason": "Runs a mysql:8.0-debian service as the backing database container."
         }
       ]
     },
-    "storage_model": {
-      "technology": "MySQL tables plus in-memory upload buffering",
+    "storage": {
+      "technology": "MySQL tables + in-memory file buffering before database persistence",
       "evidence": [
         {
           "file": "server.js",
-          "reason": "Defines userTable, mediaTable, channelTable, postTable, fileTable, and messageTable, storing uploaded file binaries in a LONGBLOB column."
+          "reason": "Stores files as LONGBLOB in fileTable, messages in messageTable, and posts/users/channels/media in dedicated relational tables."
+        },
+        {
+          "file": "server.js",
+          "reason": "Uses multer.memoryStorage() so uploaded files are buffered in memory before being inserted into the database."
         }
       ]
     },
@@ -195,213 +199,107 @@
       "evidence": [
         {
           "file": "frontend/public/index.html",
-          "reason": "Loads Material Symbols icons and the Spicy Rice font from Google Fonts."
+          "reason": "Loads Material Symbols Outlined and the Spicy Rice font from fonts.googleapis.com and fonts.gstatic.com."
+        },
+        {
+          "file": "frontend/src/homepage.js",
+          "reason": "Uses Google Material Symbols via span elements with the material-symbols-outlined class."
+        },
+        {
+          "file": "frontend/src/channels.js",
+          "reason": "Uses Material Symbols icons for add/delete/reply/thumbs and other UI affordances."
+        },
+        {
+          "file": "frontend/src/messages.js",
+          "reason": "Uses Material Symbols icons for send/add and other messaging controls."
+        },
+        {
+          "file": "frontend/src/navlink.js",
+          "reason": "Uses Material Symbols icons in the navigation and search modal."
         }
       ]
     },
     "communication_flow": [
-      "React components in frontend/src call backend REST endpoints via axios.",
-      "App.js sets window.BASE_URL to http://localhost:4000, which the frontend uses as the API base URL.",
-      "server.js listens on port 4000 and exposes endpoints consumed by the frontend.",
-      "MySQL stores users, channels, posts, messages, media links, and uploaded file blobs.",
-      "File uploads are sent as multipart/form-data to /uploadFiles and stored in fileTable.",
-      "Frontend routes and state determine which backend queries are made and which entities are displayed."
+      "React components call backend REST endpoints with axios.",
+      "App.js sets window.BASE_URL to http://localhost:4000 so frontend requests target the Express server during local development.",
+      "Homepage handles signup/login, then calls giveAccess in App.js to persist session state and route to /channels.",
+      "Channels loads channel list and selected channel posts from /getAllChannels and /getChannelPosts, and performs mutations like /addChannel, /addPost, /likePost, /dislikePost, /deleteChannel, /deletePost, and /uploadFiles.",
+      "Messages loads current user, connections, selected conversation history via /getUserDetails, /getConnectedUsers, and /getAllMessages, and sends messages with /addMessage and /uploadFiles.",
+      "Navlink provides global search and navigates to the relevant channel, post, or user based on backend search endpoints.",
+      "Profile loads and updates user profile data and media through /getUserDetails, /saveChanges, /addMedia, /removeMedia, /activeUsers, /activeChannels, /allUsers, and /deleteUser.",
+      "server.js handles all API endpoints, querying and mutating MySQL tables, and returns JSON used by the React UI."
     ]
   },
   "file_level_analysis": [
     {
-      "file_path": "server.js",
-      "purpose": "Main backend server. It initializes the database, defines schema creation and seed data, and exposes all REST endpoints for authentication, forum channels, posts, messaging, search, profile management, admin actions, and file uploads.",
-      "main_classes_functions_components": [
-        {
-          "name": "app",
-          "type": "express application",
-          "description": "Central Express application used to register middleware and all HTTP routes."
-        },
-        {
-          "name": "afterPostUpload",
-          "type": "function",
-          "description": "Updates channel and user statistics after a post is created."
-        },
-        {
-          "name": "afterMsgUpload",
-          "type": "function",
-          "description": "Updates user connection counts after a direct message is stored."
-        },
-        {
-          "name": "app.post('/signup')",
-          "type": "route handler",
-          "description": "Creates a new user after checking email and username uniqueness."
-        },
-        {
-          "name": "app.post('/login')",
-          "type": "route handler",
-          "description": "Validates login credentials against userTable."
-        },
-        {
-          "name": "app.post('/addChannel')",
-          "type": "route handler",
-          "description": "Creates a new discussion channel if the name does not already exist."
-        },
-        {
-          "name": "app.get('/getAllChannels')",
-          "type": "route handler",
-          "description": "Returns all channels."
-        },
-        {
-          "name": "app.get('/getConnectedUsers')",
-          "type": "route handler",
-          "description": "Returns users connected by prior messages."
-        },
-        {
-          "name": "app.post('/uploadFiles')",
-          "type": "route handler",
-          "description": "Stores uploaded files in fileTable for either posts or messages."
-        },
-        {
-          "name": "app.get('/getChannelPosts')",
-          "type": "route handler",
-          "description": "Returns threaded posts and replies for a channel, including attached files."
-        },
-        {
-          "name": "app.post('/addPost')",
-          "type": "route handler",
-          "description": "Creates a post or reply and returns the inserted post id."
-        },
-        {
-          "name": "app.post('/likePost')",
-          "type": "route handler",
-          "description": "Increments post likes and returns the related channel."
-        },
-        {
-          "name": "app.post('/dislikePost')",
-          "type": "route handler",
-          "description": "Increments post dislikes and returns the related channel."
-        },
-        {
-          "name": "app.get('/searchChannel')",
-          "type": "route handler",
-          "description": "Searches channels by name."
-        },
-        {
-          "name": "app.post('/searchPost')",
-          "type": "route handler",
-          "description": "Searches posts by topic or data content."
-        },
-        {
-          "name": "app.get('/searchPerson')",
-          "type": "route handler",
-          "description": "Searches users by name or username."
-        },
-        {
-          "name": "app.get('/getAllMessages')",
-          "type": "route handler",
-          "description": "Returns the conversation between two users, including attachments."
-        },
-        {
-          "name": "app.post('/addMessage')",
-          "type": "route handler",
-          "description": "Stores a new direct message."
-        },
-        {
-          "name": "app.get('/activeUsers')",
-          "type": "route handler",
-          "description": "Returns the most active users by totalPosts."
-        },
-        {
-          "name": "app.get('/activeChannels')",
-          "type": "route handler",
-          "description": "Returns the most active channels by totalPosts."
-        },
-        {
-          "name": "app.get('/allUsers')",
-          "type": "route handler",
-          "description": "Returns all users except the current one."
-        },
-        {
-          "name": "app.post('/saveChanges')",
-          "type": "route handler",
-          "description": "Updates editable profile fields for the current user."
-        },
-        {
-          "name": "app.post('/addMedia')",
-          "type": "route handler",
-          "description": "Adds a social media account entry to a user profile."
-        },
-        {
-          "name": "app.post('/removeMedia')",
-          "type": "route handler",
-          "description": "Deletes a social media account entry from a user profile."
-        },
-        {
-          "name": "app.post('/getUserDetails')",
-          "type": "route handler",
-          "description": "Returns user details, media links, and authored posts."
-        },
-        {
-          "name": "app.post('/deleteChannel')",
-          "type": "route handler",
-          "description": "Admin action to delete a channel and its posts."
-        },
-        {
-          "name": "app.post('/deletePost')",
-          "type": "route handler",
-          "description": "Admin action to delete a post and nested replies."
-        },
-        {
-          "name": "app.post('/deleteUser')",
-          "type": "route handler",
-          "description": "Admin action to delete a user and their posts."
-        }
-      ],
+      "file_path": "frontend/public/index.html",
+      "purpose": "HTML shell for the React application and external font/icon loading.",
+      "main_classes_functions_components": [],
       "technologies_used": [
-        "Node.js",
-        "Express",
-        "body-parser",
-        "cors",
-        "mysql2",
-        "multer",
-        "MySQL"
+        "HTML5",
+        "Google Fonts",
+        "Material Symbols"
       ],
       "imports_dependencies": [
-        "const express = require('express');",
-        "const bodyParser = require('body-parser');",
-        "const cors = require('cors');",
-        "const mysql = require('mysql2');",
-        "const multer = require('multer');"
+        "<link href=\"https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined\" rel=\"stylesheet\">",
+        "<link href=\"https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap\" rel=\"stylesheet\">"
       ],
       "relationships_with_other_files": [
-        "Serves as the backend API consumed by frontend/src/homepage.js, frontend/src/channels.js, frontend/src/messages.js, frontend/src/navlink.js, and frontend/src/profile.js.",
-        "Uses the database schema and seed data that power the UI content across the frontend.",
-        "Provides file upload storage that is later rendered in frontend components via blob URLs."
+        "Provides the root <div id=\"root\"></div> mounted by frontend/src/index.js.",
+        "Supplies font/icon resources used by React components in src/homepage.js, src/channels.js, src/messages.js, src/navlink.js, and src/profile.js."
+      ]
+    },
+    {
+      "file_path": "frontend/public/manifest.json",
+      "purpose": "PWA manifest metadata for the frontend application.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "Web App Manifest JSON"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Referenced by frontend/public/index.html via <link rel=\"manifest\">."
+      ]
+    },
+    {
+      "file_path": "frontend/src/App.css",
+      "purpose": "Default CRA styling for the root App component.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/App.js."
       ]
     },
     {
       "file_path": "frontend/src/App.js",
-      "purpose": "Top-level frontend application component. It sets the backend base URL, manages access/session state, and configures route protection and navigation layout.",
+      "purpose": "Main frontend application shell; configures routing and authentication state.",
       "main_classes_functions_components": [
         {
           "name": "App",
           "type": "component",
-          "description": "Main application component that owns authentication-like access state and defines route rendering."
+          "description": "Top-level component that stores access/user state, syncs sessionStorage, and routes between homepage, channels, profile, and messages."
         },
         {
           "name": "authenticate",
           "type": "function",
-          "description": "Marks the user as authenticated and stores the current username in state."
+          "description": "Marks the session as authenticated and stores the current username."
         },
         {
           "name": "removeAuthentication",
           "type": "function",
-          "description": "Clears access state and session storage on logout."
+          "description": "Logs the user out by clearing access state and sessionStorage."
         }
       ],
       "technologies_used": [
         "React",
-        "React Router",
-        "sessionStorage"
+        "react-router-dom",
+        "React hooks"
       ],
       "imports_dependencies": [
+        "import './App.css';",
         "import Homepage from './homepage';",
         "import Channels from './channels';",
         "import Navlink from './navlink';",
@@ -412,101 +310,75 @@
         "import { useEffect, useState } from 'react';"
       ],
       "relationships_with_other_files": [
-        "Imports all page-level components and the shared navigation bar.",
-        "Passes removeAuthentication to Navlink and giveAccess to Homepage.",
-        "Controls access to /channels, /profile, and /messages based on local access state."
+        "Renders frontend/src/navlink.js on all non-landing pages.",
+        "Passes giveAccess to frontend/src/homepage.js to receive login/signup success events.",
+        "Protects routes to frontend/src/channels.js, frontend/src/profile.js, and frontend/src/messages.js based on access state.",
+        "Uses sessionStorage keys that are read by channels/messages/profile components."
       ]
     },
     {
-      "file_path": "frontend/src/homepage.js",
-      "purpose": "Landing page with login and signup flows plus marketing content describing the platform.",
+      "file_path": "frontend/src/App.test.js",
+      "purpose": "Default test scaffold for the App component.",
       "main_classes_functions_components": [
         {
-          "name": "Homepage",
-          "type": "component",
-          "description": "Landing page component that handles authentication modals and initiates login/signup requests."
-        },
-        {
-          "name": "openModal",
-          "type": "function",
-          "description": "Opens the login modal."
-        },
-        {
-          "name": "closeModal",
-          "type": "function",
-          "description": "Resets login fields and closes the login modal."
-        },
-        {
-          "name": "openSignupModal",
-          "type": "function",
-          "description": "Opens the signup modal."
-        },
-        {
-          "name": "closeSignupModal",
-          "type": "function",
-          "description": "Resets signup fields and closes the signup modal."
-        },
-        {
-          "name": "handleSignUp",
-          "type": "function",
-          "description": "Validates signup inputs and sends a signup request to the backend."
-        },
-        {
-          "name": "handleLogIn",
-          "type": "function",
-          "description": "Validates login inputs and sends a login request to the backend."
-        },
-        {
-          "name": "goToNext",
-          "type": "function",
-          "description": "Moves the signup carousel to the next step."
-        },
-        {
-          "name": "goToPrev",
-          "type": "function",
-          "description": "Moves the signup carousel to the previous step."
+          "name": "renders learn react link",
+          "type": "test",
+          "description": "Checks for the default Create React App sample text."
         }
       ],
       "technologies_used": [
-        "React",
-        "React Bootstrap",
-        "Axios",
-        "React Router",
-        "Bootstrap Carousel"
+        "React Testing Library",
+        "Jest",
+        "@testing-library/jest-dom"
       ],
       "imports_dependencies": [
-        "import Stack from 'react-bootstrap/Stack';",
-        "import Button from 'react-bootstrap/Button';",
-        "import Modal from 'react-bootstrap/Modal';",
-        "import Form from 'react-bootstrap/Form';",
-        "import Carousel from 'react-bootstrap/Carousel';",
-        "import { useState, useRef } from 'react';",
-        "import axios from 'axios';",
-        "import { useNavigate } from 'react-router-dom';"
+        "import { render, screen } from '@testing-library/react';",
+        "import App from './App';"
       ],
       "relationships_with_other_files": [
-        "Calls giveAccess from App.js after successful authentication.",
-        "Navigates to /channels after successful login/signup."
+        "Imports frontend/src/App.js for rendering during test."
+      ]
+    },
+    {
+      "file_path": "frontend/src/channels.css",
+      "purpose": "Styling for the channels page, posts, replies, profile sidebar, and popovers.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/channels.js."
       ]
     },
     {
       "file_path": "frontend/src/channels.js",
-      "purpose": "Core forum page for viewing channels, creating channels and posts, replying, liking/disliking, viewing connected users, and admin deletions.",
+      "purpose": "Main channels page for browsing channels, creating posts, replying, liking/disliking, viewing connections, and admin deletion.",
       "main_classes_functions_components": [
         {
           "name": "Channels",
           "type": "component",
-          "description": "Main channels page component that loads channel data, post trees, connections, and admin controls."
+          "description": "Primary UI for channels, threaded posts, replies, file upload, connected users, and admin moderation."
+        },
+        {
+          "name": "openWarnings",
+          "type": "function",
+          "description": "Opens the delete confirmation modal for channels or posts."
+        },
+        {
+          "name": "closeWarnings",
+          "type": "function",
+          "description": "Resets deletion state and closes the warning modal."
         },
         {
           "name": "getAllChannels",
           "type": "function",
-          "description": "Fetches all channels and optionally auto-selects a channel from navigation state."
+          "description": "Fetches all channels from the backend and optionally selects a channel from navigation state."
         },
         {
           "name": "getCurrUserDertails",
           "type": "function",
-          "description": "Fetches the current logged-in user's profile details."
+          "description": "Fetches the logged-in user's profile details and loads their connections."
         },
         {
           "name": "getAllConnections",
@@ -516,56 +388,117 @@
         {
           "name": "handleChannelSelection",
           "type": "function",
-          "description": "Loads threaded posts for the selected channel."
+          "description": "Loads posts for a selected channel."
+        },
+        {
+          "name": "openChannelModal",
+          "type": "function",
+          "description": "Shows the create-channel modal."
+        },
+        {
+          "name": "closeChannelModal",
+          "type": "function",
+          "description": "Closes the create-channel modal and clears validation state."
         },
         {
           "name": "addChannel",
           "type": "function",
-          "description": "Creates a new channel on the backend."
+          "description": "Submits a new channel to the backend."
+        },
+        {
+          "name": "openPostModal",
+          "type": "function",
+          "description": "Shows the create-post modal."
+        },
+        {
+          "name": "closePostModal",
+          "type": "function",
+          "description": "Resets post form state and closes the create-post modal."
+        },
+        {
+          "name": "handleFileInput",
+          "type": "function",
+          "description": "Collects files for post or reply attachment."
+        },
+        {
+          "name": "handleFileDelete",
+          "type": "function",
+          "description": "Removes a selected file from the pending upload list."
         },
         {
           "name": "handleNewPost",
           "type": "function",
-          "description": "Creates a new top-level post and uploads attachments."
+          "description": "Creates a new post and uploads its attachments."
         },
         {
           "name": "handleNewReply",
           "type": "function",
-          "description": "Creates a reply to an existing post and uploads attachments."
+          "description": "Creates a reply to an existing post and uploads its attachments."
         },
         {
           "name": "handleFileUpload",
           "type": "function",
-          "description": "Uploads selected files associated with a post or reply."
+          "description": "Uploads selected files to the backend fileTable using multipart/form-data."
         },
         {
           "name": "handlePostLike",
           "type": "function",
-          "description": "Sends a like request for a post and refreshes the channel."
+          "description": "Sends a like action for a post and refreshes the current channel."
         },
         {
           "name": "handlePostDislike",
           "type": "function",
-          "description": "Sends a dislike request for a post and refreshes the channel."
+          "description": "Sends a dislike action for a post and refreshes the current channel."
+        },
+        {
+          "name": "goToSelectedUserPage",
+          "type": "function",
+          "description": "Navigates to the messaging page for a selected user."
+        },
+        {
+          "name": "goToSearchedPost",
+          "type": "function",
+          "description": "Navigates to a channel and post ID so the UI can scroll to a searched post."
+        },
+        {
+          "name": "showPreview",
+          "type": "function",
+          "description": "Creates a short preview snippet from long text."
+        },
+        {
+          "name": "createURL",
+          "type": "function",
+          "description": "Converts BLOB file data into a browser object URL."
+        },
+        {
+          "name": "openProfileCanvas",
+          "type": "function",
+          "description": "Opens the user profile offcanvas."
+        },
+        {
+          "name": "closeProfileCanvas",
+          "type": "function",
+          "description": "Closes the user profile offcanvas."
         },
         {
           "name": "getselectedUserDetails",
           "type": "function",
-          "description": "Fetches another user's profile information for display in an offcanvas panel."
+          "description": "Loads a connected user's full profile details for preview in the offcanvas."
         },
         {
           "name": "handleAdminDelete",
           "type": "function",
-          "description": "Deletes a channel or post using admin backend endpoints."
+          "description": "Deletes a selected channel or post when the current session has admin privileges."
         }
       ],
       "technologies_used": [
         "React",
-        "React Bootstrap",
-        "Axios",
-        "React Router",
-        "FormData",
-        "Blob/ObjectURL"
+        "React hooks",
+        "axios",
+        "react-bootstrap",
+        "react-router-dom",
+        "multipart/form-data uploads",
+        "Browser Blob/Object URL APIs"
       ],
       "imports_dependencies": [
         "import './channels.css';",
@@ -589,75 +522,237 @@
         "import {useLocation } from 'react-router-dom';"
       ],
       "relationships_with_other_files": [
-        "Uses sessionStorage values set by App.js/Homepage.js to identify the current user.",
-        "Calls many server.js endpoints for channels, posts, likes/dislikes, files, and connections.",
-        "Navigates to Messages and Profile pages using React Router.",
-        "Relies on Navlink.js for shared top navigation when present in the app layout."
+        "Uses sessionStorage keys written by frontend/src/App.js and frontend/src/homepage.js.",
+        "Fetches user, channel, post, and connection data from backend/server.js endpoints.",
+        "Uses styling from frontend/src/channels.css and frontend/src/homepage.css.",
+        "Navigates to frontend/src/messages.js and frontend/src/profile.js via React Router."
       ]
     },
     {
-      "file_path": "frontend/src/messages.js",
-      "purpose": "Direct messaging page that lists connections, displays conversations, allows new messages, and supports file attachments.",
+      "file_path": "frontend/src/homepage.css",
+      "purpose": "Styling for the landing page, auth modals, and marketing sections.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/homepage.js and frontend/src/navlink.js.",
+        "Also imported by frontend/src/channels.js and frontend/src/messages.js for shared UI styles."
+      ]
+    },
+    {
+      "file_path": "frontend/src/homepage.js",
+      "purpose": "Landing page with signup/login modals and product marketing content.",
       "main_classes_functions_components": [
         {
-          "name": "Messages",
+          "name": "Homepage",
           "type": "component",
-          "description": "Messaging page component that loads conversations, message input, attachments, and connected user details."
+          "description": "Landing page that provides authentication entry points and onboarding content."
         },
         {
-          "name": "getCurrUserDertails",
+          "name": "openModal",
           "type": "function",
-          "description": "Fetches the current user's profile and loads connections."
+          "description": "Opens the login modal."
         },
         {
-          "name": "getAllConnections",
+          "name": "closeModal",
           "type": "function",
-          "description": "Loads all connected users and defaults to one connection when no selection is provided."
+          "description": "Resets login form state and closes the login modal."
         },
         {
-          "name": "getConnectedUserDetails",
+          "name": "goToLogIn",
           "type": "function",
-          "description": "Fetches the selected contact's profile details and message history."
+          "description": "Switches from signup modal to login modal."
         },
         {
-          "name": "getAllMessages",
+          "name": "openSignupModal",
           "type": "function",
-          "description": "Loads all messages between the current user and the selected user."
+          "description": "Opens the signup modal."
         },
         {
-          "name": "handleFileInput",
+          "name": "closeSignupModal",
           "type": "function",
-          "description": "Adds selected message attachment files to state."
+          "description": "Resets signup form state and closes the signup modal."
         },
         {
-          "name": "handleFileDelete",
+          "name": "goToSignIn",
           "type": "function",
-          "description": "Removes an attachment from the pending message."
+          "description": "Switches from login modal to signup modal."
         },
         {
-          "name": "handleNewMessage",
+          "name": "removeErrors",
           "type": "function",
-          "description": "Creates a new direct message and triggers file upload if needed."
+          "description": "Clears all auth validation/server error flags."
         },
         {
-          "name": "handleFileUpload",
+          "name": "goToNext",
           "type": "function",
-          "description": "Uploads files for a newly created message."
+          "description": "Moves the signup carousel to the next step."
         },
         {
-          "name": "goToSearchedPost",
+          "name": "goToPrev",
           "type": "function",
-          "description": "Navigates from a message-related profile view to a specific channel post."
+          "description": "Moves the signup carousel to the previous step."
+        },
+        {
+          "name": "handleSignUp",
+          "type": "function",
+          "description": "Validates signup input and posts registration data to the backend."
+        },
+        {
+          "name": "handleLogIn",
+          "type": "function",
+          "description": "Validates login input, authenticates with backend, and sets admin session state when applicable."
         }
       ],
       "technologies_used": [
         "React",
-        "React Bootstrap",
-        "Axios",
-        "React Router",
+        "React hooks",
+        "axios",
+        "react-bootstrap",
+        "react-router-dom",
+        "Bootstrap CSS",
+        "Carousel-based onboarding"
+      ],
+      "imports_dependencies": [
+        "import './homepage.css';",
+        "import 'bootstrap/dist/css/bootstrap.min.css';",
+        "import Stack from 'react-bootstrap/Stack';",
+        "import Button from 'react-bootstrap/Button';",
+        "import Modal from 'react-bootstrap/Modal';",
+        "import Form from 'react-bootstrap/Form';",
+        "import Carousel from 'react-bootstrap/Carousel';",
+        "import { useState, useRef } from 'react';",
+        "import axios from 'axios';",
+        "import { useNavigate } from 'react-router-dom';"
+      ],
+      "relationships_with_other_files": [
+        "Receives giveAccess from frontend/src/App.js to update authentication state.",
+        "Calls backend signup and login endpoints in server.js.",
+        "Navigates to /channels after successful authentication.",
+        "Shares styling with frontend/src/navlink.js, frontend/src/channels.js, and frontend/src/messages.js via homepage.css."
+      ]
+    },
+    {
+      "file_path": "frontend/src/index.css",
+      "purpose": "Global CSS reset and base font settings.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/index.js."
+      ]
+    },
+    {
+      "file_path": "frontend/src/index.js",
+      "purpose": "Frontend application entry point that mounts React into the DOM.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "React DOM",
+        "React StrictMode"
+      ],
+      "imports_dependencies": [
+        "import React from 'react';",
+        "import ReactDOM from 'react-dom/client';",
+        "import './index.css';",
+        "import App from './App';",
+        "import reportWebVitals from './reportWebVitals';"
+      ],
+      "relationships_with_other_files": [
+        "Renders frontend/src/App.js.",
+        "Loads global CSS from frontend/src/index.css.",
+        "Calls frontend/src/reportWebVitals.js."
+      ]
+    },
+    {
+      "file_path": "frontend/src/messages.css",
+      "purpose": "Styling for the direct messages conversation layout and message bubbles.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/messages.js."
+      ]
+    },
+    {
+      "file_path": "frontend/src/messages.js",
+      "purpose": "Direct messaging page with conversation history, file attachments, and user profile panel.",
+      "main_classes_functions_components": [
+        {
+          "name": "Messages",
+          "type": "component",
+          "description": "Main messaging UI that loads contacts, displays message history, and sends new messages with attachments."
+        },
+        {
+          "name": "getCurrUserDertails",
+          "type": "function",
+          "description": "Fetches the logged-in user's details and connections."
+        },
+        {
+          "name": "getAllConnections",
+          "type": "function",
+          "description": "Loads the user's connected contacts."
+        },
+        {
+          "name": "getConnectedUserDetails",
+          "type": "function",
+          "description": "Loads details for the currently selected conversation partner."
+        },
+        {
+          "name": "getAllMessages",
+          "type": "function",
+          "description": "Fetches message history between the current user and the selected user."
+        },
+        {
+          "name": "handleFileInput",
+          "type": "function",
+          "description": "Collects files to attach to a message."
+        },
+        {
+          "name": "handleFileDelete",
+          "type": "function",
+          "description": "Removes pending file attachments from the message draft."
+        },
+        {
+          "name": "handleNewMessage",
+          "type": "function",
+          "description": "Submits a message to the backend and triggers file upload if needed."
+        },
+        {
+          "name": "handleFileUpload",
+          "type": "function",
+          "description": "Uploads message attachments to the backend."
+        },
+        {
+          "name": "showPreview",
+          "type": "function",
+          "description": "Creates short previews of text."
+        },
+        {
+          "name": "goToSearchedPost",
+          "type": "function",
+          "description": "Navigates to a channel post from message context."
+        },
+        {
+          "name": "createURL",
+          "type": "function",
+          "description": "Converts stored file data to an object URL for download/opening."
+        }
+      ],
+      "technologies_used": [
+        "React",
+        "React hooks",
+        "axios",
+        "react-bootstrap",
+        "react-router-dom",
         "react-textarea-autosize",
-        "FormData",
-        "Blob/ObjectURL"
+        "multipart/form-data uploads",
+        "Browser Blob/Object URL APIs"
       ],
       "imports_dependencies": [
         "import './messages.css';",
@@ -677,61 +772,78 @@
         "import Badge from 'react-bootstrap/Badge';"
       ],
       "relationships_with_other_files": [
-        "Consumes the current session user set by App.js/Homepage.js.",
-        "Uses backend endpoints for user details, connections, message history, sending messages, and file upload.",
-        "Can navigate back to Channels to locate a referenced post."
+        "Uses sessionStorage set by frontend/src/App.js and frontend/src/homepage.js.",
+        "Reads navigation state from frontend/src/channels.js, frontend/src/navlink.js, and frontend/src/profile.js when opening a conversation or jumping to a post.",
+        "Calls backend endpoints defined in server.js for users, connections, messages, and uploads."
       ]
     },
     {
       "file_path": "frontend/src/navlink.js",
-      "purpose": "Shared top navigation bar with route links, global search modal, and logout action.",
+      "purpose": "Top navigation bar used on authenticated pages, including global search and logout.",
       "main_classes_functions_components": [
         {
           "name": "Navlink",
           "type": "component",
-          "description": "Top navigation component that renders navigation links, search UI, and logout."
+          "description": "Authenticated-page navigation bar with route links, search modal, and logout action."
+        },
+        {
+          "name": "openSearchModal",
+          "type": "function",
+          "description": "Opens the search modal."
+        },
+        {
+          "name": "closeSearchModal",
+          "type": "function",
+          "description": "Resets search form and closes the modal."
         },
         {
           "name": "handleSearch",
           "type": "function",
-          "description": "Dispatches the search request based on selected search type."
+          "description": "Dispatches search based on selected category."
         },
         {
           "name": "handlePostSearch",
           "type": "function",
-          "description": "Searches posts by text."
+          "description": "Searches posts using the backend."
         },
         {
           "name": "handlePersonSearch",
           "type": "function",
-          "description": "Searches users by name or username."
+          "description": "Searches people using the backend."
         },
         {
           "name": "handleChannelSearch",
           "type": "function",
-          "description": "Searches channels by name."
+          "description": "Searches channels using the backend."
         },
         {
           "name": "goToSearchedChannel",
           "type": "function",
-          "description": "Navigates to the channels page for a selected channel."
+          "description": "Navigates to a channel from search results."
         },
         {
           "name": "goToSearchedPerson",
           "type": "function",
-          "description": "Navigates to messages for a selected person."
+          "description": "Navigates to the message page for a searched person."
         },
         {
           "name": "goToSearchedPost",
           "type": "function",
-          "description": "Navigates to a selected post within a channel."
+          "description": "Navigates to a selected post in a channel."
+        },
+        {
+          "name": "showPreview",
+          "type": "function",
+          "description": "Generates a short preview string for post search results."
         }
       ],
       "technologies_used": [
         "React",
-        "React Bootstrap",
-        "Axios",
-        "React Router"
+        "React hooks",
+        "axios",
+        "react-bootstrap",
+        "react-router-dom",
+        "Bootstrap CSS"
       ],
       "imports_dependencies": [
         "import { useLocation , useNavigate} from 'react-router-dom';",
@@ -747,86 +859,140 @@
         "import axios from 'axios';"
       ],
       "relationships_with_other_files": [
-        "Rendered by App.js on all non-landing routes.",
-        "Uses the backend search endpoints defined in server.js.",
-        "Navigates to Channels and Messages pages based on search results."
+        "Used by frontend/src/App.js as a shared authenticated-page header.",
+        "Navigates into frontend/src/channels.js, frontend/src/messages.js, and frontend/src/profile.js.",
+        "Calls backend search endpoints implemented in server.js."
+      ]
+    },
+    {
+      "file_path": "frontend/src/profile.css",
+      "purpose": "Styling for the profile page, admin user list, editable form, and media sections.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "CSS"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Imported by frontend/src/profile.js."
       ]
     },
     {
       "file_path": "frontend/src/profile.js",
-      "purpose": "Profile management page for viewing and editing the current user's profile, managing social media links, and showing suggested users/channels or all users for admin.",
+      "purpose": "Profile management page for editing account information, social links, suggested users/channels, and admin moderation.",
       "main_classes_functions_components": [
         {
           "name": "Profile",
           "type": "component",
-          "description": "Profile page component that loads user details, supports profile editing, media links, and admin moderation."
+          "description": "Main profile UI for editing user details, selecting avatars, managing media links, and browsing activity."
         },
         {
           "name": "getCurrUserDertails",
           "type": "function",
-          "description": "Fetches the current user's profile data including posts and media."
+          "description": "Fetches the current user's full profile data."
+        },
+        {
+          "name": "openMediaModal",
+          "type": "function",
+          "description": "Opens the social media account modal."
+        },
+        {
+          "name": "closeMediaModal",
+          "type": "function",
+          "description": "Closes the social media account modal."
+        },
+        {
+          "name": "openProfileCanvas",
+          "type": "function",
+          "description": "Opens the offcanvas used to preview other users."
+        },
+        {
+          "name": "closeProfileCanvas",
+          "type": "function",
+          "description": "Closes the offcanvas used to preview other users."
+        },
+        {
+          "name": "closeAvatarModal",
+          "type": "function",
+          "description": "Closes the avatar selector modal and clears selection."
         },
         {
           "name": "getPopularUserDetails",
           "type": "function",
-          "description": "Fetches another user's details for preview in an offcanvas panel."
+          "description": "Fetches detailed profile information for a suggested or admin-listed user."
         },
         {
           "name": "getAllPopularUsers",
           "type": "function",
-          "description": "Fetches suggested users or all users depending on admin status."
+          "description": "Loads either active users or all users depending on whether the session is admin."
         },
         {
           "name": "getAllPopularChannels",
           "type": "function",
-          "description": "Fetches popular channels for non-admin users."
+          "description": "Loads suggested channels for non-admin users."
         },
         {
           "name": "handleNewMedia",
           "type": "function",
-          "description": "Adds a new social media account to the current user's profile."
+          "description": "Adds a new social media link to the user's profile."
         },
         {
           "name": "handleDeleteMedia",
           "type": "function",
-          "description": "Removes an existing social media account from the current user's profile."
+          "description": "Removes a social media link from the user's profile."
         },
         {
           "name": "handleNewPic",
           "type": "function",
-          "description": "Applies the selected avatar to the profile."
+          "description": "Applies a selected avatar image."
         },
         {
           "name": "handleSaveChanges",
           "type": "function",
-          "description": "Persists edited profile fields to the backend."
+          "description": "Saves profile edits to the backend."
         },
         {
           "name": "goToSearchedPost",
           "type": "function",
-          "description": "Navigates to a specific post from profile history."
+          "description": "Navigates to a post from the activity history."
         },
         {
           "name": "goToSelectedUserPage",
           "type": "function",
-          "description": "Navigates to the messages page for a selected user."
+          "description": "Navigates to a direct message conversation with another user."
         },
         {
           "name": "openChannelOnOtherPage",
           "type": "function",
-          "description": "Navigates to a channel page from suggested channels."
+          "description": "Navigates to a channel from suggested channels."
+        },
+        {
+          "name": "openWarnings",
+          "type": "function",
+          "description": "Opens the admin user deletion confirmation modal."
+        },
+        {
+          "name": "closeWarnings",
+          "type": "function",
+          "description": "Closes the admin deletion confirmation modal."
         },
         {
           "name": "handleAdminDelete",
           "type": "function",
-          "description": "Deletes a selected user as an admin."
+          "description": "Deletes the selected user when the session has admin privileges."
+        },
+        {
+          "name": "showPreview",
+          "type": "function",
+          "description": "Generates a short preview string for activity items."
         }
       ],
       "technologies_used": [
         "React",
-        "React Bootstrap",
-        "Axios",
-        "React Router"
+        "React hooks",
+        "axios",
+        "react-bootstrap",
+        "react-router-dom",
+        "Bootstrap CSS"
       ],
       "imports_dependencies": [
         "import './profile.css';",
@@ -846,57 +1012,96 @@
         "import {useNavigate } from 'react-router-dom';"
       ],
       "relationships_with_other_files": [
-        "Uses backend endpoints for current user details, popular users/channels, profile updates, media management, and admin deletion.",
-        "Uses sessionStorage role flag set by Homepage.js/App.js to switch between normal and admin views.",
-        "Navigates to Channels and Messages pages."
+        "Uses sessionStorage set by frontend/src/App.js and frontend/src/homepage.js.",
+        "Calls profile-related backend endpoints in server.js.",
+        "Navigates to frontend/src/channels.js and frontend/src/messages.js from activity and user actions.",
+        "Uses shared CSS from frontend/src/profile.css, frontend/src/channels.css, and frontend/src/homepage.css."
       ]
     },
     {
-      "file_path": "frontend/src/index.js",
-      "purpose": "React entry point that mounts the application into the DOM and registers performance reporting.",
+      "file_path": "frontend/src/reportWebVitals.js",
+      "purpose": "CRA performance reporting hook.",
       "main_classes_functions_components": [
         {
-          "name": "root",
-          "type": "React root",
-          "description": "Root React rendering target created from the DOM element with id 'root'."
+          "name": "reportWebVitals",
+          "type": "function",
+          "description": "Loads web-vitals metrics and forwards them to a callback if provided."
         }
       ],
       "technologies_used": [
-        "React",
-        "ReactDOM",
         "web-vitals"
       ],
       "imports_dependencies": [
-        "import React from 'react';",
-        "import ReactDOM from 'react-dom/client';",
-        "import './index.css';",
-        "import App from './App';",
-        "import reportWebVitals from './reportWebVitals';"
+        "import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => { ... })"
       ],
       "relationships_with_other_files": [
-        "Bootstraps App.js and applies global styles from index.css."
+        "Imported and invoked by frontend/src/index.js."
       ]
     },
     {
-      "file_path": "frontend/public/index.html",
-      "purpose": "HTML template for the React app and external font/icon includes.",
+      "file_path": "frontend/src/setupTests.js",
+      "purpose": "Testing setup for Jest DOM matchers.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "HTML",
-        "Google Fonts",
-        "Google Material Symbols"
+        "@testing-library/jest-dom"
       ],
       "imports_dependencies": [
-        "<link href=\"https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined\" rel=\"stylesheet\">",
-        "<link href=\"https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap\" rel=\"stylesheet\">"
+        "import '@testing-library/jest-dom';"
       ],
       "relationships_with_other_files": [
-        "Provides the root div where React mounts and loads fonts/icons referenced by frontend components."
+        "Used implicitly by frontend test files such as frontend/src/App.test.js."
+      ]
+    },
+    {
+      "file_path": "frontend/dockerfile",
+      "purpose": "Docker image definition for the React frontend.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "Docker",
+        "Node.js"
+      ],
+      "imports_dependencies": [
+        "FROM node:14",
+        "CMD [\"npm\", \"start\"]"
+      ],
+      "relationships_with_other_files": [
+        "Builds the frontend application from the contents of the frontend directory."
+      ]
+    },
+    {
+      "file_path": "frontend/package.json",
+      "purpose": "Frontend dependency and script manifest.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "npm",
+        "React",
+        "Bootstrap",
+        "axios",
+        "react-router-dom",
+        "react-textarea-autosize",
+        "testing libraries"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Defines dependencies used by files in frontend/src.",
+        "Configures the frontend proxy to the backend lab URL."
+      ]
+    },
+    {
+      "file_path": "frontend/README.md",
+      "purpose": "Standard Create React App documentation for running and building the frontend.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "Markdown"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Describes usage of the frontend project generated by CRA."
       ]
     },
     {
       "file_path": "docker-compose.yml",
-      "purpose": "Defines the multi-container runtime setup for the app, database, backend, and frontend.",
+      "purpose": "Local multi-container orchestration for database, backend, and frontend services.",
       "main_classes_functions_components": [
         {
           "name": "mysql-image",
@@ -906,12 +1111,12 @@
         {
           "name": "backend",
           "type": "service",
-          "description": "Node.js backend container built from the root Dockerfile."
+          "description": "Node/Express backend container."
         },
         {
           "name": "frontend",
           "type": "service",
-          "description": "React frontend container built from frontend/dockerfile."
+          "description": "React frontend container."
         }
       ],
       "technologies_used": [
@@ -921,33 +1126,30 @@
         "React"
       ],
       "imports_dependencies": [
-        "services:",
-        "mysql-image:",
-        "backend:",
-        "frontend:"
+        "image: mysql:8.0-debian",
+        "build: context: .",
+        "build: context: ./frontend"
       ],
       "relationships_with_other_files": [
-        "Coordinates runtime of server.js and the React app against the MySQL container."
+        "Runs the backend built from the root Dockerfile and server.js.",
+        "Runs the frontend built from frontend/dockerfile.",
+        "Provides the mysql-image service that server.js connects to."
       ]
     },
     {
-      "file_path": "frontend/package.json",
-      "purpose": "Frontend dependency manifest and build/start scripts.",
+      "file_path": "dockerfile",
+      "purpose": "Docker image definition for the Node/Express backend.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "npm",
-        "React",
-        "React Bootstrap",
-        "Axios",
-        "react-router-dom",
-        "react-textarea-autosize"
+        "Docker",
+        "Node.js"
       ],
       "imports_dependencies": [
-        "\"scripts\": { \"start\": \"react-scripts start\", \"build\": \"react-scripts build\", \"test\": \"react-scripts test\" }",
-        "\"dependencies\": { ... }"
+        "FROM node:14",
+        "CMD [\"node\", \"server.js\"]"
       ],
       "relationships_with_other_files": [
-        "Determines the frontend build and runtime dependencies used by the React source files."
+        "Builds and runs server.js as the backend service."
       ]
     },
     {
@@ -955,18 +1157,76 @@
       "purpose": "Backend dependency manifest.",
       "main_classes_functions_components": [],
       "technologies_used": [
+        "npm",
+        "Express",
+        "MySQL",
+        "Multer",
+        "CORS",
+        "Body Parser"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Provides backend packages required by server.js."
+      ]
+    },
+    {
+      "file_path": "server.js",
+      "purpose": "Backend API server and MySQL schema initialization.",
+      "main_classes_functions_components": [
+        {
+          "name": "app",
+          "type": "express application",
+          "description": "Express application instance used to register routes and middleware."
+        },
+        {
+          "name": "upload",
+          "type": "multer instance",
+          "description": "Configured multer uploader that stores files in memory before persistence."
+        },
+        {
+          "name": "afterPostUpload",
+          "type": "function",
+          "description": "Updates channel and user post counts after a new post is inserted."
+        },
+        {
+          "name": "afterMsgUpload",
+          "type": "function",
+          "description": "Updates user connection counts after a message is inserted."
+        }
+      ],
+      "technologies_used": [
         "Node.js",
         "Express",
+        "MySQL",
         "mysql2",
-        "multer",
+        "body-parser",
         "cors",
-        "body-parser"
+        "multer",
+        "SQL recursive common table expressions"
       ],
       "imports_dependencies": [
-        "\"dependencies\": { ... }"
+        "const express = require('express');",
+        "const bodyParser = require('body-parser');",
+        "const cors = require('cors');",
+        "const mysql = require('mysql2');",
+        "const multer = require('multer');"
       ],
       "relationships_with_other_files": [
-        "Supports server.js runtime dependencies."
+        "Receives HTTP requests from all frontend React components.",
+        "Persists and reads all application data from MySQL tables.",
+        "Serves as the single backend API for authentication, channels, posts, messages, profiles, search, uploads, and admin operations."
+      ]
+    },
+    {
+      "file_path": "README.md",
+      "purpose": "Project-level documentation and run instructions.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "Markdown"
+      ],
+      "imports_dependencies": [],
+      "relationships_with_other_files": [
+        "Describes the overall AskMentor project and Docker-based execution flow."
       ]
     }
   ],
@@ -975,24 +1235,39 @@
       "skill_name": "JavaScript",
       "evidence": [
         {
-          "file_path": "server.js",
-          "function_class_component": "Entire file",
-          "explanation": "Uses CommonJS modules, Express route handlers, async callbacks, and MySQL query logic."
-        },
-        {
           "file_path": "frontend/src/App.js",
-          "function_class_component": "App",
-          "explanation": "Uses modern JavaScript with React hooks, destructuring, and conditional rendering."
+          "component_or_function": "App",
+          "explanation": "Uses modern JavaScript modules, arrow functions, and sessionStorage logic in a React component."
         },
         {
           "file_path": "frontend/src/channels.js",
-          "function_class_component": "Channels",
-          "explanation": "Implements complex client-side logic with hooks, arrays, recursion-like tree traversal, and file handling."
+          "component_or_function": "Channels",
+          "explanation": "Uses async/await, array methods, and object/closure patterns to manage UI and data fetching."
+        },
+        {
+          "file_path": "frontend/src/homepage.js",
+          "component_or_function": "Homepage",
+          "explanation": "Implements signup/login workflows with string processing and async API calls."
         },
         {
           "file_path": "frontend/src/messages.js",
-          "function_class_component": "Messages",
-          "explanation": "Manages message state, file uploads, and navigation using JavaScript in React."
+          "component_or_function": "Messages",
+          "explanation": "Uses hooks, async/await, and array handling for message history and attachments."
+        },
+        {
+          "file_path": "frontend/src/navlink.js",
+          "component_or_function": "Navlink",
+          "explanation": "Implements search state management and route navigation with modern JS syntax."
+        },
+        {
+          "file_path": "frontend/src/profile.js",
+          "component_or_function": "Profile",
+          "explanation": "Uses array transformations, async/await, and state-driven UI edits."
+        },
+        {
+          "file_path": "server.js",
+          "component_or_function": "Express route handlers and helper functions",
+          "explanation": "Contains many asynchronous route handlers and SQL integration written in Node.js."
         }
       ]
     },
@@ -1001,203 +1276,248 @@
       "evidence": [
         {
           "file_path": "frontend/src/index.js",
-          "function_class_component": "root render",
-          "explanation": "Mounts the root React tree."
+          "component_or_function": "root.render",
+          "explanation": "Bootstraps a React application using ReactDOM.createRoot."
         },
         {
           "file_path": "frontend/src/App.js",
-          "function_class_component": "App",
-          "explanation": "Defines the app shell and routing."
-        },
-        {
-          "file_path": "frontend/src/homepage.js",
-          "function_class_component": "Homepage",
-          "explanation": "Uses state, refs, and components for login/signup UI."
+          "component_or_function": "App",
+          "explanation": "Implements the main component and route tree."
         },
         {
           "file_path": "frontend/src/channels.js",
-          "function_class_component": "Channels",
-          "explanation": "Uses hooks, modals, offcanvas, overlays, and dynamic rendering for forum interactions."
+          "component_or_function": "Channels",
+          "explanation": "Builds a complex interactive page using hooks and JSX."
+        },
+        {
+          "file_path": "frontend/src/homepage.js",
+          "component_or_function": "Homepage",
+          "explanation": "Builds a modal/carousel-based authentication landing page."
         },
         {
           "file_path": "frontend/src/messages.js",
-          "function_class_component": "Messages",
-          "explanation": "Uses hooks and dynamic lists for direct messaging."
-        },
-        {
-          "file_path": "frontend/src/profile.js",
-          "function_class_component": "Profile",
-          "explanation": "Uses hooks, forms, modals, offcanvas, and lists for profile editing."
-        }
-      ]
-    },
-    {
-      "skill_name": "React Router",
-      "evidence": [
-        {
-          "file_path": "frontend/src/App.js",
-          "function_class_component": "Routes/Route/Navigate",
-          "explanation": "Defines application routes and redirects unauthorized access."
+          "component_or_function": "Messages",
+          "explanation": "Builds a two-panel messaging interface using React state and effects."
         },
         {
           "file_path": "frontend/src/navlink.js",
-          "function_class_component": "Navlink",
-          "explanation": "Uses route-aware navigation and search-driven route changes."
-        },
-        {
-          "file_path": "frontend/src/channels.js",
-          "function_class_component": "Channels",
-          "explanation": "Navigates between channels and deep-linked posts."
-        },
-        {
-          "file_path": "frontend/src/messages.js",
-          "function_class_component": "Messages",
-          "explanation": "Navigates to channels from message context."
+          "component_or_function": "Navlink",
+          "explanation": "Builds a shared navigation bar with modal search."
         },
         {
           "file_path": "frontend/src/profile.js",
-          "function_class_component": "Profile",
-          "explanation": "Navigates from profile to channels and messages."
+          "component_or_function": "Profile",
+          "explanation": "Builds a detailed editable profile screen."
         }
       ]
     },
     {
-      "skill_name": "REST API design",
+      "skill_name": "React Hooks",
       "evidence": [
         {
-          "file_path": "server.js",
-          "function_class_component": "All route handlers",
-          "explanation": "Exposes separate endpoints for CRUD-like operations on users, channels, posts, messages, media, and files."
+          "file_path": "frontend/src/App.js",
+          "component_or_function": "useEffect, useState",
+          "explanation": "Manages authentication state and session synchronization."
+        },
+        {
+          "file_path": "frontend/src/channels.js",
+          "component_or_function": "useEffect, useState, useRef",
+          "explanation": "Coordinates data fetching, post scrolling, modal visibility, and file input handling."
         },
         {
           "file_path": "frontend/src/homepage.js",
-          "function_class_component": "handleSignUp, handleLogIn",
-          "explanation": "Consumes auth endpoints via HTTP requests."
-        },
-        {
-          "file_path": "frontend/src/channels.js",
-          "function_class_component": "handleNewPost, addChannel, handlePostLike, handlePostDislike",
-          "explanation": "Consumes content management endpoints."
-        },
-        {
-          "file_path": "frontend/src/profile.js",
-          "function_class_component": "handleSaveChanges, handleNewMedia, handleDeleteMedia",
-          "explanation": "Consumes profile management endpoints."
-        }
-      ]
-    },
-    {
-      "skill_name": "MySQL database design",
-      "evidence": [
-        {
-          "file_path": "server.js",
-          "function_class_component": "DB initialization and table creation",
-          "explanation": "Creates relational tables for users, channels, posts, messages, media, and files."
-        }
-      ]
-    },
-    {
-      "skill_name": "SQL recursive queries",
-      "evidence": [
-        {
-          "file_path": "server.js",
-          "function_class_component": "app.get('/getChannelPosts')",
-          "explanation": "Uses a recursive CTE to return threaded posts and replies in tree order."
-        },
-        {
-          "file_path": "server.js",
-          "function_class_component": "app.post('/deletePost')",
-          "explanation": "Uses a recursive CTE to delete a post and all nested replies."
-        }
-      ]
-    },
-    {
-      "skill_name": "File upload handling",
-      "evidence": [
-        {
-          "file_path": "server.js",
-          "function_class_component": "app.post('/uploadFiles')",
-          "explanation": "Uses multer memory storage and persists file blobs to MySQL."
-        },
-        {
-          "file_path": "frontend/src/channels.js",
-          "function_class_component": "handleFileInput, handleFileUpload",
-          "explanation": "Collects and uploads files for posts and replies."
+          "component_or_function": "useState, useRef",
+          "explanation": "Manages modal forms and carousel control."
         },
         {
           "file_path": "frontend/src/messages.js",
-          "function_class_component": "handleFileInput, handleFileUpload",
-          "explanation": "Collects and uploads files for direct messages."
+          "component_or_function": "useState, useRef, useEffect",
+          "explanation": "Tracks selected conversation, file attachments, and loaded message history."
+        },
+        {
+          "file_path": "frontend/src/navlink.js",
+          "component_or_function": "useEffect, useState",
+          "explanation": "Drives search input, modal state, and side-effect-based querying."
+        },
+        {
+          "file_path": "frontend/src/profile.js",
+          "component_or_function": "useState, useRef, useEffect",
+          "explanation": "Controls profile editing state, modals, and remote data loading."
         }
       ]
     },
     {
-      "skill_name": "State management with React hooks",
+      "skill_name": "REST API Design",
       "evidence": [
+        {
+          "file_path": "server.js",
+          "component_or_function": "Express route handlers",
+          "explanation": "Exposes resource-oriented endpoints for users, channels, posts, messages, media, search, and admin actions."
+        },
         {
           "file_path": "frontend/src/homepage.js",
-          "function_class_component": "Homepage",
-          "explanation": "Uses useState and useRef for modal state and form inputs."
+          "component_or_function": "handleSignUp, handleLogIn",
+          "explanation": "Consumes auth-related POST endpoints."
         },
         {
           "file_path": "frontend/src/channels.js",
-          "function_class_component": "Channels",
-          "explanation": "Uses multiple useState, useRef, and useEffect hooks for data fetching, modals, file popovers, and admin controls."
+          "component_or_function": "getAllChannels, addChannel, handleNewPost, handlePostLike, handlePostDislike",
+          "explanation": "Consumes multiple backend endpoints for channel/post lifecycle."
         },
         {
           "file_path": "frontend/src/messages.js",
-          "function_class_component": "Messages",
-          "explanation": "Uses hooks for message state, attachments, selected user, and data loading."
+          "component_or_function": "getAllMessages, handleNewMessage",
+          "explanation": "Consumes messaging endpoints."
+        },
+        {
+          "file_path": "frontend/src/navlink.js",
+          "component_or_function": "handlePostSearch, handlePersonSearch, handleChannelSearch",
+          "explanation": "Consumes search endpoints."
         },
         {
           "file_path": "frontend/src/profile.js",
-          "function_class_component": "Profile",
-          "explanation": "Uses hooks extensively for form state, modal visibility, and fetched entities."
+          "component_or_function": "handleSaveChanges, handleNewMedia, handleDeleteMedia",
+          "explanation": "Consumes profile and media endpoints."
         }
       ]
     },
     {
-      "skill_name": "Docker and containerization",
+      "skill_name": "MySQL / SQL",
+      "evidence": [
+        {
+          "file_path": "server.js",
+          "component_or_function": "Database initialization and queries",
+          "explanation": "Creates tables, inserts seed data, and performs CRUD operations with SQL queries."
+        }
+      ]
+    },
+    {
+      "skill_name": "Relational Database Modeling",
+      "evidence": [
+        {
+          "file_path": "server.js",
+          "component_or_function": "CREATE TABLE statements",
+          "explanation": "Defines separate normalized tables for users, media, channels, posts, files, and messages with foreign-key-like relationships expressed by IDs."
+        }
+      ]
+    },
+    {
+      "skill_name": "File Upload Handling",
+      "evidence": [
+        {
+          "file_path": "server.js",
+          "component_or_function": "upload middleware and /uploadFiles endpoint",
+          "explanation": "Uses multer memory storage and stores uploaded files as BLOBs in MySQL."
+        },
+        {
+          "file_path": "frontend/src/channels.js",
+          "component_or_function": "handleFileInput, handleFileUpload",
+          "explanation": "Supports attaching files to posts and replies."
+        },
+        {
+          "file_path": "frontend/src/messages.js",
+          "component_or_function": "handleFileInput, handleFileUpload",
+          "explanation": "Supports attaching files to direct messages."
+        }
+      ]
+    },
+    {
+      "skill_name": "Routing and Navigation",
+      "evidence": [
+        {
+          "file_path": "frontend/src/App.js",
+          "component_or_function": "Routes, Route, Navigate",
+          "explanation": "Implements protected routing between application sections."
+        },
+        {
+          "file_path": "frontend/src/navlink.js",
+          "component_or_function": "goToSearchedChannel, goToSearchedPerson, goToSearchedPost",
+          "explanation": "Routes users to specific views from search results."
+        },
+        {
+          "file_path": "frontend/src/channels.js",
+          "component_or_function": "goToSelectedUserPage, goToSearchedPost",
+          "explanation": "Navigates to messages or back to a selected post."
+        },
+        {
+          "file_path": "frontend/src/messages.js",
+          "component_or_function": "goToSearchedPost",
+          "explanation": "Navigates from messages to related channel posts."
+        },
+        {
+          "file_path": "frontend/src/profile.js",
+          "component_or_function": "goToSearchedPost, goToSelectedUserPage, openChannelOnOtherPage",
+          "explanation": "Navigates from profile activity and suggestions to posts, messages, and channels."
+        }
+      ]
+    },
+    {
+      "skill_name": "Session Management",
+      "evidence": [
+        {
+          "file_path": "frontend/src/App.js",
+          "component_or_function": "authenticate, removeAuthentication, useEffect",
+          "explanation": "Stores session_user and isAdmin in sessionStorage and controls access state."
+        },
+        {
+          "file_path": "frontend/src/homepage.js",
+          "component_or_function": "handleLogIn",
+          "explanation": "Sets isAdmin in sessionStorage for the hardcoded admin account."
+        },
+        {
+          "file_path": "frontend/src/channels.js",
+          "component_or_function": "isAdmin effect",
+          "explanation": "Reads sessionStorage isAdmin to enable admin controls."
+        },
+        {
+          "file_path": "frontend/src/profile.js",
+          "component_or_function": "isAdmin effect",
+          "explanation": "Reads sessionStorage isAdmin to alter profile sidebar behavior for admin users."
+        }
+      ]
+    },
+    {
+      "skill_name": "Docker / Containerization",
       "evidence": [
         {
           "file_path": "docker-compose.yml",
-          "function_class_component": "services",
-          "explanation": "Defines separate containers for MySQL, backend, and frontend."
+          "component_or_function": "mysql-image, backend, frontend services",
+          "explanation": "Defines a full local deployment with separate containers for the database, backend, and frontend."
         },
         {
           "file_path": "dockerfile",
-          "function_class_component": "Backend Dockerfile",
-          "explanation": "Builds the Node.js backend container."
+          "component_or_function": "Backend image",
+          "explanation": "Packages the Node backend into a container."
         },
         {
           "file_path": "frontend/dockerfile",
-          "function_class_component": "Frontend Dockerfile",
-          "explanation": "Builds the React frontend container."
+          "component_or_function": "Frontend image",
+          "explanation": "Packages the React frontend into a container."
         }
       ]
     },
     {
-      "skill_name": "Bootstrap UI composition",
+      "skill_name": "CSS Styling / UI Layout",
       "evidence": [
         {
-          "file_path": "frontend/src/homepage.js",
-          "function_class_component": "Homepage",
-          "explanation": "Uses Bootstrap components for layout and interactive forms."
+          "file_path": "frontend/src/channels.css",
+          "component_or_function": "Style rules",
+          "explanation": "Defines layout for channel page, sidebars, scrollable content, buttons, and reply blocks."
         },
         {
-          "file_path": "frontend/src/channels.js",
-          "function_class_component": "Channels",
-          "explanation": "Uses Bootstrap components for cards, modals, lists, and overlays."
+          "file_path": "frontend/src/homepage.css",
+          "component_or_function": "Style rules",
+          "explanation": "Defines landing page and modal presentation styles."
         },
         {
-          "file_path": "frontend/src/messages.js",
-          "function_class_component": "Messages",
-          "explanation": "Uses Bootstrap components for message layout and attachment UI."
+          "file_path": "frontend/src/messages.css",
+          "component_or_function": "Style rules",
+          "explanation": "Defines message bubble alignment and conversation layout."
         },
         {
-          "file_path": "frontend/src/profile.js",
-          "function_class_component": "Profile",
-          "explanation": "Uses Bootstrap forms, layout grids, lists, and overlays."
+          "file_path": "frontend/src/profile.css",
+          "component_or_function": "Style rules",
+          "explanation": "Defines editable profile, user suggestion panel, and media sections."
         }
       ]
     }
@@ -1207,32 +1527,32 @@
       {
         "from": "frontend/src/index.js",
         "to": "frontend/src/App.js",
-        "relationship": "Renders App as the root component."
+        "relationship": "Entry point renders the App component."
       },
       {
         "from": "frontend/src/App.js",
         "to": "frontend/src/homepage.js",
-        "relationship": "Displays the landing page at route /."
+        "relationship": "Renders homepage at / and passes authentication callback."
       },
       {
         "from": "frontend/src/App.js",
         "to": "frontend/src/channels.js",
-        "relationship": "Displays channels page at route /channels with access gating."
+        "relationship": "Protects and renders channels page at /channels."
       },
       {
         "from": "frontend/src/App.js",
         "to": "frontend/src/profile.js",
-        "relationship": "Displays profile page at route /profile with access gating."
+        "relationship": "Protects and renders profile page at /profile."
       },
       {
         "from": "frontend/src/App.js",
         "to": "frontend/src/messages.js",
-        "relationship": "Displays messages page at route /messages with access gating."
+        "relationship": "Protects and renders messages page at /messages."
       },
       {
         "from": "frontend/src/App.js",
         "to": "frontend/src/navlink.js",
-        "relationship": "Shows global navigation on all routes except landing page."
+        "relationship": "Renders the authenticated navigation bar on all non-landing pages."
       },
       {
         "from": "frontend/src/homepage.js",
@@ -1242,39 +1562,43 @@
       {
         "from": "frontend/src/channels.js",
         "to": "server.js",
-        "relationship": "Calls channel, post, like/dislike, file upload, connection, and deletion endpoints."
+        "relationship": "Calls channel, post, file upload, like/dislike, user detail, and admin endpoints."
       },
       {
         "from": "frontend/src/messages.js",
         "to": "server.js",
-        "relationship": "Calls user, connection, conversation, message creation, and file upload endpoints."
+        "relationship": "Calls user, connection, message, and file upload endpoints."
       },
       {
         "from": "frontend/src/navlink.js",
         "to": "server.js",
-        "relationship": "Calls search endpoints."
+        "relationship": "Calls search endpoints for posts, people, and channels."
       },
       {
         "from": "frontend/src/profile.js",
         "to": "server.js",
-        "relationship": "Calls profile, media, popularity, and admin endpoints."
+        "relationship": "Calls profile, media, user listing, and admin deletion endpoints."
+      },
+      {
+        "from": "server.js",
+        "to": "mysql-image",
+        "relationship": "Connects to the MySQL container as database host."
       }
     ],
     "important_dependencies": [
-      "App.js sets window.BASE_URL, which all axios calls rely on.",
-      "sessionStorage key 'session_user' is used by Channels, Messages, and Profile to identify the current user.",
-      "sessionStorage key 'isAdmin' controls admin-only features in Channels and Profile.",
-      "server.js uses MySQL seed data to populate default users, media, channels, and posts used by the frontend.",
-      "fileTable stores binary file data; frontend reconstructs file download links using Blob and URL.createObjectURL."
+      "frontend/src/App.js depends on sessionStorage state written by homepage login/signup and read by other pages.",
+      "frontend/src/channels.js depends on route state keys channelFromState and postFromState to open a specific channel and scroll to a post.",
+      "frontend/src/messages.js depends on route state key personFromState to open a specific conversation.",
+      "frontend/src/profile.js depends on backend counts and list endpoints to populate suggestion and admin panels.",
+      "server.js depends on MySQL schema creation during startup to serve the application."
     ],
     "data_flow": [
-      "User authenticates on Homepage using /login or /signup.",
-      "On success, App.js stores session state and navigation proceeds to /channels.",
-      "Channels page loads all channels and current user details, then fetches the selected channel's threaded posts.",
-      "Creating posts/replies/messages may involve a second request to /uploadFiles to persist attachments.",
-      "Search in Navlink queries backend endpoints and routes to the corresponding page with state parameters.",
-      "Profile page loads current user details and shows editable profile fields, media links, suggested users, and channels.",
-      "Admin actions from Channels/Profile invoke deletion endpoints that mutate MySQL data and then refresh frontend state."
+      "User submits signup/login on Homepage -> axios POST to server.js -> server validates against MySQL -> frontend stores session_user and possibly isAdmin -> App routing unlocks protected pages.",
+      "Channels page loads session_user -> fetches current user details and connections -> fetches channel list -> user selects a channel -> posts are retrieved and displayed with nested replies and files.",
+      "Creating a post or reply in Channels -> server inserts post -> frontend optionally uploads files -> server stores files in fileTable -> frontend refreshes channel data.",
+      "Messages page loads session_user and selected conversation partner -> fetches messages and attached files -> user sends message -> server inserts message and frontend uploads attachments if present.",
+      "Search in Navlink -> backend queries by search type -> user navigates to chosen entity -> route state is passed to channels or messages to display the target.",
+      "Profile page loads current user and suggestion lists -> user can edit profile fields or add/remove media -> admin mode changes the sidebar to list all users and enable deletions."
     ]
   }
 }

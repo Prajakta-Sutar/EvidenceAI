@@ -57,7 +57,7 @@ analyst_prompt = PromptTemplate.from_template(
         }}
 
     3. File-Level Analysis
-    For each important file:
+    For each file:
     -File path
     - Purpose
     - Main classes/functions/components
@@ -67,6 +67,7 @@ analyst_prompt = PromptTemplate.from_template(
     - Technologies used
     - Imports/dependencies
     - Relationship with other files
+    Do not miss any file 
 
     For example :
     {{

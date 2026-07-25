@@ -41,6 +41,7 @@ def analyst(project):
     response = assistant_llm.invoke(modified_prompt)
     print(response.content)
 
+
 def assistant(question):
     context = retriever(question) 
     inputs = {"question": question, "context":context}
@@ -48,8 +49,6 @@ def assistant(question):
     response = assistant_llm.invoke(agumented_prompt)
     print(response.content)
     return response.content
-
-
 
 
 @app.get("/")
@@ -68,5 +67,5 @@ def classifier(question: str):
 
 
 if __name__ == "__main__":
-    analyst("evidence/repository/datagenesys.txt")
+    analyst("evidence/repomix_res/datagenesys.txt")
 
