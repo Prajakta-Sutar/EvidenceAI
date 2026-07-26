@@ -49,6 +49,34 @@ def return_function_class_purpose(path, name, type):
     return ("Unknown")
 
 
+def return_type(path, name):
+    actual_path = path.replace("\\", "/")
+    if "askmentor" in actual_path:
+        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        for file in askmentor_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                for component in file["main_classes_functions_components"]:
+                    if component["name"] == name:
+                        return component["type"]
+
+    if "datagenesys" in actual_path:
+            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    for component in file["main_classes_functions_components"]:
+                        if component["name"] == name:
+                            return component["type"]
+
+def return_name(node, source_byte):
+    for child in node.children:
+        if child.type == "identifier":
+            name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+            return name
+
+    return "Unknown"
+
+
+
 def print_tree(node, indent=0):
     print("  " * indent + f"{node.type} [{node.start_point} - {node.end_point}]")
     for child in node.children:
@@ -60,7 +88,7 @@ def create_tree(path, language):
     with open(path, "r", encoding="utf-8") as f:
         code = f.read()
     tree = parser.parse(bytes(code, "utf8"))
-    print_tree(tree.root_node)
+    #print_tree(tree.root_node)
     return tree.root_node
 
 
@@ -153,103 +181,215 @@ def python_chunker(path):
 
 ########################### Chunking for .js document #########################
 
-def javascript_chunker(path):
-    treenode = create_tree(path, "javascript")
-   
-    imports = []
-    exports = []
-    chunks = []
-    hooks = []
-    others = []
-     
+def js_function_chunker(path, node, source_byte, parent_function):
+    function_useffect = []
+    function_usestate = []
+    function_other =[]
+    function_chunks = []
+    function_other_lexical = []
 
+    project, file_purpose = return_file_purpose(path)
+    function_purpose = return_function_class_purpose(path, parent_function, "component")
+
+    for child in node.children:
+        code = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+        if child.type == "return_statement":
+            function_chunks.append({
+                "content" : code, 
+                "metadata":{
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "project" : project, 
+                "type" : "return_statement"
+                }
+            })
+        elif child.type == "expression_statement":
+            function_useffect.append(code)
+        elif child.type == "lexical_declaration":
+            declarator = child.named_children[0]
+            value = declarator.named_children[-1]
+            if value.type in ("arrow_function", "function_expression"):
+                helper_function_name = declarator.named_children[0].text.decode("utf-8")
+                helper_function_purpose = return_function_class_purpose(path, helper_function_name, "function")
+                function_chunks.append({
+                    "content": code,
+                    "metadata":{
+                        "file" : path, 
+                        "purpose": file_purpose, 
+                        "function_name" : parent_function,
+                        "function_purpose" : function_purpose,
+                        "helper_function_name" :helper_function_name,
+                        "helper_function_purpose" :helper_function_purpose,
+                        "project" : project, 
+                        "type" : "helper_function"
+                    }
+                })
+
+            elif value.type == "call_expression":
+                function_usestate.append(code)
+            else:
+                function_other_lexical.append(code)
+        else:
+            function_other.append(code)
+
+    if function_useffect:
+        function_chunks.append({
+            "content" : "\n".join(function_useffect), 
+            "metadata": {
+                "file" : path, 
+                "purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "project": project,
+                "type": "useffect_statements"
+            }
+        })
+
+    if function_usestate:
+        function_chunks.append({
+            "content" : "\n".join(function_usestate), 
+            "metadata": {
+                "file" : path, 
+                "purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "project": project,
+                "type": "usestate_statements"
+            }
+        })
+    if function_other:
+        function_chunks.append({
+            "content" : "\n".join(function_other), 
+            "metadata": {
+                "file" : path, 
+                "purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "project": project,
+                "type": "other_function_statements"
+            }
+        })
+    if function_other_lexical:
+        function_chunks.append({
+            "content" : "\n".join(function_other_lexical), 
+            "metadata": {
+                "file" : path, 
+                "purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "project": project,
+                "type": "other_lexical_statements"
+            }
+        })
+    return function_chunks
+
+
+
+def javascript_chunker(path):
+    print(path)
+    treenode = create_tree(path, "javascript")
     with open(path, "r",  encoding="utf-8") as f:
         source_code = f.read()
 
     source_byte = source_code.encode("utf-8")
-    project, purpose = return_file_purpose(path)
+    project, file_purpose = return_file_purpose(path)
+
+    file_imports = []
+    file_exports = []
+    file_const_var_let = []
+    file_top_level_functions = []
+    file_chunks = []
+    file_others = []
 
     for node in treenode.children:
+        code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
         if node.type == "import_statement":
-            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
-            imports.append(code)
-
+            file_imports.append(code)
         elif node.type == "export_statement":
-            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
-            exports.append(code)
-
-        elif node.type == "function_declaration":
-            if has_return_statement(node):
-                
-            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
-            function_name = None
-            for child in node.children:
-                if child.type == "identifier":
-                    function_name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
-                    break
-            function_purpose = return_function_class_purpose(path, function_name, "function")
-            chunks.append({
-                "content": code,
-                "metadata":{
-                    "file" : path, 
-                    "purpose": purpose, 
-                    "function_name" : function_name,
-                    "function_purpose" : function_purpose,
-                    "project" : project, 
-                    "type" : "function"
-                }
-            })
+            file_exports.append(code)
         elif node.type == "expression_statement":
-            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
-            chunks.append({
-                "content": code,
-                "metadata": {
-                    "file": path,
-                    "purpose" : purpose,
-                    "code_purpose": "Top-level execution statement",
-                    "project": project,
-                    "type": "expression_statement"
-                }
-            })
+            file_top_level_functions.append(code)
         elif node.type in ("lexical_declaration", "variable_declaration"):
-            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
-            others.append(code)
+            file_const_var_let.append(code)
+        elif node.type == "function_declaration":
+            function_name = return_name(node, source_byte)
+            function_type = return_type(path, function_name)
+            if function_type == "function":
+                function_purpose = return_function_class_purpose(path, function_name, function_type)
+                file_chunks.append({
+                    "content": code,
+                    "metadata":{
+                        "file" : path, 
+                        "purpose": file_purpose, 
+                        "function_name" : function_name,
+                        "function_purpose" : function_purpose,
+                        "project" : project, 
+                        "type" : "function"
+                    }
+                })
+            else:
+                for child in node.children:
+                    if child.type == "statement_block":
+                        in_function_chunks = js_function_chunker(path,child, source_byte, function_name)
+                        file_chunks.extend(in_function_chunks)
+                        break
         else:
-            continue
+            file_others.append(code)
 
-    if imports:
-        chunks.append({
-            "content" : "\n".join(imports), 
+    if file_imports:
+        file_chunks.append({
+            "content" : "\n".join(file_imports), 
             "metadata": {
                 "file": path,
-                "purpose" : purpose,
+                "purpose" : file_purpose,
                 "project": project,
                 "type": "imports"
             }
         })
-    if exports:
-        chunks.append({
-            "content" : "\n".join(exports), 
+    if file_exports:
+        file_chunks.append({
+            "content" : "\n".join(file_exports),
             "metadata": {
                 "file": path,
-                "purpose" : purpose,
+                "purpose" : file_purpose,
                 "project": project,
                 "type": "exports"
             }
         })
-    if others:
-        chunks.append({
-            "content" : "\n".join(others), 
+    if file_const_var_let:
+        file_chunks.append({
+            "content" : "\n".join(file_const_var_let), 
             "metadata": {
                 "file": path,
-                "purpose" : purpose,
+                "purpose" : file_purpose,
                 "project": project,
-                "type": "global_variables_and_constants"
+                "type": "global_variables_constants"
             }
         })
-
-
-    return chunks
+    if file_top_level_functions:
+        file_chunks.append({
+            "content" : "\n".join(file_top_level_functions), 
+            "metadata": {
+                "file": path,
+                "purpose" : file_purpose,
+                "project": project,
+                "type": "Top_level_expressions"
+            }
+        })
+    if file_others:
+        file_chunks.append({
+            "content" : "\n".join(file_others), 
+            "metadata": {
+                "file": path,
+                "purpose" : file_purpose,
+                "project": project,
+                "type": "Other_statements_in_file"
+            }
+        })
+                
+    return file_chunks
 
 
 ########################### Chunking for HTML document #########################

@@ -1,5 +1,5 @@
 import os 
-from tree_sitter_language_pack import get_language
+
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
@@ -51,7 +51,18 @@ def build_database():
     project_docs = get_documents("evidence/repository")
     for path in project_docs:
         if path.endswith(".js"):
+            print(path, "#############################################################")
             chunks = javascript_chunker(path)
+            for chunk in chunks:
+                print("=" * 50)
+                print("CONTENT:")
+                print(chunk["content"])
+    
+                print("\nMETADATA:")
+                for key, value in chunk["metadata"].items():
+                    print(f"{key}: {value}")
+    
+                print("\n")
         """
         if path.endswith(".md"):
             chunks = md_chunker(path)
