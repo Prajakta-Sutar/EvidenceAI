@@ -102,13 +102,36 @@ def html_chunker(path):
         html_file = f.read()
     soup = BeautifulSoup(html_file, "html.parser")
     scripts = []
-    for script in soup.findAll("script"):
+    for script in soup.find_all("script"):
         if script.string:
-            script.append(script.string)
+            scripts.append(script.string)
 
-    for script in soup.findAll("script"):
-        scripts.decompose()
-    chunks = str(soup)
+    for script in soup.find_all("script"):
+        script.decompose()
+
+    project, purpose = return_purpose(path)
+    chunks = []
+    html_chunk = {
+                "content" : str(soup), 
+                "metadata" :{
+                    "project" : project,
+                    "file" : path,
+                    "purpose" : purpose, 
+                    "type" : "html"
+                }
+            }
+    chunks.append(html_chunk)
+    if scripts:
+        script_chunk = {
+                    "content" : "\n".join(scripts), 
+                    "metadata" :{
+                        "project" : project,
+                        "file" : path,
+                        "purpose" : purpose, 
+                        "type" : "script"
+                    }
+                }
+        chunks.append(script_chunk)
     return chunks
 
 
@@ -140,14 +163,13 @@ def build_database():
         """
         if path.endswith(".md"):
             chunks = md_chunker(path)
-        """
-        if path.endswith((".json", ".yml", "dockerfile", "css" )) :
+        elif path.endswith((".json", ".yml", "dockerfile", "css" )) :
             project, purpose = return_purpose(path)
 
             with open(path, "r", encoding="utf-8") as f:
                 page_content = f.read()
 
-            chunk = {
+            chunks = {
                 "content" : page_content, 
                 "metadata" :{
                     "project" : project,
@@ -156,7 +178,11 @@ def build_database():
                     "type" : "configuration"
                 }
             }
-            
+        """
+        if path.endswith(".html"):
+            chunks = html_chunker(path)
+           
+
             
     
 
