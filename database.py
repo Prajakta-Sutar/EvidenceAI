@@ -70,7 +70,7 @@ def return_purpose(path):
                 if file["file_path"] == file_path:
                     return (datagenesys_json["project_overview"]["project_name"],file["purpose"])
     
-    return None
+    return ("Unknown", "Unknown")
 
 
 def create_tree(path, language):
@@ -120,12 +120,7 @@ def md_chunker(path):
     with open(path, "r", encoding="utf-8") as f:
         markdown_text = f.read()
 
-    response = return_purpose(path)
-    if response:
-        project, purpose = response
-    else:
-        project = "Unknown" 
-        purpose = "Unknown"
+    project, purpose = return_purpose(path)
     chunks = markdown_splitter.split_text(markdown_text)
     for chunk in chunks:
         chunk.metadata["project"] = project
@@ -142,8 +137,26 @@ def build_database():
     project_docs = get_documents("evidence/repository")
   
     for path in project_docs:
+        """
         if path.endswith(".md"):
             chunks = md_chunker(path)
+        """
+        if path.endswith((".json", ".yml", "dockerfile", "css" )) :
+            project, purpose = return_purpose(path)
+
+            with open(path, "r", encoding="utf-8") as f:
+                page_content = f.read()
+
+            chunk = {
+                "content" : page_content, 
+                "metadata" :{
+                    "project" : project,
+                    "file" : path,
+                    "purpose" : purpose, 
+                    "type" : "configuration"
+                }
+            }
+            
             
     
 
