@@ -49,6 +49,10 @@ def return_function_class_purpose(path, name, type):
     return ("Unknown")
 
 
+def print_tree(node, indent=0):
+    print("  " * indent + f"{node.type} [{node.start_point} - {node.end_point}]")
+    for child in node.children:
+        print_tree(child, indent + 1)
 
 def create_tree(path, language):
     current_language = get_language(language)
@@ -56,13 +60,11 @@ def create_tree(path, language):
     with open(path, "r", encoding="utf-8") as f:
         code = f.read()
     tree = parser.parse(bytes(code, "utf8"))
+    print_tree(tree.root_node)
     return tree.root_node
 
 
-def print_tree(node, indent=0):
-    print("  " * indent + f"{node.type} [{node.start_point} - {node.end_point}]")
-    for child in node.children:
-        print_tree(child, indent + 1)
+
 
 ########################### Chunking for python document #########################
 
@@ -153,12 +155,102 @@ def python_chunker(path):
 
 def javascript_chunker(path):
     treenode = create_tree(path, "javascript")
+   
     imports = []
     exports = []
-    helper_function = []
+    chunks = []
     hooks = []
-    others = [] 
-    return None
+    others = []
+     
+
+    with open(path, "r",  encoding="utf-8") as f:
+        source_code = f.read()
+
+    source_byte = source_code.encode("utf-8")
+    project, purpose = return_file_purpose(path)
+
+    for node in treenode.children:
+        if node.type == "import_statement":
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            imports.append(code)
+
+        elif node.type == "export_statement":
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            exports.append(code)
+
+        elif node.type == "function_declaration":
+            if has_return_statement(node):
+                
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            function_name = None
+            for child in node.children:
+                if child.type == "identifier":
+                    function_name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+                    break
+            function_purpose = return_function_class_purpose(path, function_name, "function")
+            chunks.append({
+                "content": code,
+                "metadata":{
+                    "file" : path, 
+                    "purpose": purpose, 
+                    "function_name" : function_name,
+                    "function_purpose" : function_purpose,
+                    "project" : project, 
+                    "type" : "function"
+                }
+            })
+        elif node.type == "expression_statement":
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            chunks.append({
+                "content": code,
+                "metadata": {
+                    "file": path,
+                    "purpose" : purpose,
+                    "code_purpose": "Top-level execution statement",
+                    "project": project,
+                    "type": "expression_statement"
+                }
+            })
+        elif node.type in ("lexical_declaration", "variable_declaration"):
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            others.append(code)
+        else:
+            continue
+
+    if imports:
+        chunks.append({
+            "content" : "\n".join(imports), 
+            "metadata": {
+                "file": path,
+                "purpose" : purpose,
+                "project": project,
+                "type": "imports"
+            }
+        })
+    if exports:
+        chunks.append({
+            "content" : "\n".join(exports), 
+            "metadata": {
+                "file": path,
+                "purpose" : purpose,
+                "project": project,
+                "type": "exports"
+            }
+        })
+    if others:
+        chunks.append({
+            "content" : "\n".join(others), 
+            "metadata": {
+                "file": path,
+                "purpose" : purpose,
+                "project": project,
+                "type": "global_variables_and_constants"
+            }
+        })
+
+
+    return chunks
+
 
 ########################### Chunking for HTML document #########################
 
@@ -340,5 +432,10 @@ def summary_chunker(path):
             "source" : "Analyst"
             
         }
+
     })
     return chunks
+
+
+if __name__ == "__main__":
+    create_tree("./evidence/repository/askmentor/frontend/src/channels.js","javascript")

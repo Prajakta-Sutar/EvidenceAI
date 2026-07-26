@@ -48,9 +48,11 @@ def get_documents(root):
 
 
 def build_database():
-    """
     project_docs = get_documents("evidence/repository")
     for path in project_docs:
+        if path.endswith(".js"):
+            chunks = javascript_chunker(path)
+        """
         if path.endswith(".md"):
             chunks = md_chunker(path)
         
@@ -78,10 +80,10 @@ def build_database():
         else:
             continue
         """
+    """
     summary_docs = get_documents("./evidence/summary")
     for path in summary_docs:
         summary_chunks = summary_chunker(path)
-
         for chunk in summary_chunks:
             print("=" * 50)
             print("CONTENT:")
@@ -92,7 +94,7 @@ def build_database():
                 print(f"{key}: {value}")
 
             print("\n")
-                
+    """          
 
             
     
