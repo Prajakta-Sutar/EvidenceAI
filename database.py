@@ -3,7 +3,7 @@ from tree_sitter_language_pack import get_language
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
-from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker
+from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
 
 load_dotenv()
@@ -48,11 +48,9 @@ def get_documents(root):
 
 
 def build_database():
-    
-    project_docs = get_documents("evidence")
     """
+    project_docs = get_documents("evidence/repository")
     for path in project_docs:
-        
         if path.endswith(".md"):
             chunks = md_chunker(path)
         
@@ -73,43 +71,27 @@ def build_database():
                     "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
                 }
             }
-        
         elif path.endswith((".json", ".yml", "dockerfile", "css" )) :
-            project, purpose = return_file_purpose(path)
-
-            with open(path, "r", encoding="utf-8") as f:
-                page_content = f.read()
-
-            chunks = {
-                "content" : page_content, 
-                "metadata" :{
-                    "project" : project,
-                    "file" : path,
-                    "purpose" : purpose, 
-                    "type" : "configuration"
-                }
-            }
-        
+            chunks = no_split_chunker(path)
+        elif path.endswith(".js"):
+            chunks = javascript_chunker(path)
+        else:
+            continue
         """
-    for path in project_docs:
-        if path.endswith(".pdf"):
-            loader = PyPDFLoader(path)
-            document = loader.load()
-            chunks = {
-                "content" : document[0].page_content, 
-                "metadata" : {
-                    "file" : path, 
-                    "type" : "resume", 
-                    "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
-                }
-            }
+    summary_docs = get_documents("./evidence/summary")
+    for path in summary_docs:
+        summary_chunks = summary_chunker(path)
 
+        for chunk in summary_chunks:
+            print("=" * 50)
             print("CONTENT:")
-            print(chunks["content"])
+            print(chunk["content"])
 
             print("\nMETADATA:")
-            for key, value in chunks["metadata"].items():
+            for key, value in chunk["metadata"].items():
                 print(f"{key}: {value}")
+
+            print("\n")
                 
 
             

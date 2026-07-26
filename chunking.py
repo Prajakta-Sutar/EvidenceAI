@@ -203,11 +203,11 @@ def html_chunker(path):
 
 ########################### Chunking for .md document #########################
 
-markdown_splitter = MarkdownHeaderTextSplitter(
-        headers_to_split_on = [  ("#", "title"), ("##", "section")]
-)
+
 def md_chunker(path):
-    print(path)
+    markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on = [  ("#", "title"), ("##", "section")]
+    )
     with open(path, "r", encoding="utf-8") as f:
         markdown_text = f.read()
 
@@ -222,3 +222,123 @@ def md_chunker(path):
 
 
 
+def no_split_chunker(path):
+    project, purpose = return_file_purpose(path)
+    with open(path, "r", encoding="utf-8") as f:
+        page_content = f.read()
+    chunks = {
+        "content" : page_content, 
+        "metadata" :{
+            "project" : project,
+            "file" : path,
+            "purpose" : purpose, 
+            "type" : "configuration"
+        }
+    }
+    return chunks 
+
+
+def summary_chunker(path):
+    if "askmentor_summary.txt" in path:
+        json_summary = askmentor_json
+    else:
+        json_summary = datagenesys_json
+
+    chunks = []
+
+    overview = json_summary["project_overview"]
+    chunks.append({
+        "content" : json.dumps(overview, indent=2) , 
+        "metadata" :{
+            "file" : path,
+            "purpose" : "High-level project overview",
+            "type" :"project_summary", 
+            "project" : overview["project_name"], 
+            "source" : "Analyst"
+        }
+    })
+
+    for component, description in json_summary["architecture"].items():
+         chunks.append({
+            "content" : f"""
+            Componenet : {component}
+            Description : {json.dumps(description, indent=2)}
+            """ , 
+            "metadata" :{
+                "file" : path,
+                "purpose" : f"Architecture description for {component}",
+                "type" :"architechture", 
+                "project" : overview["project_name"], 
+                "component" : component, 
+                "source" : "Analyst"
+                
+            }
+        })
+        
+
+    for file in json_summary["file_level_analysis"]:
+        chunks.append({
+            "content" : json.dumps(file, indent=2), 
+            "metadata" :{
+                "file" : path,
+                "purpose" :  f"Summary of {file['file_path']}",
+                "type" :"file overview", 
+                "project" : overview["project_name"], 
+                "code_file" : file["file_path"],
+                "source" : "Analyst"
+                
+            }
+        })
+        
+
+    for skill in json_summary["skills_demonstrated"]:
+        chunks.append({
+            "content" : json.dumps(skill, indent=2), 
+            "metadata" :{
+                "file" : path,
+                "purpose" :  f"Summary of how I demostrated skill {skill["skill_name"]}",
+                "type" :"skill overview", 
+                "project" : overview["project_name"], 
+                "skill" : skill["skill_name"],
+                "source" : "Analyst"
+                
+            }
+        })
+
+    relation_map = json_summary["project_relationship_map"]
+    chunks.append({
+        "content" : json.dumps(relation_map["imports_and_usage"], indent=2), 
+        "metadata" :{
+            "file" : path,
+            "purpose" : "Shows relationships between files and how components use each other",
+            "type": "file_relationships", 
+            "project" : overview["project_name"], 
+            "source" : "Analyst"
+            
+        }
+    })
+
+    chunks.append({
+        "content" : json.dumps(relation_map["important_dependencies"], indent=2), 
+        "metadata" :{
+            "file" : path,
+            "purpose" : "Shows important libraries, frameworks, and dependency relationships",
+            "type": "dependencies", 
+            "project" : overview["project_name"], 
+            "source" : "Analyst"
+            
+        }
+    })
+
+    chunks.append({
+        "content" : json.dumps(relation_map["data_flow"], indent=2), 
+        "metadata" :{
+            "file" : path,
+            "purpose" : "Explains how data moves through the application",
+            "type": "data_flow", 
+            "project" : overview["project_name"], 
+            "source" : "Analyst"
+            
+        }
+    })
+    return chunks
