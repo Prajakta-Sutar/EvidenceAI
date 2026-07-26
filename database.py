@@ -1,4 +1,5 @@
 import os 
+import json
 import chromadb
 from tree_sitter import Parser
 from bs4 import BeautifulSoup
@@ -12,7 +13,7 @@ from langchain_community.document_loaders import TextLoader, PyPDFLoader
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-
+"""
 # Create database collection to store embeddingsmeb
 database_client = chromadb.PersistentClient("./portfolio_database")
 embedding_funct = embedding_functions.OpenAIEmbeddingFunction(
@@ -27,8 +28,8 @@ database = database_client.get_or_create_collection(
         "embedding_function" : embedding_funct
     }
 )
-print("Database created !\n")
 
+"""
 
 dir_ignore = {
                 ".git",
@@ -49,71 +50,102 @@ def get_documents(root):
     return documents
 
 
+with open("./evidence/summary/askmentor_summary.txt", "r", encoding="utf-8") as f:
+    askmentor_json = json.load(f)
+
+with open("./evidence/summary/datagenesys_summary.txt", "r", encoding="utf-8") as f:
+    datagenesys_json = json.load(f)
+
+def return_purpose(path):
+    actual_path = path.replace("\\", "/")
+    if "askmentor" in actual_path:
+        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        for file in askmentor_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                return (askmentor_json["project_overview"]["project_name"], file["purpose"])
+
+    if "datagenesys" in actual_path:
+            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    return (datagenesys_json["project_overview"]["project_name"],file["purpose"])
+    
+    return None
+
+
 def create_tree(path, language):
     current_language = get_language(language)
-    parser = Parser()
-    parser.set_language(current_language)
-
+    parser = Parser(current_language)
     with open(path, "r", encoding="utf-8") as f:
         code = f.read()
     tree = parser.parse(bytes(code, "utf8"))
     return tree.root_node
 
 
+def python_chunker(path):
+    treenode = create_tree(path, "python")
+    return None
+
+def javascript_chunker(path):
+    treenode = create_tree(path, "javascript")
+    imports = []
+    exports = []
+    helper_function = []
+    hooks = []
+    others = []
+    return None
 
 
-chunk_at = [  ("#", "title"), ("##", "section"),]
+
+def html_chunker(path):
+    with open(path, "r",  encoding="utf-8") as f:
+        html_file = f.read()
+    soup = BeautifulSoup(html_file, "html.parser")
+    scripts = []
+    for script in soup.findAll("script"):
+        if script.string:
+            script.append(script.string)
+
+    for script in soup.findAll("script"):
+        scripts.decompose()
+    chunks = str(soup)
+    return chunks
+
 
 markdown_splitter = MarkdownHeaderTextSplitter(
-        headers_to_split_on = chunk_at
+        headers_to_split_on = [  ("#", "title"), ("##", "section")]
 )
+def md_chunker(path):
+    print(path)
+    with open(path, "r", encoding="utf-8") as f:
+        markdown_text = f.read()
+
+    response = return_purpose(path)
+    if response:
+        project, purpose = response
+    else:
+        project = "Unknown" 
+        purpose = "Unknown"
+    chunks = markdown_splitter.split_text(markdown_text)
+    for chunk in chunks:
+        chunk.metadata["project"] = project
+        chunk.metadata["file"] = path
+        chunk.metadata["purpose"] = purpose
+        chunk.metadata["type"] = "markdown"
+    return chunks
+
+
+
 
 
 def build_database():
     project_docs = get_documents("evidence/repository")
-    chunks = None
+  
     for path in project_docs:
-        if path.endswith(".py"):
-            treenode = create_tree(path, "python")
-        elif path.endswith(".js"):
-            treenode = create_tree(path, "javascript")
-        elif path.endswith(".html"):
-            with open(path, "r",  encoding="utf-8") as f:
-                html_file = f.read()
-            soup = BeautifulSoup(html_file, "html.parser")
-            scripts = []
-            for script in soup.findAll("script"):
-                if script.string:
-                    script.append(script.string)
-
-            for script in soup.findAll("script"):
-                scripts.decompose()
-            chunks = str(soup)
+        if path.endswith(".md"):
+            chunks = md_chunker(path)
+            
     
-        elif path.endswith(".md"):
-            with open(path, "r", encoding="utf-8") as f:
-                markdown_text = f.read()
-            chunks = markdown_splitter(markdown_text)
-
-        elif path.endswith(".json") or path.endswith(".yml") \
-            or path.endswith("dockerfile") or path.endswith(".css"):
-            with open(path, "r", encoding="utf-8") as f:
-                document = f.read()
-            chunks = document
-        else:
-            continue
-        
-
-
-"""
-def retriever(question : str):
-    retrived_chunks = database.query(
-        query_texts = [question], 
-        n_results = 5
-    ) 
-    return "\n".join(retrived_chunks["documents"][0])
-
-"""
 
 if __name__ == "__main__":
     build_database()
