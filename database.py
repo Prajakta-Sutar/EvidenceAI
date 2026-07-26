@@ -2,7 +2,9 @@ import os
 from tree_sitter_language_pack import get_language
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
+from langchain_community.document_loaders import PyPDFLoader
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker
+
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -29,7 +31,8 @@ dir_ignore = {
                 ".git",
                 "node_modules",
                 "build",
-                "dist"
+                "dist", 
+                "repomix_res"
             }
 
 def get_documents(root):
@@ -58,7 +61,19 @@ def build_database():
 
         elif path.endswith(".py"):
             chunks = python_chunker(path)
-            
+
+        elif path.endswith(".pdf"):
+            loader = PyPDFLoader(path)
+            document = loader.load()
+            chunks = {
+                "content" : document[0].page_content, 
+                "metadata" : {
+                    "file" : path, 
+                    "type" : "resume", 
+                    "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
+                }
+            }
+        
         elif path.endswith((".json", ".yml", "dockerfile", "css" )) :
             project, purpose = return_file_purpose(path)
 
@@ -77,17 +92,24 @@ def build_database():
         
         """
     for path in project_docs:
-        if path.endswith(".py"):
-            chunks = python_chunker(path)
-            for i, chunk in enumerate(chunks):
-                print(f"\n========== CHUNK {i+1} ==========")
+        if path.endswith(".pdf"):
+            loader = PyPDFLoader(path)
+            document = loader.load()
+            chunks = {
+                "content" : document[0].page_content, 
+                "metadata" : {
+                    "file" : path, 
+                    "type" : "resume", 
+                    "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
+                }
+            }
 
-                print("CONTENT:")
-                print(chunk["content"])
+            print("CONTENT:")
+            print(chunks["content"])
 
-                print("\nMETADATA:")
-                for key, value in chunk["metadata"].items():
-                    print(f"{key}: {value}")
+            print("\nMETADATA:")
+            for key, value in chunks["metadata"].items():
+                print(f"{key}: {value}")
                 
 
             
