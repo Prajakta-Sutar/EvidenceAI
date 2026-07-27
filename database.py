@@ -104,7 +104,20 @@ def retriever(question : str):
         query_texts = [question], 
         n_results = 10
     ) 
-    return "\n".join(retrived_chunks["documents"][0])   
+
+    context = ""
+    document_contents = retrived_chunks["documents"][0]  
+    document_metadata = retrived_chunks["metadatas"][0]
+
+    for document, metadata in zip(document_contents, document_metadata):
+        doc_metadata = "\n".join(f"{key}:{value}" for key, value in metadata.items())
+        context += f"""
+        metadata : {doc_metadata}
+        content : {document}
+
+        ----------------------------------------
+        """
+    return context
 
 if __name__ == "__main__":
     print("Before build:", database.count())
