@@ -1,5 +1,6 @@
 import os 
-
+import uuid
+import chromadb
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
@@ -9,13 +10,15 @@ from chunking import python_chunker, javascript_chunker, html_chunker, md_chunke
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-"""
+
 # Create database collection to store embeddingsmeb
 database_client = chromadb.PersistentClient("./portfolio_database")
 embedding_funct = embedding_functions.OpenAIEmbeddingFunction(
     api_key=api_key,
     model_name="text-embedding-3-small"
 )
+
+
 database = database_client.get_or_create_collection(
     name="Portfolio_Evidence", 
     metadata={"description": "Collection storing Prajakta's Portfolio"},
@@ -25,14 +28,16 @@ database = database_client.get_or_create_collection(
     }
 )
 
-"""
+
 
 dir_ignore = {
                 ".git",
                 "node_modules",
                 "build",
                 "dist", 
-                "repomix_res"
+                "repomix_res",
+                "__pycache",
+                ".venv",
             }
 
 def get_documents(root):
@@ -42,73 +47,72 @@ def get_documents(root):
             d for d in subdir if d not in dir_ignore
         ]
         for file in files:
+            if file == "package-lock.json":
+                continue 
             path = os.path.join(root, file)
             documents.append(path)
     return documents
 
 
+def add_chunks(chunks):
+    if len(chunks) == 0:
+        return
+    for chunk in chunks:
+        database.add(
+            ids=str(uuid.uuid4()),
+            documents=chunk["content"], 
+            metadatas=chunk["metadata"]
+        )
+
 def build_database():
     project_docs = get_documents("evidence/repository")
     for path in project_docs:
-        if path.endswith(".js"):
-            print(path, "#############################################################")
+        if os.path.basename(path).lower() == "dockerfile":
+            chunks = no_split_chunker(path)
+        elif path.endswith(".js"):
             chunks = javascript_chunker(path)
-            for chunk in chunks:
-                print("=" * 50)
-                print("CONTENT:")
-                print(chunk["content"])
-    
-                print("\nMETADATA:")
-                for key, value in chunk["metadata"].items():
-                    print(f"{key}: {value}")
-    
-                print("\n")
-        """
-        if path.endswith(".md"):
+        elif path.endswith(".md"):
             chunks = md_chunker(path)
-        
         elif path.endswith(".html"):
             chunks = html_chunker(path)
-
         elif path.endswith(".py"):
             chunks = python_chunker(path)
-
         elif path.endswith(".pdf"):
             loader = PyPDFLoader(path)
             document = loader.load()
-            chunks = {
+            chunks = [{
                 "content" : document[0].page_content, 
                 "metadata" : {
                     "file" : path, 
                     "type" : "resume", 
                     "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
                 }
-            }
-        elif path.endswith((".json", ".yml", "dockerfile", "css" )) :
+            }]
+        elif path.endswith((".json", ".yml", ".css" )) :
             chunks = no_split_chunker(path)
-        elif path.endswith(".js"):
-            chunks = javascript_chunker(path)
         else:
             continue
-        """
-    """
-    summary_docs = get_documents("./evidence/summary")
+        add_chunks(chunks)
+    
+    summary_docs = get_documents("evidence/summary")
     for path in summary_docs:
         summary_chunks = summary_chunker(path)
-        for chunk in summary_chunks:
-            print("=" * 50)
-            print("CONTENT:")
-            print(chunk["content"])
-
-            print("\nMETADATA:")
-            for key, value in chunk["metadata"].items():
-                print(f"{key}: {value}")
-
-            print("\n")
-    """          
-
+        add_chunks(summary_chunks)
             
-    
+def retriever(question : str):
+    retrived_chunks = database.query(
+        query_texts = [question], 
+        n_results = 10
+    ) 
+    return "\n".join(retrived_chunks["documents"][0])   
 
 if __name__ == "__main__":
+    print("Before build:", database.count())
+
     build_database()
+
+    print("After build:", database.count())
+
+    result = retriever("What projects use React?")
+
+    print(result)
