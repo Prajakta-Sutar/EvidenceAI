@@ -43,7 +43,7 @@ def analyst(project):
 
 
 def assistant(question):
-    context = retriever(question) 
+    context = retriever(question)  
     print("\n========== RETRIEVED CONTEXT ==========")
     print(context)
     print("========================================")
