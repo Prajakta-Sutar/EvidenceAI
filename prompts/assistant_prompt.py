@@ -22,5 +22,9 @@ assistant_prompt = PromptTemplate.from_template(
     Question : {question}
     Context : {context}
 
+    When you find code files as evidence to suport your answer, rank the 
+    file from most importatnt evidence to least important evidence. 
+
+
     """
 )

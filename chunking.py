@@ -67,20 +67,14 @@ def return_type(path, name):
                         if component["name"] == name:
                             return component["type"]
 
+
 def return_name(node, source_byte):
     for child in node.children:
         if child.type == "identifier":
             name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
             return name
-
     return "Unknown"
 
-
-
-def print_tree(node, indent=0):
-    print("  " * indent + f"{node.type} [{node.start_point} - {node.end_point}]")
-    for child in node.children:
-        print_tree(child, indent + 1)
 
 def create_tree(path, language):
     current_language = get_language(language)
@@ -88,7 +82,6 @@ def create_tree(path, language):
     with open(path, "r", encoding="utf-8") as f:
         code = f.read()
     tree = parser.parse(bytes(code, "utf8"))
-    #print_tree(tree.root_node)
     return tree.root_node
 
 
@@ -122,11 +115,11 @@ def python_chunker(path):
             chunks.append({
                 "content": code,
                 "metadata":{
+                    "project" : project, 
                     "file" : path, 
-                    "purpose": purpose, 
+                    "file_purpose": purpose, 
                     "function_name" : function_name,
                     "function_purpose" : function_purpose,
-                    "project" : project, 
                     "type" : "function"
                 }
             })
@@ -140,11 +133,11 @@ def python_chunker(path):
             chunks.append({
                 "content": code,
                 "metadata":{
+                    "project" : project, 
                     "file" : path, 
-                    "purpose": purpose,
+                    "file_purpose": purpose,
                     "class_name" : class_name, 
                     "class_purpose" : class_purpose,
-                    "project" : project, 
                     "type" : "class"
                 }
             })
@@ -158,9 +151,9 @@ def python_chunker(path):
         chunks.append({
             "content" : "\n".join(imports),
             "metadata":{
+                "project" : project,
                 "file" : path, 
-                "purpose": purpose, 
-                "project" : project, 
+                "file_purpose": purpose, 
                 "type" : "imports"
             }
         })
@@ -169,9 +162,9 @@ def python_chunker(path):
         chunks.append({
                 "content": "\n".join(global_assignments),
                 "metadata":{
-                    "file" : path, 
-                    "purpose": purpose, 
                     "project" : project, 
+                    "file" : path, 
+                    "file_purpose": purpose, 
                     "type" : "assignment"
                 }
             })
@@ -197,11 +190,11 @@ def js_function_chunker(path, node, source_byte, parent_function):
             function_chunks.append({
                 "content" : code, 
                 "metadata":{
+                "project" : project, 
                 "file" : path, 
                 "file_purpose": file_purpose, 
                 "function_name" : parent_function,
-                "function_purpose" : function_purpose,
-                "project" : project, 
+                "function_purpose" : function_purpose, 
                 "type" : "return_statement"
                 }
             })
@@ -216,13 +209,13 @@ def js_function_chunker(path, node, source_byte, parent_function):
                 function_chunks.append({
                     "content": code,
                     "metadata":{
+                        "project" : project, 
                         "file" : path, 
-                        "purpose": file_purpose, 
+                        "file_purpose": file_purpose, 
                         "function_name" : parent_function,
                         "function_purpose" : function_purpose,
                         "helper_function_name" :helper_function_name,
                         "helper_function_purpose" :helper_function_purpose,
-                        "project" : project, 
                         "type" : "helper_function"
                     }
                 })
@@ -238,11 +231,11 @@ def js_function_chunker(path, node, source_byte, parent_function):
         function_chunks.append({
             "content" : "\n".join(function_useffect), 
             "metadata": {
+                "project" : project, 
                 "file" : path, 
-                "purpose": file_purpose, 
+                "file_purpose": file_purpose, 
                 "function_name" : parent_function,
                 "function_purpose" : function_purpose,
-                "project": project,
                 "type": "useffect_statements"
             }
         })
@@ -251,11 +244,11 @@ def js_function_chunker(path, node, source_byte, parent_function):
         function_chunks.append({
             "content" : "\n".join(function_usestate), 
             "metadata": {
+                "project" : project, 
                 "file" : path, 
-                "purpose": file_purpose, 
+                "file_purpose": file_purpose, 
                 "function_name" : parent_function,
                 "function_purpose" : function_purpose,
-                "project": project,
                 "type": "usestate_statements"
             }
         })
@@ -263,11 +256,11 @@ def js_function_chunker(path, node, source_byte, parent_function):
         function_chunks.append({
             "content" : "\n".join(function_other), 
             "metadata": {
+                "project" : project, 
                 "file" : path, 
-                "purpose": file_purpose, 
+                "file_purpose": file_purpose, 
                 "function_name" : parent_function,
                 "function_purpose" : function_purpose,
-                "project": project,
                 "type": "other_function_statements"
             }
         })
@@ -275,11 +268,11 @@ def js_function_chunker(path, node, source_byte, parent_function):
         function_chunks.append({
             "content" : "\n".join(function_other_lexical), 
             "metadata": {
+                "project" : project, 
                 "file" : path, 
-                "purpose": file_purpose, 
+                "file_purpose": file_purpose, 
                 "function_name" : parent_function,
                 "function_purpose" : function_purpose,
-                "project": project,
                 "type": "other_lexical_statements"
             }
         })
@@ -288,7 +281,6 @@ def js_function_chunker(path, node, source_byte, parent_function):
 
 
 def javascript_chunker(path):
-    print(path)
     treenode = create_tree(path, "javascript")
     with open(path, "r",  encoding="utf-8") as f:
         source_code = f.read()
@@ -321,11 +313,11 @@ def javascript_chunker(path):
                 file_chunks.append({
                     "content": code,
                     "metadata":{
+                        "project" : project, 
                         "file" : path, 
-                        "purpose": file_purpose, 
+                        "file_purpose": file_purpose, 
                         "function_name" : function_name,
                         "function_purpose" : function_purpose,
-                        "project" : project, 
                         "type" : "function"
                     }
                 })
@@ -342,9 +334,9 @@ def javascript_chunker(path):
         file_chunks.append({
             "content" : "\n".join(file_imports), 
             "metadata": {
+                "project" : project, 
                 "file": path,
-                "purpose" : file_purpose,
-                "project": project,
+                "file_purpose" : file_purpose,
                 "type": "imports"
             }
         })
@@ -352,9 +344,9 @@ def javascript_chunker(path):
         file_chunks.append({
             "content" : "\n".join(file_exports),
             "metadata": {
+                "project" : project, 
                 "file": path,
-                "purpose" : file_purpose,
-                "project": project,
+                "file_purpose" : file_purpose,
                 "type": "exports"
             }
         })
@@ -362,9 +354,9 @@ def javascript_chunker(path):
         file_chunks.append({
             "content" : "\n".join(file_const_var_let), 
             "metadata": {
+                "project" : project, 
                 "file": path,
-                "purpose" : file_purpose,
-                "project": project,
+                "file_purpose" : file_purpose,
                 "type": "global_variables_constants"
             }
         })
@@ -372,9 +364,9 @@ def javascript_chunker(path):
         file_chunks.append({
             "content" : "\n".join(file_top_level_functions), 
             "metadata": {
+                "project" : project, 
                 "file": path,
-                "purpose" : file_purpose,
-                "project": project,
+                "file_purpose" : file_purpose,
                 "type": "Top_level_expressions"
             }
         })
@@ -382,9 +374,9 @@ def javascript_chunker(path):
         file_chunks.append({
             "content" : "\n".join(file_others), 
             "metadata": {
+                "project" : project, 
                 "file": path,
-                "purpose" : file_purpose,
-                "project": project,
+                "file_purpose" : file_purpose,
                 "type": "Other_statements_in_file"
             }
         })
@@ -413,7 +405,7 @@ def html_chunker(path):
                 "metadata" :{
                     "project" : project,
                     "file" : path,
-                    "purpose" : purpose, 
+                    "file_purpose" : purpose, 
                     "type" : "html"
                 }
             }
@@ -424,7 +416,7 @@ def html_chunker(path):
                     "metadata" :{
                         "project" : project,
                         "file" : path,
-                        "purpose" : purpose, 
+                        "file_purpose" : purpose, 
                         "type" : "script"
                     }
                 }
@@ -444,12 +436,20 @@ def md_chunker(path):
         markdown_text = f.read()
 
     project, purpose = return_file_purpose(path)
-    chunks = markdown_splitter.split_text(markdown_text)
-    for chunk in chunks:
-        chunk.metadata["project"] = project
-        chunk.metadata["file"] = path
-        chunk.metadata["purpose"] = purpose
-        chunk.metadata["type"] = "markdown"
+    documents = markdown_splitter.split_text(markdown_text)
+    chunks =[]
+    for doc in documents:
+        chunks.append({
+            "content" : doc.page_content, 
+            "metadata":{
+                "project" : project,
+                "file" : path,
+                "file_purpose" : purpose, 
+                "type" : "markdown", 
+                **doc.metadata
+            }
+        })
+   
     return chunks
 
 
@@ -458,15 +458,15 @@ def no_split_chunker(path):
     project, purpose = return_file_purpose(path)
     with open(path, "r", encoding="utf-8") as f:
         page_content = f.read()
-    chunks = {
+    chunks = [{
         "content" : page_content, 
         "metadata" :{
             "project" : project,
             "file" : path,
-            "purpose" : purpose, 
+            "file_purpose" : purpose, 
             "type" : "configuration"
         }
-    }
+    }]
     return chunks 
 
 
@@ -482,10 +482,10 @@ def summary_chunker(path):
     chunks.append({
         "content" : json.dumps(overview, indent=2) , 
         "metadata" :{
-            "file" : path,
-            "purpose" : "High-level project overview",
-            "type" :"project_summary", 
             "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "High-level project overview",
+            "type" :"project_summary", 
             "source" : "Analyst"
         }
     })
@@ -497,11 +497,11 @@ def summary_chunker(path):
             Description : {json.dumps(description, indent=2)}
             """ , 
             "metadata" :{
-                "file" : path,
-                "purpose" : f"Architecture description for {component}",
-                "type" :"architechture", 
                 "project" : overview["project_name"], 
+                "file" : path,
+                "file_purpose" : f"Architecture description for {component}",
                 "component" : component, 
+                "type" :"architechture",
                 "source" : "Analyst"
                 
             }
@@ -512,11 +512,11 @@ def summary_chunker(path):
         chunks.append({
             "content" : json.dumps(file, indent=2), 
             "metadata" :{
-                "file" : path,
-                "purpose" :  f"Summary of {file['file_path']}",
-                "type" :"file overview", 
                 "project" : overview["project_name"], 
+                "file" : path,
+                "file_purpose" :  f"Summary of {file['file_path']}",
                 "code_file" : file["file_path"],
+                "type" :"file_overview", 
                 "source" : "Analyst"
                 
             }
@@ -527,11 +527,11 @@ def summary_chunker(path):
         chunks.append({
             "content" : json.dumps(skill, indent=2), 
             "metadata" :{
+                "project" : overview["project_name"],
                 "file" : path,
-                "purpose" :  f"Summary of how I demostrated skill {skill["skill_name"]}",
-                "type" :"skill overview", 
-                "project" : overview["project_name"], 
+                "file_purpose" :  f"Summary of how I demostrated skill {skill["skill_name"]}",
                 "skill" : skill["skill_name"],
+                "type" :"skill_overview",  
                 "source" : "Analyst"
                 
             }
@@ -541,10 +541,10 @@ def summary_chunker(path):
     chunks.append({
         "content" : json.dumps(relation_map["imports_and_usage"], indent=2), 
         "metadata" :{
-            "file" : path,
-            "purpose" : "Shows relationships between files and how components use each other",
-            "type": "file_relationships", 
             "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "Shows relationships between files and how components use each other",
+            "type": "file_relationships",
             "source" : "Analyst"
             
         }
@@ -553,10 +553,10 @@ def summary_chunker(path):
     chunks.append({
         "content" : json.dumps(relation_map["important_dependencies"], indent=2), 
         "metadata" :{
-            "file" : path,
-            "purpose" : "Shows important libraries, frameworks, and dependency relationships",
-            "type": "dependencies", 
             "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "Shows important libraries, frameworks, and dependency relationships",
+            "type": "dependencies",  
             "source" : "Analyst"
             
         }
@@ -565,10 +565,10 @@ def summary_chunker(path):
     chunks.append({
         "content" : json.dumps(relation_map["data_flow"], indent=2), 
         "metadata" :{
-            "file" : path,
-            "purpose" : "Explains how data moves through the application",
-            "type": "data_flow", 
             "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "Explains how data moves through the application",
+            "type": "data_flow", 
             "source" : "Analyst"
             
         }
@@ -577,5 +577,3 @@ def summary_chunker(path):
     return chunks
 
 
-if __name__ == "__main__":
-    create_tree("./evidence/repository/askmentor/frontend/src/channels.js","javascript")
