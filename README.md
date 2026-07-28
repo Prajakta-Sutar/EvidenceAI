@@ -21,4 +21,5 @@
     Retrived evidence are NOT incomplete anymore. 
   - Retrival is retriving separate chunks from same file as evidence, 
     instead of combining them as one🚨🚨.
+  - Query generator is creating relevant queries 🥳🎉. 
   
