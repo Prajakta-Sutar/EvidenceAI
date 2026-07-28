@@ -102,7 +102,7 @@ def build_database():
 def retriever(question : str):
     retrived_chunks = database.query(
         query_texts = [question], 
-        n_results = 10
+        n_results = 20
     ) 
 
     context = ""

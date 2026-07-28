@@ -44,14 +44,14 @@ def analyst(project):
 
 def assistant(question):
     context = retriever(question)  
-    print("\n========== RETRIEVED CONTEXT ==========")
-    print(context)
-    print("========================================")
     inputs = {"question": question, "context":context}
     agumented_prompt = assistant_prompt.invoke(inputs)
     response = assistant_llm.invoke(agumented_prompt)
-    print(response.content)
-    return response.content
+    result = json.loads(response.content)
+    summary = result["summary"]
+    print(summary)
+    return summary
+    
 
 
 @app.get("/")
@@ -67,7 +67,6 @@ def classifier(question: str):
             return result["response"]
         else:
             return assistant(question) 
-
 
 
     

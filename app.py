@@ -5,7 +5,7 @@ from model import classifier
 demo = gr.Interface(
     fn=classifier,
     inputs=[gr.Textbox(label="Question")],
-    outputs=gr.Textbox(label="Response")
+    outputs=gr.Markdown(label="Response")
 )
 
 demo.launch()
