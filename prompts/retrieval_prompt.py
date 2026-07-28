@@ -15,7 +15,7 @@ retrieval_prompt = PromptTemplate.from_template("""
                 - implementation details 
         
         Rules :
-                - Create 3-5 new queries. 
+                - Create 3 or 4 new queries. 
                 - Every query should target different aspects of the recruiter's question.
                 - Prefer project names, technologies, frameworks, and implementation concepts when required.
                 - Do not include generic hiring language.

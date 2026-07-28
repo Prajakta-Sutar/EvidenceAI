@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_classic.retrievers import MultiQueryRetriever
 from prompts.retrieval_prompt import retrieval_prompt
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
@@ -106,7 +105,7 @@ def build_database():
 
 
 query_llm = ChatOpenAI(
-    model="gpt-5.4-nano",
+    model="gpt-5.4-mini",
     temperature=1,
     api_key=os.getenv("OPENAI_API_KEY")
 )
@@ -116,7 +115,12 @@ def query_generator(question):
     modified_prompt = retrieval_prompt.invoke(input_question)
     response = query_llm.invoke(modified_prompt)
     result = response.content.split("\n")
-    return result
+    queries = []
+    for query in result:
+        if len(query) > 0:
+            queries.append(query)
+    print(queries)
+    return queries
 
 
 def retriever(question : str):
@@ -126,11 +130,10 @@ def retriever(question : str):
     seen = set()
     queries = query_generator(question)
     for query in queries:
-        print(query)
         retrived_chunks = database.query(
             query_texts = [query], 
-            n_results = 15
-        ) 
+            n_results = 10
+        )
         for chunk_id, doc, metadata in zip(retrived_chunks["ids"][0], retrived_chunks["documents"][0],retrived_chunks["metadatas"][0] ):
             if chunk_id not in seen:
                 seen.add(chunk_id)
@@ -138,8 +141,9 @@ def retriever(question : str):
                 document_metadata.append(metadata)
                 document_ids.append(chunk_id)
 
+
     context = ""
-    
+    print("Before context")
     for document, metadata in zip(document_contents, document_metadata):
         doc_metadata = "\n".join(f"{key}:{value}" for key, value in metadata.items())
         context += f"""
@@ -148,5 +152,7 @@ def retriever(question : str):
 
         ----------------------------------------
         """
+    print("After context")
     return context
+
 
