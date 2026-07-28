@@ -57,7 +57,6 @@ assistant_prompt = PromptTemplate.from_template(
     
     2. Evidence :
         - Must be a JSON array.
-        - Write the evidence from most important evidence to least important evidence.
         - For each evidence item:
             -Include the file path from the evidence metadata field called "file".
             - If file name ends with .txt , .pdf , do not include them as evidence. 

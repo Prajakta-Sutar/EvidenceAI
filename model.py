@@ -28,7 +28,7 @@ classifier_llm = ChatOpenAI(
 
 assistant_llm = ChatOpenAI(
     model="gpt-5.4-mini",
-    temperature=3,
+    temperature=0.5,
     api_key=os.getenv("OPENAI_API_KEY")
 )
 

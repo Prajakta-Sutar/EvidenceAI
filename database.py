@@ -106,7 +106,7 @@ def build_database():
 
 query_llm = ChatOpenAI(
     model="gpt-5.4-mini",
-    temperature=1,
+    temperature=0.5,
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
@@ -130,6 +130,7 @@ def retriever(question : str):
     seen = set()
     queries = query_generator(question)
     for query in queries:
+        print(query)
         retrived_chunks = database.query(
             query_texts = [query], 
             n_results = 10
@@ -152,7 +153,10 @@ def retriever(question : str):
 
         ----------------------------------------
         """
+    print(context)
     print("After context")
     return context
 
 
+if __name__ == "__main__":
+    retriever("why should we hire her?")
