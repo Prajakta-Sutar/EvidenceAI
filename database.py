@@ -2,8 +2,11 @@ import os
 import uuid
 import chromadb
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_classic.retrievers import MultiQueryRetriever
+from prompts.retrieval_prompt import retrieval_prompt
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
 
@@ -13,6 +16,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 # Create database collection to store embeddingsmeb
 database_client = chromadb.PersistentClient("./portfolio_database")
+
 embedding_funct = embedding_functions.OpenAIEmbeddingFunction(
     api_key=api_key,
     model_name="text-embedding-3-small"
@@ -98,17 +102,44 @@ def build_database():
     for path in summary_docs:
         summary_chunks = summary_chunker(path)
         add_chunks(summary_chunks)
-            
+
+
+
+query_llm = ChatOpenAI(
+    model="gpt-5.4-nano",
+    temperature=1,
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+def query_generator(question):
+    input_question = {'question': question}
+    modified_prompt = retrieval_prompt.invoke(input_question)
+    response = query_llm.invoke(modified_prompt)
+    result = response.content.split("\n")
+    return result
+
+
 def retriever(question : str):
-    retrived_chunks = database.query(
-        query_texts = [question], 
-        n_results = 20
-    ) 
+    document_contents = []
+    document_metadata = []
+    document_ids = []
+    seen = set()
+    queries = query_generator(question)
+    for query in queries:
+        print(query)
+        retrived_chunks = database.query(
+            query_texts = [query], 
+            n_results = 15
+        ) 
+        for chunk_id, doc, metadata in zip(retrived_chunks["ids"][0], retrived_chunks["documents"][0],retrived_chunks["metadatas"][0] ):
+            if chunk_id not in seen:
+                seen.add(chunk_id)
+                document_contents.append(doc)  
+                document_metadata.append(metadata)
+                document_ids.append(chunk_id)
 
     context = ""
-    document_contents = retrived_chunks["documents"][0]  
-    document_metadata = retrived_chunks["metadatas"][0]
-
+    
     for document, metadata in zip(document_contents, document_metadata):
         doc_metadata = "\n".join(f"{key}:{value}" for key, value in metadata.items())
         context += f"""
@@ -119,13 +150,3 @@ def retriever(question : str):
         """
     return context
 
-if __name__ == "__main__":
-    print("Before build:", database.count())
-
-    build_database()
-
-    print("After build:", database.count())
-
-    result = retriever("What projects use React?")
-
-    print(result)

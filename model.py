@@ -49,8 +49,8 @@ def assistant(question):
     response = assistant_llm.invoke(agumented_prompt)
     result = json.loads(response.content)
     summary = result["summary"]
-    print(summary)
-    return summary
+    evidence = result["evidence"]
+    return summary , evidence
     
 
 

@@ -57,36 +57,14 @@ assistant_prompt = PromptTemplate.from_template(
     
     2. Evidence :
         - Must be a JSON array.
-        rite the evidence from most important evidence to least important evidence.
-        For each evidence item:
+        - Write the evidence from most important evidence to least important evidence.
+        - For each evidence item:
             -Include the file path from the evidence metadata field called "file".
+            - If file name ends with .txt , .pdf , do not include them as evidence. 
+            You can use this files to answer recruiter's questions in summary sections. 
             - Explain how the technology was implemented in the project using information
                 from that artifact.
             - Describe the technical role of the artifact in the project.
-
-        Evidence selection rules:
-            Before writing the Evidence section, filter all retrieved context.
-
-            Only include artifacts that are direct implementation files:
-            - source code files (.js, .py, .java, .cpp, etc.)
-            - configuration files (.json, .yaml, .yml, Dockerfile, etc.)
-            - database schema files
-            - API definitions
-            - deployment/infrastructure files
-
-            Never include:
-                - analyst documents
-                - summary documents
-                - .txt files
-                - README files
-                - PDFs
-                - resumes
-                - generated descriptions
-                - project documentation
-
-                These documents may only be used internally to understand the project and
-                generate the Summary section. They must never appear under Evidence, even if
-                they contain useful information.
 
 
         Evidence explanation rules:
