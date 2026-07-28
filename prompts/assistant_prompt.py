@@ -19,6 +19,10 @@ assistant_prompt = PromptTemplate.from_template(
 
     Do not list dependency files unless specifically asked, unless they provide 
     meaningful evidence related to the recruiter's question.
+    Your response must always be valid JSON.
+    Do not use Markdown formatting.
+    Do not use code blocks.
+    Do not add any explanation outside the JSON object.
 
     If your response includes evidence, structure your response into two parts:
 
@@ -36,10 +40,32 @@ assistant_prompt = PromptTemplate.from_template(
         from that artifact.
        - Describe the technical role of the artifact in the project.
 
+    Evidence selection rules:
+        Before writing the Evidence section, filter all retrieved context.
+
+        Only include artifacts that are direct implementation files:
+        - source code files (.js, .py, .java, .cpp, etc.)
+        - configuration files (.json, .yaml, .yml, Dockerfile, etc.)
+        - database schema files
+        - API definitions
+        - deployment/infrastructure files
+
+        Never include:
+        - analyst documents
+        - summary documents
+        - .txt files
+        - README files
+        - PDFs
+        - resumes
+        - generated descriptions
+        - project documentation
+
+        These documents may only be used internally to understand the project and
+        generate the Summary section. They must never appear under Evidence, even if
+        they contain useful information.
+
+
     Evidence explanation rules:
-        - Evidence with metadata "source"="analyst" is internal supporting document. 
-        You can use such evidence to understand the project and answer recruiters question
-        in summary section. 
        -  Do not describe the file like documentation.
         - Do not explain why the AI selected this artifact as evidence.
         - Do not start decription as "This file" or "This evidence" or 
@@ -60,30 +86,34 @@ assistant_prompt = PromptTemplate.from_template(
 
     Question - Does she have docker experience ?
 
-    Yor Response -
-
-    Summary - 
-    Yes, Prajakta has experience with Docker. She used Docker in the AskMentor
-    project to containerize and run a full-stack application consisting of a
-    React frontend, Node.js backend, and MySQL database.
-    Supporting evidence for this experience is available in the left panel
-
-    Evidence - 
-    path : /askmentor/docker-compose.yml
-    The Docker Compose configuration defines the application's containerized
-    architecture with separate services for `mysql-image`, `backend`, and
-    `frontend`. The backend service is built from the project root, the frontend
-    service is built from the `./frontend` directory, and the services are connected
-    through Docker Compose with configured ports and service dependencies. This
-    setup allows the React frontend, Node.js backend, and MySQL database to run
-    together as a complete full-stack application.
-
-    path : /askmentor/dockerfile
-    The backend Dockerfile creates the container environment for the Node.js API
-    service. It defines the Node runtime, installs the application dependencies,
-    copies the backend source code into the container, and configures the startup
-    command to run the API service using `npm start`.
-
+    Yor Response -{{
+    "summary" :  "Yes, Prajakta has experience with Docker. She used Docker in the AskMentor
+        project to containerize and run a full-stack application consisting of a
+        React frontend, Node.js backend, and MySQL database.
+        Supporting evidence for this experience is available in the left panel", 
+    "Evidence" :[
+        {{
+            "file" : "/askmentor/docker-compose.yml", 
+            "Description" : "The Docker Compose configuration defines the application's containerized
+                architecture with separate services for `mysql-image`, `backend`, and
+                `frontend`. The backend service is built from the project root, the frontend
+                service is built from the `./frontend` directory, and the services are connected
+                through Docker Compose with configured ports and service dependencies. This
+                setup allows the React frontend, Node.js backend, and MySQL database to run
+                together as a complete full-stack application. "
+        }}, 
+        {{
+            "file" : "/askmentor/dockerfile",
+            "description" : "The backend Dockerfile creates the container environment for the Node.js API
+                service. It defines the Node runtime, installs the application dependencies,
+                copies the backend source code into the container, and configures the startup
+                command to run the API service using `npm start`."
+        
+        }}
+        
+        ]
+    
+    }}
 
 
     If your answer does not include evidences your summary should be 

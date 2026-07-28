@@ -19,5 +19,6 @@
   - After hybrid chunking, and using same retrival as before, 
     retrival quality has been improved significantly. 🥳🎉.
     Retrived evidence are NOT incomplete anymore. 
-    
+  - Retrival is retriving separate chunks from same file as evidence, 
+    instead of combining them as one🚨🚨.
   
