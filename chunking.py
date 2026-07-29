@@ -471,7 +471,7 @@ def no_split_chunker(path):
 
 
 def summary_chunker(path):
-    if "askmentor_summary.txt" in path:
+    if "askmentor_summary.txt" in path.lower():
         json_summary = askmentor_json
     else:
         json_summary = datagenesys_json
@@ -521,42 +521,16 @@ def summary_chunker(path):
                 
             }
         })
-        
 
-    for skill in json_summary["skills_demonstrated"]:
-        chunks.append({
-            "content" : json.dumps(skill, indent=2), 
-            "metadata" :{
-                "project" : overview["project_name"],
-                "file" : path,
-                "file_purpose" :  f"Summary of how I demostrated skill {skill["skill_name"]}",
-                "skill" : skill["skill_name"],
-                "type" :"skill_overview",  
-                "source" : "Analyst"
-                
-            }
-        })
 
     relation_map = json_summary["project_relationship_map"]
     chunks.append({
-        "content" : json.dumps(relation_map["imports_and_usage"], indent=2), 
+        "content" : json.dumps(relation_map["component_relationships"], indent=2), 
         "metadata" :{
             "project" : overview["project_name"], 
             "file" : path,
             "file_purpose" : "Shows relationships between files and how components use each other",
             "type": "file_relationships",
-            "source" : "Analyst"
-            
-        }
-    })
-
-    chunks.append({
-        "content" : json.dumps(relation_map["important_dependencies"], indent=2), 
-        "metadata" :{
-            "project" : overview["project_name"], 
-            "file" : path,
-            "file_purpose" : "Shows important libraries, frameworks, and dependency relationships",
-            "type": "dependencies",  
             "source" : "Analyst"
             
         }

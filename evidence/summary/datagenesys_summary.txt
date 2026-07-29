@@ -1,163 +1,108 @@
 {
   "project_overview": {
     "project_name": "DataPredictify",
-    "problem_solved": "A web application for analyzing a dataset, cleaning and transforming data, visualizing correlations/relationships, and training machine learning models to predict an Alzheimer’s disease target variable from user-provided features.",
-    "main_focus": "Data preprocessing, exploratory visualization, and predictive modeling for an Alzheimer’s Disease dataset using a Django-based interface.",
+    "Description": "A Django-based data science web application that analyzes an Alzheimer's Disease dataset, performs preprocessing and encoding, generates exploratory graphs for dataset columns, and trains multiple machine learning classifiers to predict the target diagnosis from user-provided features.",
     "main_features": [
-      "Loads a local Alzheimer’s Disease CSV dataset",
-      "Detects and handles missing values",
-      "Encodes categorical, boolean, and datetime-like columns",
-      "Computes correlation-based related columns",
-      "Generates on-demand graphs for selected columns",
-      "Trains and compares several scikit-learn classifiers",
-      "Returns a predicted target value based on user input",
-      "Displays cleaned dataset summaries and model performance in the browser"
+      "Loads a local Alzheimer's Disease CSV dataset and checks whether the expected target column exists",
+      "Generates a pre-processing dataset snapshot with column names, data types, and missing-value counts",
+      "Cleans data by handling missing values, removing high-missingness columns, and encoding categorical/datetime values",
+      "Computes column correlation relationships to determine which variables to visualize together",
+      "Generates interactive graphs for selected columns using Seaborn and Matplotlib",
+      "Accepts user-entered feature values and returns a prediction for the target variable",
+      "Trains and evaluates multiple machine learning models with GridSearchCV",
+      "Displays trained model names, best parameters, and accuracy metrics in the UI"
     ]
   },
   "architecture": {
     "frontend": {
-      "technology": "Django templates",
+      "technology": "Django templates, HTML, CSS, JavaScript, jQuery",
       "evidence": [
         {
           "file": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "reason": "Defines the full UI structure using Django template tags such as {% load static %}, {% if %}, {% for %}, and {% url %}."
-        }
-      ]
-    },
-    "frontend_styling": {
-      "technology": "CSS",
-      "evidence": [
+          "reason": "Defines the full user interface using Django template syntax, HTML structure, form submission, AJAX requests, and client-side rendering of graphs and model results."
+        },
         {
           "file": "dataScience/datagenisys/static/datagenisys/css/home_page.css",
-          "reason": "Provides all page styling, layout, animations, and responsive presentation rules for the home page."
-        }
-      ]
-    },
-    "frontend_interactivity": {
-      "technology": "jQuery",
-      "evidence": [
-        {
-          "file": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "reason": "Uses $(document).ready(), click handlers, and $.ajax() for asynchronous graph generation and prediction requests."
-        }
-      ]
-    },
-    "frontend_icons_and_assets": {
-      "technology": "Google Material Symbols",
-      "evidence": [
-        {
-          "file": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "reason": "Loads the Material Symbols stylesheet and uses icon spans such as arrow_upward, query_stats, bar_chart, and automation."
+          "reason": "Provides the styling for the homepage layout, navigation bar, graph modal, forms, tables, and responsive visual presentation."
         }
       ]
     },
     "backend": {
-      "technology": "Django",
-      "evidence": [
-        {
-          "file": "dataScience/dataScience/settings.py",
-          "reason": "Configures a Django project with INSTALLED_APPS, MIDDLEWARE, TEMPLATES, URL configuration, static files, and database settings."
-        },
-        {
-          "file": "dataScience/dataScience/urls.py",
-          "reason": "Defines project-level URL routing and includes the datagenisys app URL configuration."
-        },
-        {
-          "file": "dataScience/datagenisys/views.py",
-          "reason": "Implements Django view functions that render templates and return JsonResponse payloads."
-        },
-        {
-          "file": "dataScience/datagenisys/urls.py",
-          "reason": "Maps app routes to Django view functions."
-        },
-        {
-          "file": "dataScience/manage.py",
-          "reason": "Provides the Django management entrypoint for running the server and management commands."
-        }
-      ]
-    },
-    "data_processing_backend": {
-      "technology": "pandas and NumPy",
+      "technology": "Django, pandas, NumPy, scikit-learn, Seaborn, Matplotlib",
       "evidence": [
         {
           "file": "dataScience/datagenisys/views.py",
-          "reason": "Reads CSV data, manipulates DataFrames, serializes to JSON, and performs array conversions for model input."
+          "reason": "Implements Django request handlers for rendering the page, loading and cleaning the dataset, returning graph data as JSON, and returning predictions and trained model details."
         },
         {
           "file": "dataScience/datagenisys/nan_handler.py",
-          "reason": "Uses pandas DataFrame operations and NumPy values to detect missing data and impute or drop columns."
+          "reason": "Uses pandas and scikit-learn's SimpleImputer to process missing values and clean dataset columns."
         },
         {
           "file": "dataScience/datagenisys/data_encoder.py",
-          "reason": "Uses pandas DataFrame operations and NumPy trigonometric functions for encoding and feature engineering."
-        },
-        {
-          "file": "dataScience/datagenisys/binning.py",
-          "reason": "Uses pandas and NumPy to bin numeric and datetime-like columns."
+          "reason": "Uses pandas and scikit-learn's LabelEncoder to transform categorical and datetime-like columns into numeric representations."
         },
         {
           "file": "dataScience/datagenisys/correlations.py",
-          "reason": "Uses pandas correlation matrix computation."
-        }
-      ]
-    },
-    "machine_learning_backend": {
-      "technology": "scikit-learn",
-      "evidence": [
-        {
-          "file": "dataScience/datagenisys/machine_learning_models.py",
-          "reason": "Uses preprocessing.StandardScaler, train_test_split, GridSearchCV, LogisticRegression, SVC, DecisionTreeClassifier, and KNeighborsClassifier."
+          "reason": "Uses pandas correlation computation to identify strongly related columns for visualization."
         },
-        {
-          "file": "dataScience/datagenisys/data_encoder.py",
-          "reason": "Uses sklearn.preprocessing.LabelEncoder to encode categorical and boolean values."
-        },
-        {
-          "file": "dataScience/datagenisys/nan_handler.py",
-          "reason": "Uses sklearn.impute.SimpleImputer to fill missing values."
-        }
-      ]
-    },
-    "visualization_backend": {
-      "technology": "Seaborn and Matplotlib",
-      "evidence": [
         {
           "file": "dataScience/datagenisys/graphs.py",
-          "reason": "Generates count plots, KDE plots, boxen plots, scatter plots, and saves them to in-memory PNG images."
+          "reason": "Uses Seaborn and Matplotlib to generate base64-encoded images returned to the frontend."
+        },
+        {
+          "file": "dataScience/datagenisys/machine_learning_models.py",
+          "reason": "Uses scikit-learn model selection and classifiers to train multiple predictive models and choose the best-performing one."
+        },
+        {
+          "file": "dataScience/datagenisys/urls.py",
+          "reason": "Defines Django routes that map browser requests and AJAX calls to the view functions."
+        },
+        {
+          "file": "dataScience/dataScience/settings.py",
+          "reason": "Configures the Django project, installed apps, templates, static files, and database settings."
+        },
+        {
+          "file": "dataScience/dataScience/urls.py",
+          "reason": "Connects the app URL configuration to the project-level routing and exposes the admin route."
+        },
+        {
+          "file": "dataScience/manage.py",
+          "reason": "Provides the Django command-line entry point used to run migrations, start the development server, and execute management commands."
         }
       ]
     },
     "database_storage": {
-      "technology": "SQLite",
+      "technology": "Local CSV file and SQLite",
       "evidence": [
         {
+          "file": "dataScience/datagenisys/views.py",
+          "reason": "Loads the dataset from a CSV file located under the app's static directory and processes it in memory for analysis and prediction."
+        },
+        {
           "file": "dataScience/dataScience/settings.py",
-          "reason": "DATABASES is configured with django.db.backends.sqlite3 and db.sqlite3 under BASE_DIR."
+          "reason": "Configures SQLite as the default Django database using db.sqlite3."
+        },
+        {
+          "file": "README.md",
+          "reason": "Describes the dataset source and notes that the application expects a local data file for analysis."
         }
       ]
     },
-    "external_apis_and_externals": {
-      "technology": "Kaggle dataset source",
+    "external_apis": {
+      "technology": "Google Fonts and jQuery CDN",
       "evidence": [
         {
-          "file": "README.md",
-          "reason": "Documents the Alzheimer’s Disease Dataset as sourced from Kaggle and provides the citation."
-        },
-        {
           "file": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "reason": "Displays dataset citation pointing to Kaggle URL and DOI."
+          "reason": "Imports the Material Symbols font from Google Fonts and loads jQuery from a public CDN for client-side AJAX and DOM manipulation."
         }
       ]
     },
     "communication_flow": [
-      "Browser loads the Django-rendered home page from datagenisys.views.get_dataset.",
-      "The template displays dataset summary tables and includes jQuery-based AJAX handlers.",
-      "When the user clicks 'See Graphs', the browser posts the selected column and serialized DataFrame data to datagenisys.views.get_graphs.",
-      "get_graphs loads the JSON DataFrame, resolves correlated columns, and calls graphs.graph_generator to generate base64-encoded plot images, which are returned as JSON.",
-      "When the user submits feature values for prediction, the browser posts serialized form data to datagenisys.views.get_prediction.",
-      "get_prediction parses input features, encodes categorical values using the stored encoding map, reconstructs the cleaned DataFrame, and calls machine_learning_models.predictive_model.",
-      "predictive_model scales data, performs model tuning with GridSearchCV, selects the best model, and returns the predicted target class and model performance details.",
-      "The browser updates the page with the prediction result and trained model table using the JSON response."
+      "Browser requests the homepage URL -> Django URL routing in dataScience/dataScience/urls.py forwards to datagenisys.urls -> views.get_dataset loads and cleans the CSV dataset -> template renders dataset tables and initialization state.",
+      "User clicks 'See Graphs' in the template -> jQuery sends AJAX POST to the get_graphs endpoint -> views.get_graphs reads the encoded dataframe and correlation data from the request -> graphs.graph_generator creates base64 PNG images -> JSON response is used to display the graphs in the modal.",
+      "User submits feature values in the prediction form -> jQuery intercepts the form submission and posts serialized form data to get_prediction -> views.get_prediction reconstructs the dataframe and input vector -> machine_learning_models.predictive_model trains models and predicts the target -> response updates the prediction label and trained model table in the template.",
+      "Data cleaning starts in views.get_dataset -> nan_handler.NaN_handler handles missing values -> data_encoder.category_encoder transforms categorical and datetime columns -> correlations.get_corr computes related columns -> the cleaned and encoded dataframe is passed to the template and reused by AJAX endpoints."
     ]
   },
   "file_level_analysis": [
@@ -166,720 +111,366 @@
       "purpose": "Marks the migrations package for the Django app.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "Python package marker"
-      ],
-      "imports_dependencies": [],
-      "relationships_with_other_files": [
-        "Used implicitly by Django migration discovery."
+        "Python",
+        "Django migrations package structure"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/static/datagenisys/css/home_page.css",
-      "purpose": "Defines all styling and animations for the application home page.",
+      "purpose": "Defines the visual styling and layout rules for the homepage and its interactive components.",
       "main_classes_functions_components": [],
       "technologies_used": [
         "CSS",
-        "CSS animations",
+        "Responsive layout using vw/vh units",
         "Flexbox",
-        "Fixed positioning"
-      ],
-      "imports_dependencies": [],
-      "relationships_with_other_files": [
-        "Loaded by templates/datagenisys/home_page.html via Django static tag."
+        "CSS animations",
+        "Fixed positioning",
+        "Pseudo-elements"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-      "purpose": "Renders the main user interface for dataset information, graphs, and predictive modeling.",
+      "purpose": "Renders the homepage, dataset overview, graph section, and predictive model form using Django templating and client-side AJAX interactions.",
       "main_classes_functions_components": [
         {
-          "name": "Django template blocks and control structures",
+          "name": "Django template blocks and conditionals",
           "type": "template logic",
-          "description": "Conditionally renders dataset states, tables, and prediction sections based on context variables such as got_data and false_target."
+          "description": "Controls which sections are shown depending on whether data is loaded and whether the target variable exists."
         },
         {
-          "name": "$('.graph-button').click(...)",
-          "type": "JavaScript handler",
-          "description": "Requests graphs for a selected column via AJAX and injects returned images into the graph modal."
+          "name": "graph-button click handler",
+          "type": "JavaScript event handler",
+          "description": "Sends an AJAX request to fetch graphs for a selected column and displays them in a modal container."
         },
         {
-          "name": "$('form').on('submit', ...)",
-          "type": "JavaScript handler",
-          "description": "Intercepts prediction form submission, sends AJAX request to the backend, and updates prediction/model results on the page."
+          "name": "form submit handler",
+          "type": "JavaScript event handler",
+          "description": "Intercepts model prediction submission, posts the user input to the backend, and updates the prediction and trained model results in the page."
         }
       ],
       "technologies_used": [
-        "Django templates",
         "HTML",
+        "Django template language",
         "JavaScript",
         "jQuery",
         "AJAX",
-        "Google Material Symbols"
-      ],
-      "imports_dependencies": [
-        "{% load static %}",
-        "Uses {% url 'get_graphs' %} and {% url 'get_prediction' %} for backend calls.",
-        "Consumes context variables from datagenisys.views.get_dataset and datagenisys.views.get_prediction."
-      ],
-      "relationships_with_other_files": [
-        "Rendered by datagenisys.views.get_dataset.",
-        "Consumes cleaned dataset, correlation data, encoding maps, and target variable from views.py.",
-        "Calls datagenisys.views.get_graphs and datagenisys.views.get_prediction via AJAX."
+        "CSS classes from home_page.css",
+        "Google Fonts Material Symbols"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/__init__.py",
-      "purpose": "Marks the datagenisys directory as a Python package.",
+      "purpose": "Initializes the datagenisys Django application package.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "Python package marker"
-      ],
-      "imports_dependencies": [],
-      "relationships_with_other_files": [
-        "Allows importing datagenisys modules throughout the Django project."
+        "Python",
+        "Django app package"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/admin.py",
-      "purpose": "Django admin configuration file.",
+      "purpose": "Contains the Django admin registration module for the app, though no models are registered here.",
       "main_classes_functions_components": [],
       "technologies_used": [
+        "Python",
         "Django admin"
-      ],
-      "imports_dependencies": [
-        "from django.contrib import admin"
-      ],
-      "relationships_with_other_files": [
-        "Registered in Django app structure; no models are currently declared here."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/apps.py",
-      "purpose": "Defines the Django application configuration for datagenisys.",
+      "purpose": "Declares the Django application configuration class.",
       "main_classes_functions_components": [
         {
           "name": "DatagenisysConfig",
           "type": "class",
-          "description": "Configures the app name and default primary key field type for Django."
+          "description": "Defines the application name and default primary key field type for Django."
         }
       ],
       "technologies_used": [
+        "Python",
         "Django AppConfig"
-      ],
-      "imports_dependencies": [
-        "from django.apps import AppConfig"
-      ],
-      "relationships_with_other_files": [
-        "Referenced in dataScience/settings.py under INSTALLED_APPS."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/binning.py",
-      "purpose": "Bins numeric and datetime-like columns into discrete ranges and records cleaning steps.",
+      "purpose": "Bins numeric and datetime-like columns into categorical intervals for cleaner analysis and visualization.",
       "main_classes_functions_components": [
         {
           "name": "column_bins",
           "type": "function",
-          "description": "Detects datetime-like, integer, and float columns and transforms them into categorical bins."
+          "description": "Detects datetime-like and numeric columns, creates interval bins, replaces original values with binned labels, and records the cleaning steps."
         }
       ],
       "technologies_used": [
+        "Python",
         "pandas",
         "NumPy",
         "warnings",
         "datetime"
-      ],
-      "imports_dependencies": [
-        "from datetime import datetime, timedelta",
-        "import pandas as pd",
-        "import numpy as np",
-        "import warnings"
-      ],
-      "relationships_with_other_files": [
-        "Not directly imported by views.py in the current code, but appears intended as part of preprocessing utilities."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/correlations.py",
-      "purpose": "Computes correlation-based related columns for each feature.",
+      "purpose": "Computes related columns using the dataset correlation matrix.",
       "main_classes_functions_components": [
         {
           "name": "get_corr",
           "type": "function",
-          "description": "Builds a correlation matrix, ranks absolute correlations, and returns columns strongly related to each feature."
+          "description": "Builds a correlation matrix, ranks absolute correlations, and returns strongly related columns for each feature."
         }
       ],
       "technologies_used": [
+        "Python",
         "pandas"
-      ],
-      "imports_dependencies": [
-        "def get_corr(df):"
-      ],
-      "relationships_with_other_files": [
-        "Called by datagenisys.views.get_dataset to prepare graph relationships.",
-        "Its result is passed to the template and then to datagenisys.views.get_graphs."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/data_encoder.py",
-      "purpose": "Encodes categorical, boolean, and datetime-like values into numeric features and drops low-value columns.",
+      "purpose": "Encodes categorical, boolean, and datetime-like data into machine-learning-friendly numeric forms and tracks encoding metadata.",
       "main_classes_functions_components": [
         {
           "name": "category_encoder",
           "type": "function",
-          "description": "Encodes categorical data with LabelEncoder, performs cyclic datetime encoding, and removes constant or identifier-like columns."
+          "description": "Drops low-value or identifier-like columns, label-encodes categorical values, applies cyclic datetime encoding, and returns updated encoding maps and metadata."
         }
       ],
       "technologies_used": [
-        "scikit-learn LabelEncoder",
+        "Python",
         "pandas",
-        "NumPy"
-      ],
-      "imports_dependencies": [
-        "from sklearn.preprocessing import LabelEncoder",
-        "import pandas as pd"
-      ],
-      "relationships_with_other_files": [
-        "Called by datagenisys.views.get_dataset after missing-value handling.",
-        "Produces encoding maps and encoded data later used by datagenisys.views.get_prediction."
+        "NumPy",
+        "scikit-learn LabelEncoder"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/graphs.py",
-      "purpose": "Generates visualizations for selected columns and returns them as base64-encoded image URLs.",
+      "purpose": "Generates visualizations for selected columns and returns them as base64-encoded PNG images.",
       "main_classes_functions_components": [
         {
           "name": "graph_generator",
           "type": "function",
-          "description": "Chooses plot types based on column type and relation to target/categorical variables, then saves plots to memory and returns encoded images."
+          "description": "Chooses graph types based on whether the selected column is categorical, numeric, or the target variable, then saves each plot to an in-memory buffer and converts it to a data URI."
         }
       ],
       "technologies_used": [
-        "seaborn",
-        "matplotlib.pyplot",
+        "Python",
+        "Seaborn",
+        "Matplotlib",
         "pandas",
         "base64",
         "io.BytesIO"
-      ],
-      "imports_dependencies": [
-        "import seaborn as sns",
-        "import seaborn.objects as so",
-        "import pandas as pd",
-        "import matplotlib.pyplot as plt",
-        "from io import BytesIO",
-        "import base64",
-        "import random"
-      ],
-      "relationships_with_other_files": [
-        "Called by datagenisys.views.get_graphs.",
-        "Consumes cleaned DataFrame and correlated columns from views.py."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/machine_learning_models.py",
-      "purpose": "Trains and compares multiple classification models and predicts the target class.",
+      "purpose": "Trains and compares multiple supervised classification models to predict the target label.",
       "main_classes_functions_components": [
         {
           "name": "predictive_model",
           "type": "function",
-          "description": "Scales data, splits training/testing sets, runs GridSearchCV for several classifiers, selects the best-performing model, and predicts the provided input."
+          "description": "Standardizes features, splits data into train/test sets, tunes several classifiers using GridSearchCV, records best hyperparameters and accuracy, and predicts the output for user input."
         }
       ],
       "technologies_used": [
+        "Python",
         "NumPy",
-        "scikit-learn preprocessing.StandardScaler",
+        "scikit-learn StandardScaler",
         "scikit-learn train_test_split",
         "scikit-learn GridSearchCV",
         "LogisticRegression",
         "SVC",
         "DecisionTreeClassifier",
         "KNeighborsClassifier"
-      ],
-      "imports_dependencies": [
-        "import numpy as np",
-        "from sklearn import preprocessing",
-        "from sklearn.model_selection import train_test_split",
-        "from sklearn.model_selection import GridSearchCV",
-        "from sklearn.linear_model import LogisticRegression",
-        "from sklearn.svm import SVC",
-        "from sklearn.tree import DecisionTreeClassifier",
-        "from sklearn.neighbors import KNeighborsClassifier"
-      ],
-      "relationships_with_other_files": [
-        "Called by datagenisys.views.get_prediction.",
-        "Returns trained model metrics used in the template response."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/nan_handler.py",
-      "purpose": "Handles missing values by dropping or imputing columns depending on data type and missingness level.",
+      "purpose": "Handles missing values and drops columns with too much missing data.",
       "main_classes_functions_components": [
         {
           "name": "NaN_handler",
           "type": "function",
-          "description": "Inspects each column for missing values and applies imputation or column removal rules based on type and threshold."
+          "description": "Inspects each column, replaces missing string/object values or imputes numeric/boolean missing values when appropriate, and drops columns that exceed missingness thresholds."
         }
       ],
       "technologies_used": [
+        "Python",
         "scikit-learn SimpleImputer",
         "NumPy",
         "pandas"
-      ],
-      "imports_dependencies": [
-        "from sklearn.impute import SimpleImputer",
-        "import numpy as np",
-        "import pandas as pd"
-      ],
-      "relationships_with_other_files": [
-        "Called by datagenisys.views.get_dataset before encoding and correlation analysis."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/tests.py",
-      "purpose": "Placeholder for Django tests.",
+      "purpose": "Contains the Django test module placeholder for the app.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "Django test framework"
-      ],
-      "imports_dependencies": [
-        "from django.test import TestCase"
-      ],
-      "relationships_with_other_files": [
-        "No tests are currently implemented."
+        "Python",
+        "Django TestCase"
       ]
     },
     {
       "file_path": "dataScience/datagenisys/urls.py",
-      "purpose": "Defines URL routes for the datagenisys app.",
+      "purpose": "Defines app-level URL routes for dataset loading, graph generation, and prediction.",
       "main_classes_functions_components": [],
       "technologies_used": [
+        "Python",
         "Django URL routing"
-      ],
-      "imports_dependencies": [
-        "from django.urls import path",
-        "from . import views"
-      ],
-      "relationships_with_other_files": [
-        "Maps the root path to views.get_dataset.",
-        "Maps /graphs/ to views.get_graphs.",
-        "Maps /model/ to views.get_prediction.",
-        "Included by dataScience/urls.py."
       ]
     },
     {
       "file_path": "dataScience/datagenisys/views.py",
-      "purpose": "Implements the main request handlers for displaying the page, generating graphs, and producing predictions.",
+      "purpose": "Contains the main Django views that load the dataset, prepare cleaning/encoding results, serve graph requests, and serve prediction requests.",
       "main_classes_functions_components": [
         {
           "name": "home_page",
           "type": "function",
-          "description": "Renders the home page template without additional context."
+          "description": "Renders the homepage template without additional dataset context."
         },
         {
           "name": "get_dataset",
           "type": "function",
-          "description": "Loads the dataset from a local CSV file, analyzes and cleans it, computes correlations, encodes categorical values, and renders the template with context data."
+          "description": "Loads the CSV dataset, verifies the target variable, performs cleaning and encoding, computes correlations, and prepares template context."
         },
         {
           "name": "get_graphs",
           "type": "function",
-          "description": "Accepts a column name and serialized DataFrame via POST, generates related graphs, and returns them as JSON."
+          "description": "Receives AJAX POST data, reconstructs the dataframe, generates relevant graphs for one column, and returns the images as JSON."
         },
         {
           "name": "get_prediction",
           "type": "function",
-          "description": "Parses user-provided features, encodes them, calls the predictive model pipeline, and returns the prediction and trained model summary as JSON."
+          "description": "Parses input features, encodes categorical values, calls the machine learning training pipeline, decodes the predicted label, and returns prediction results as JSON."
         }
       ],
       "technologies_used": [
-        "Django",
+        "Python",
+        "Django render",
+        "Django JsonResponse",
         "pandas",
         "NumPy",
         "json",
         "io",
         "os",
-        "scikit-learn via imported helpers"
-      ],
-      "imports_dependencies": [
-        "import pandas as pd",
-        "import numpy as np",
-        "from django.conf import settings",
-        "from django.shortcuts import render, redirect",
-        "from django.http import HttpResponse",
-        "from .nan_handler import NaN_handler",
-        "from .data_encoder import category_encoder",
-        "from .correlations import get_corr",
-        "from .graphs import graph_generator",
-        "from django.http import JsonResponse",
-        "import json",
-        "import os",
-        "import io",
-        "from .machine_learning_models import predictive_model"
-      ],
-      "relationships_with_other_files": [
-        "Renders dataScience/datagenisys/templates/datagenisys/home_page.html.",
-        "Reads CSV data from dataScience/datagenisys/static/datagenisys/alzheimers_disease_data.csv as referenced in code.",
-        "Uses NaN_handler, category_encoder, get_corr, graph_generator, and predictive_model.",
-        "Provides JSON endpoints consumed by the template's AJAX calls."
+        "application-level state",
+        "server-side machine learning orchestration"
       ]
     },
     {
       "file_path": "dataScience/dataScience/settings.py",
-      "purpose": "Configures the Django project settings.",
-      "main_classes_functions_components": [
-        {
-          "name": "BASE_DIR",
-          "type": "setting",
-          "description": "Defines the project root path used throughout the project for locating files."
-        },
-        {
-          "name": "INSTALLED_APPS",
-          "type": "setting",
-          "description": "Registers Django core apps and the datagenisys application."
-        },
-        {
-          "name": "DATABASES",
-          "type": "setting",
-          "description": "Configures SQLite as the default database backend."
-        },
-        {
-          "name": "TEMPLATES",
-          "type": "setting",
-          "description": "Enables Django template rendering with app directory discovery."
-        },
-        {
-          "name": "STATIC_URL",
-          "type": "setting",
-          "description": "Configures static file URL handling."
-        }
-      ],
+      "purpose": "Configures the Django project settings including apps, middleware, templates, database, static files, and CSRF trusted origins.",
+      "main_classes_functions_components": [],
       "technologies_used": [
-        "Django",
-        "SQLite"
-      ],
-      "imports_dependencies": [
-        "from pathlib import Path"
-      ],
-      "relationships_with_other_files": [
-        "Registers datagenisys.apps.DatagenisysConfig.",
-        "Used by manage.py and Django runtime.",
-        "Supports template and static file resolution for home_page.html and home_page.css."
+        "Python",
+        "Django settings",
+        "SQLite",
+        "Static file configuration",
+        "Template configuration"
       ]
     },
     {
       "file_path": "dataScience/dataScience/urls.py",
-      "purpose": "Defines the project-wide URL routing.",
+      "purpose": "Defines project-wide URL routing and connects the app routes to the root path.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "Django URL routing"
-      ],
-      "imports_dependencies": [
-        "from django.contrib import admin",
-        "from django.urls import path, include"
-      ],
-      "relationships_with_other_files": [
-        "Routes the root URL to datagenisys.urls.",
-        "Routes /admin/ to the Django admin site."
+        "Python",
+        "Django URL routing",
+        "Django admin",
+        "include"
       ]
     },
     {
       "file_path": "dataScience/manage.py",
-      "purpose": "Command-line entry point for Django administrative tasks.",
+      "purpose": "Provides the executable entry point for Django management commands.",
       "main_classes_functions_components": [
         {
           "name": "main",
           "type": "function",
-          "description": "Sets the Django settings module and invokes Django's command-line utility."
+          "description": "Sets the Django settings module and delegates command execution to Django's management utility."
         }
       ],
       "technologies_used": [
         "Python",
-        "Django management"
-      ],
-      "imports_dependencies": [
-        "import os",
-        "import sys"
-      ],
-      "relationships_with_other_files": [
-        "Bootstraps the dataScience.settings module."
+        "Django management CLI",
+        "Environment variable configuration"
       ]
     },
     {
       "file_path": "dataScience/package.json",
-      "purpose": "Contains a package manifest with a Django dependency entry.",
+      "purpose": "Contains a package manifest with a Django dependency entry, although the project is primarily Python-based.",
       "main_classes_functions_components": [],
       "technologies_used": [
+        "JSON",
         "npm package manifest"
-      ],
-      "imports_dependencies": [],
-      "relationships_with_other_files": [
-        "Not used by the Django runtime in the visible codebase."
       ]
     },
     {
       "file_path": "README.md",
-      "purpose": "Documents the project, dataset citation, and basic run instructions.",
+      "purpose": "Documents the project purpose, dataset citation, runtime instructions, and example feature input for predictions.",
       "main_classes_functions_components": [],
       "technologies_used": [
-        "Markdown"
-      ],
-      "imports_dependencies": [],
-      "relationships_with_other_files": [
-        "Describes the same Django/Pandas/scikit-learn/Seaborn/Matplotlib stack implemented in the code."
-      ]
-    }
-  ],
-  "skills_demonstrated": [
-    {
-      "skill_name": "Python programming",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/views.py",
-          "component": "get_dataset, get_graphs, get_prediction",
-          "explanation": "Uses Python control flow, data parsing, JSON handling, and function composition to implement the web application logic."
-        },
-        {
-          "file_path": "dataScience/datagenisys/machine_learning_models.py",
-          "component": "predictive_model",
-          "explanation": "Implements model training and selection logic in Python."
-        },
-        {
-          "file_path": "dataScience/datagenisys/nan_handler.py",
-          "component": "NaN_handler",
-          "explanation": "Implements conditional preprocessing logic in Python."
-        },
-        {
-          "file_path": "dataScience/manage.py",
-          "component": "main",
-          "explanation": "Implements a standard Python CLI entrypoint for Django management."
-        }
-      ]
-    },
-    {
-      "skill_name": "Django web framework",
-      "evidence": [
-        {
-          "file_path": "dataScience/dataScience/settings.py",
-          "component": "INSTALLED_APPS, TEMPLATES, DATABASES, MIDDLEWARE",
-          "explanation": "Configures a Django project with standard app, template, and middleware settings."
-        },
-        {
-          "file_path": "dataScience/dataScience/urls.py",
-          "component": "urlpatterns",
-          "explanation": "Routes project URLs to the app and admin site."
-        },
-        {
-          "file_path": "dataScience/datagenisys/views.py",
-          "component": "home_page, get_dataset, get_graphs, get_prediction",
-          "explanation": "Defines Django views returning rendered templates and JSON responses."
-        },
-        {
-          "file_path": "dataScience/datagenisys/urls.py",
-          "component": "urlpatterns",
-          "explanation": "Defines application route mappings."
-        },
-        {
-          "file_path": "dataScience/datagenisys/apps.py",
-          "component": "DatagenisysConfig",
-          "explanation": "Declares the app configuration class used by Django."
-        }
-      ]
-    },
-    {
-      "skill_name": "Data cleaning and preprocessing",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/nan_handler.py",
-          "component": "NaN_handler",
-          "explanation": "Handles missing values by imputing or dropping columns based on thresholds and data type."
-        },
-        {
-          "file_path": "dataScience/datagenisys/data_encoder.py",
-          "component": "category_encoder",
-          "explanation": "Encodes categorical data, converts boolean values, handles datetime encoding, and removes low-information columns."
-        },
-        {
-          "file_path": "dataScience/datagenisys/binning.py",
-          "component": "column_bins",
-          "explanation": "Bins continuous and datetime-like values into discrete ranges."
-        },
-        {
-          "file_path": "dataScience/datagenisys/views.py",
-          "component": "get_dataset",
-          "explanation": "Coordinates preprocessing by loading the CSV, calling missing-value handling, and encoding functions."
-        }
-      ]
-    },
-    {
-      "skill_name": "Machine learning model selection",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/machine_learning_models.py",
-          "component": "predictive_model",
-          "explanation": "Uses GridSearchCV across multiple classifiers to compare hyperparameters and choose the best model."
-        }
-      ]
-    },
-    {
-      "skill_name": "Feature engineering",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/data_encoder.py",
-          "component": "category_encoder",
-          "explanation": "Creates cyclic encodings for datetime components like hour, minute, second, month, and day."
-        },
-        {
-          "file_path": "dataScience/datagenisys/binning.py",
-          "component": "column_bins",
-          "explanation": "Transforms continuous values into interval labels for categorical use."
-        }
-      ]
-    },
-    {
-      "skill_name": "Data visualization",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/graphs.py",
-          "component": "graph_generator",
-          "explanation": "Creates multiple plot types depending on feature types and returns them as images."
-        },
-        {
-          "file_path": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "component": "graph modal and AJAX graph request",
-          "explanation": "Displays graph results in the browser and triggers on-demand graph generation."
-        }
-      ]
-    },
-    {
-      "skill_name": "Front-end scripting with jQuery",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "component": "AJAX handlers",
-          "explanation": "Uses jQuery event handlers and AJAX requests to communicate with Django endpoints without page reloads."
-        }
-      ]
-    },
-    {
-      "skill_name": "HTML templating",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "component": "Django template syntax",
-          "explanation": "Uses conditional rendering, looping, and URL resolution to generate dynamic page content."
-        }
-      ]
-    },
-    {
-      "skill_name": "CSS layout and animation",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/static/datagenisys/css/home_page.css",
-          "component": "styles and keyframes",
-          "explanation": "Implements flex layouts, fixed containers, shadows, hover interactions, and animation keyframes."
-        }
-      ]
-    },
-    {
-      "skill_name": "JSON-based client-server communication",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/views.py",
-          "component": "get_graphs, get_prediction",
-          "explanation": "Returns JsonResponse objects to front-end AJAX requests."
-        },
-        {
-          "file_path": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-          "component": "$.ajax calls",
-          "explanation": "Sends form and column data to the backend and consumes JSON responses."
-        }
-      ]
-    },
-    {
-      "skill_name": "Scikit-learn",
-      "evidence": [
-        {
-          "file_path": "dataScience/datagenisys/machine_learning_models.py",
-          "component": "predictive_model",
-          "explanation": "Uses scaler, train-test split, grid search, and multiple classifiers."
-        },
-        {
-          "file_path": "dataScience/datagenisys/data_encoder.py",
-          "component": "category_encoder",
-          "explanation": "Uses LabelEncoder for categorical transformation."
-        },
-        {
-          "file_path": "dataScience/datagenisys/nan_handler.py",
-          "component": "NaN_handler",
-          "explanation": "Uses SimpleImputer for missing value handling."
-        }
+        "Markdown",
+        "Project documentation"
       ]
     }
   ],
   "project_relationship_map": {
-    "imports_and_usage": [
+    "component_relationships": [
       {
-        "from": "dataScience/dataScience/urls.py",
-        "to": "dataScience/datagenisys/urls.py",
-        "relationship": "Includes app URL routes at the project root."
+        "source": "dataScience/dataScience/urls.py",
+        "destination": "dataScience/datagenisys/urls.py",
+        "how": "Project-level routing includes the app's URL configuration so the root path is handled by the datagenisys app."
       },
       {
-        "from": "dataScience/datagenisys/urls.py",
-        "to": "dataScience/datagenisys/views.py",
-        "relationship": "Maps routes to view functions."
+        "source": "dataScience/datagenisys/urls.py",
+        "destination": "dataScience/datagenisys/views.py",
+        "how": "App routes map the root page, graph endpoint, and prediction endpoint to the corresponding Django view functions."
       },
       {
-        "from": "dataScience/datagenisys/views.py",
-        "to": "dataScience/datagenisys/nan_handler.py",
-        "relationship": "Uses NaN_handler during dataset preprocessing."
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/nan_handler.py",
+        "how": "The dataset loading view uses the missing-value handler to clean the raw dataframe before further processing."
       },
       {
-        "from": "dataScience/datagenisys/views.py",
-        "to": "dataScience/datagenisys/data_encoder.py",
-        "relationship": "Uses category_encoder for categorical/datetime encoding."
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/data_encoder.py",
+        "how": "The dataset loading view calls the encoding function to transform categorical and datetime-like columns into numeric representations."
       },
       {
-        "from": "dataScience/datagenisys/views.py",
-        "to": "dataScience/datagenisys/correlations.py",
-        "relationship": "Uses get_corr to build related-column mappings for graph generation."
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/correlations.py",
+        "how": "The dataset loading view computes column relationships to prepare graph suggestions for the frontend."
       },
       {
-        "from": "dataScience/datagenisys/views.py",
-        "to": "dataScience/datagenisys/graphs.py",
-        "relationship": "Uses graph_generator to create column-specific visualizations."
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/graphs.py",
+        "how": "The graph endpoint invokes the graph generator to produce column-specific visualizations returned as JSON."
       },
       {
-        "from": "dataScience/datagenisys/views.py",
-        "to": "dataScience/datagenisys/machine_learning_models.py",
-        "relationship": "Uses predictive_model to train classifiers and generate predictions."
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/machine_learning_models.py",
+        "how": "The prediction endpoint calls the machine learning pipeline to train models and obtain the best prediction."
       },
       {
-        "from": "dataScience/datagenisys/templates/datagenisys/home_page.html",
-        "to": "dataScience/datagenisys/views.py",
-        "relationship": "Calls get_graphs and get_prediction via AJAX and relies on context from get_dataset."
+        "source": "dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "destination": "dataScience/datagenisys/views.py",
+        "how": "The template sends AJAX requests to the graph and prediction endpoints and uses the returned JSON to update the UI dynamically."
       },
       {
-        "from": "dataScience/dataScience/settings.py",
-        "to": "dataScience/datagenisys/apps.py",
-        "relationship": "Registers the app config in INSTALLED_APPS."
+        "source": "dataScience/datagenisys/static/datagenisys/css/home_page.css",
+        "destination": "dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "how": "The stylesheet defines the layout and styling for classes and IDs used by the homepage template."
+      },
+      {
+        "source": "dataScience/datagenisys/views.py",
+        "destination": "dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "how": "The view passes context variables such as the cleaned dataset, graph data, encoding maps, and target variable to the template for rendering."
       }
     ],
-    "important_dependencies": [
-      "The entire application depends on Django template rendering and URL routing.",
-      "Preprocessing depends on pandas DataFrames and scikit-learn encoders/imputers.",
-      "Graph generation depends on seaborn and matplotlib rendering to in-memory PNG images.",
-      "Predictions depend on scikit-learn model training and the encoded feature map returned during dataset preparation."
-    ],
     "data_flow": [
-      "CSV dataset is loaded in datagenisys.views.get_dataset from a static file path.",
-      "Missing values are handled by NaN_handler.",
-      "Categorical and datetime-like fields are transformed by category_encoder.",
-      "Correlation mapping is built by get_corr and passed to the template.",
-      "The browser requests graphs for selected columns via get_graphs.",
-      "The browser submits feature values via get_prediction.",
-      "Feature input is encoded using the stored encoding map and converted to a model-ready array.",
-      "predictive_model trains multiple classifiers and returns the best prediction plus model summary.",
-      "The template updates the dataset, graph modal, and trained model table dynamically."
+      "Django receives the root request -> get_dataset reads the local CSV -> NaN_handler cleans missing values -> category_encoder transforms features -> get_corr identifies correlated columns -> home_page.html renders dataset summaries and prediction form.",
+      "User clicks a graph button -> browser sends POST with the selected column and serialized dataframe -> get_graphs reconstructs the dataframe -> graph_generator produces images -> frontend displays them in the graph modal.",
+      "User enters comma-separated feature values -> browser posts form data to get_prediction -> the view aligns input features with dataframe columns and encodes categorical values -> predictive_model trains several classifiers and predicts the target class -> the template displays the predicted diagnosis and a table of trained models.",
+      "The cleaned and encoded dataframe is stored in memory during request handling and also serialized into JSON fields in the page so later AJAX calls can reuse the same processed data."
     ]
   }
 }

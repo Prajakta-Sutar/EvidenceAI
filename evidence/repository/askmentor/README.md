@@ -3,6 +3,8 @@
 ## Project Overview
 Link to the presentation video - https://usaskca1-my.sharepoint.com/:v:/g/personal/jrg814_usask_ca/IQCecbB4i5eCRqO1kg0u9ueLAd5N65Br3uhrJ6IUWE_pBek?e=l3X15o
 
+This is personal project
+
 AskMentor is a web development project where I leverage my computer science skills to create a discussion forum website dedicated to various computer science topics, specifically designed for desktop users. This platform empowers users to initiate new discussion channels, connect with others, search for posts, users, and channels, and update their profiles. Currently, the design of this website is not responsive. 
 
 ## Technology Stack

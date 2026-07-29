@@ -67,6 +67,13 @@ classifier_prompt = PromptTemplate.from_template("""
         {{"category" : "Relevant",
         "clarification" : "False"}}
 
+        Prompt - can she work full time ?
+        Note - Of course user is asking wheather prajakta can work full time or not 
+        experience. 
+        Response -
+        {{"category" : "Relevant",
+        "clarification" : "False"}}
+
     
     Category "Private":
     Prompt can be related to- 

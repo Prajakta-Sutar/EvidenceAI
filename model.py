@@ -12,6 +12,7 @@ from prompts.analyst_prompt import analyst_prompt
 
 
 
+
 # Get the OpenAI API to access the LLM and embedding model
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -32,7 +33,6 @@ assistant_llm = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-
 def analyst(project):
     with open(project, "r") as f:
         repository_file = f.read() 
@@ -40,6 +40,21 @@ def analyst(project):
     modified_prompt = analyst_prompt.invoke(repository)
     response = assistant_llm.invoke(modified_prompt)
     print(response.content)
+
+
+def classifier(question: str):
+    user_question = {"question": question}
+    modified_prompt = classifier_prompt.invoke(user_question)
+    response = classifier_llm.invoke(modified_prompt)
+    result = json.loads(response.content)
+    if result["category"] != "Relevant":
+        return result["response"], None
+    else:
+        if result["clarification"] == "True":
+            return result["response"], None
+        else:
+            return assistant(question) 
+
 
 
 def assistant(question):
@@ -55,19 +70,8 @@ def assistant(question):
     
 
 
-@app.get("/")
-def classifier(question: str):
-    user_question = {"question": question}
-    modified_prompt = classifier_prompt.invoke(user_question)
-    response = classifier_llm.invoke(modified_prompt)
-    result = json.loads(response.content)
-    if result["category"] != "Relevant":
-        return result["response"], None
-    else:
-        if result["clarification"] == "True":
-            return result["response"], None
-        else:
-            return assistant(question) 
 
 
-    
+
+if __name__ == "__main__":
+    analyst("./evidence/repomix_res/datagenesys.txt")

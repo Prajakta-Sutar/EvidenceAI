@@ -68,8 +68,9 @@ def add_chunks(chunks):
             metadatas=chunk["metadata"]
         )
 
+
 def build_database():
-    project_docs = get_documents("evidence/repository")
+    project_docs = get_documents("./evidence")
     for path in project_docs:
         if os.path.basename(path).lower() == "dockerfile":
             chunks = no_split_chunker(path)
@@ -81,28 +82,13 @@ def build_database():
             chunks = html_chunker(path)
         elif path.endswith(".py"):
             chunks = python_chunker(path)
-        elif path.endswith(".pdf"):
-            loader = PyPDFLoader(path)
-            document = loader.load()
-            chunks = [{
-                "content" : document[0].page_content, 
-                "metadata" : {
-                    "file" : path, 
-                    "type" : "resume", 
-                    "purpose" : "Professional resume containing education, technical skills, projects, certifications, and work experience"
-                }
-            }]
         elif path.endswith((".json", ".yml", ".css" )) :
             chunks = no_split_chunker(path)
+        elif path.endswith(".txt") and "summary" in path.lower():
+            chunks = summary_chunker(path)
         else:
             continue
         add_chunks(chunks)
-    
-    summary_docs = get_documents("evidence/summary")
-    for path in summary_docs:
-        summary_chunks = summary_chunker(path)
-        add_chunks(summary_chunks)
-
 
 
 statergy_llm = ChatOpenAI(
@@ -111,14 +97,19 @@ statergy_llm = ChatOpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-def statergy_generator(question):
-    input_question = {'question': question}
-    modified_prompt = statergist_prompt.invoke(input_question)
-    response = statergy_llm.invoke(modified_prompt)
-    result = json.loads(response.content)
-    return result["queries"], result["instructions"], result["evidence"]
 
-    
+def statergy_generator():
+    while True:
+        user = input("Input question here : ")
+        print(question, "\n")
+        input_question = {'question': user}
+        modified_prompt = statergist_prompt.invoke(input_question)
+        response = statergy_llm.invoke(modified_prompt)
+        result = json.loads(response.content)
+        for r in result:
+            print(r, "\n")
+    #return result["queries"], result["instructions"], result["evidence"]
+
 
 def retriever(question : str):
     document_contents = []
@@ -151,3 +142,6 @@ def retriever(question : str):
         """
     return context , instructions, evidence
 
+
+if __name__ == "__main__":
+    statergy_generator()
