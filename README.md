@@ -22,4 +22,7 @@
   - Retrival is retriving separate chunks from same file as evidence, 
     instead of combining them as one🚨🚨.
   - Query generator is creating relevant queries 🥳🎉. 
+  - Evolved query generator to return not only queries, but also instructions for final
+    LLM model. In other words, created dynamic prompting. 
+  - The response quality, format has been improved significantly after dynamic prompting 🥳🥳🥳🥳🥳🥳. 
   
