@@ -1,11 +1,12 @@
 import os 
+import json
 import uuid
 import chromadb
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
-from prompts.retrieval_prompt import retrieval_prompt
+from prompts.retrieval_prompt import statergist_prompt
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
 
@@ -104,33 +105,28 @@ def build_database():
 
 
 
-query_llm = ChatOpenAI(
+statergy_llm = ChatOpenAI(
     model="gpt-5.4-mini",
     temperature=0.5,
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-def query_generator(question):
+def statergy_generator(question):
     input_question = {'question': question}
-    modified_prompt = retrieval_prompt.invoke(input_question)
-    response = query_llm.invoke(modified_prompt)
-    result = response.content.split("\n")
-    queries = []
-    for query in result:
-        if len(query) > 0:
-            queries.append(query)
-    print(queries)
-    return queries
+    modified_prompt = statergist_prompt.invoke(input_question)
+    response = statergy_llm.invoke(modified_prompt)
+    result = json.loads(response.content)
+    return result["queries"], result["instructions"]
 
+    
 
 def retriever(question : str):
     document_contents = []
     document_metadata = []
     document_ids = []
     seen = set()
-    queries = query_generator(question)
+    queries, instructions = statergy_generator(question)
     for query in queries:
-        print(query)
         retrived_chunks = database.query(
             query_texts = [query], 
             n_results = 10
@@ -144,7 +140,7 @@ def retriever(question : str):
 
 
     context = ""
-    print("Before context")
+    
     for document, metadata in zip(document_contents, document_metadata):
         doc_metadata = "\n".join(f"{key}:{value}" for key, value in metadata.items())
         context += f"""
@@ -153,10 +149,6 @@ def retriever(question : str):
 
         ----------------------------------------
         """
-    print(context)
-    print("After context")
-    return context
+    return context , instructions
 
 
-if __name__ == "__main__":
-    retriever("why should we hire her?")

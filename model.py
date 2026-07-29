@@ -43,8 +43,8 @@ def analyst(project):
 
 
 def assistant(question):
-    context = retriever(question)  
-    inputs = {"question": question, "context":context}
+    context , instructions = retriever(question)  
+    inputs = {"question": question, "context":context, "instructions": instructions}
     agumented_prompt = assistant_prompt.invoke(inputs)
     response = assistant_llm.invoke(agumented_prompt)
     result = json.loads(response.content)
