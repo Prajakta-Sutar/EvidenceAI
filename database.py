@@ -93,7 +93,7 @@ def build_database():
 
 statergy_llm = ChatOpenAI(
     model="gpt-5.4-mini",
-    temperature=0.5,
+    temperature=0,
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
@@ -101,13 +101,14 @@ statergy_llm = ChatOpenAI(
 def statergy_generator():
     while True:
         user = input("Input question here : ")
-        print(question, "\n")
+        print(user, "\n")
         input_question = {'question': user}
         modified_prompt = statergist_prompt.invoke(input_question)
         response = statergy_llm.invoke(modified_prompt)
         result = json.loads(response.content)
-        for r in result:
-            print(r, "\n")
+        for i in result["instructions"]:
+            print(i)
+        print(result["evidence"])
     #return result["queries"], result["instructions"], result["evidence"]
 
 
