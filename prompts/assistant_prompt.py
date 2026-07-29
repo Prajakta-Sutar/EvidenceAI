@@ -13,19 +13,21 @@ assistant_prompt = PromptTemplate.from_template(
     You will response in two parts. 
     1. Summary 
     2. Evidence
+    
 
     Response format:
-        Return a JSON object with exactly two fields:
+        1. when Pull_evidence == "files" 
+            Return a JSON object with exactly two fields:
 
-        {{
-        "summary": "Markdown formatted string",
-        "evidence": [
             {{
-            "file": "file path",
-            "description": "technical explanation"
+            "summary": "Markdown formatted string",
+            "evidence": [
+                {{
+                "file": "file path",
+                "description": "technical explanation"
+                }}
+            ]
             }}
-        ]
-        }}
 
     
     1. Summary:

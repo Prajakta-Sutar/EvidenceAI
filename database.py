@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
-from prompts.retrieval_prompt import statergist_prompt
+from prompts.statergist_prompt import statergist_prompt
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
 
@@ -116,7 +116,7 @@ def statergy_generator(question):
     modified_prompt = statergist_prompt.invoke(input_question)
     response = statergy_llm.invoke(modified_prompt)
     result = json.loads(response.content)
-    return result["queries"], result["instructions"]
+    return result["queries"], result["instructions"], result["evidence"]
 
     
 
@@ -125,7 +125,7 @@ def retriever(question : str):
     document_metadata = []
     document_ids = []
     seen = set()
-    queries, instructions = statergy_generator(question)
+    queries, instructions, evidence = statergy_generator(question)
     for query in queries:
         retrived_chunks = database.query(
             query_texts = [query], 
@@ -149,6 +149,5 @@ def retriever(question : str):
 
         ----------------------------------------
         """
-    return context , instructions
-
+    return context , instructions, evidence
 

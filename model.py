@@ -43,13 +43,14 @@ def analyst(project):
 
 
 def assistant(question):
-    context , instructions = retriever(question)  
-    inputs = {"question": question, "context":context, "instructions": instructions}
+    context , instructions, evidence = retriever(question)  
+    inputs = {"question": question, "context":context, "instructions": instructions }
     agumented_prompt = assistant_prompt.invoke(inputs)
     response = assistant_llm.invoke(agumented_prompt)
     result = json.loads(response.content)
     summary = result["summary"]
     evidence = result["evidence"]
+    print(evidence)
     return summary , evidence
     
 
@@ -61,10 +62,10 @@ def classifier(question: str):
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
     if result["category"] != "Relevant":
-        return result["response"]
+        return result["response"], None
     else:
         if result["clarification"] == "True":
-            return result["response"]
+            return result["response"], None
         else:
             return assistant(question) 
 
