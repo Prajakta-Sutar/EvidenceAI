@@ -108,7 +108,7 @@ def statergy_generator():
         result = json.loads(response.content)
         for i in result["instructions"]:
             print(i)
-        print(result["evidence"])
+        print(result["evidence"], "\n")
     #return result["queries"], result["instructions"], result["evidence"]
 
 

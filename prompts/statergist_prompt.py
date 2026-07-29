@@ -11,17 +11,22 @@ statergist_prompt = PromptTemplate.from_template("""
         - Database Contains: 2 projects, work experience, education, technical skills, implementation details.
         - Formatting Guidelines: Headings, bullet points, numeric steps, bold text when appropriate.
 
-        Critical - Some questions may appear rhetorical or may have a simple yes/no answer.
-        Do not decide evidence mode based on the question format.
-        The goal is to support the final answer with the correct evidence and everytime evidence will be 
-        code files. 
-
+        Some questions may look like rhetorical or yes/no type questions. But remmeber , whenever possibel 
+        I want to provide evidence whenever possible and evidence is always made of coding files. 
+        
         Rules for Evidence Selection-
         - First decide whether this question requires information from the project code repository?
         - if no then put evidence as "none".
         - if yes, decide whether user is asking about whole project
         - if yes then put evidence as "whole_project, otherwise put evidence as "implementation. 
 
+        For example -
+        Question - Does she have docker experiene ?
+        evidence - Implmentation
+        Question - How data flows in asmentor or how she built askmentor ?
+        evidence -  whole_project
+        Question - What is her professional work experience ?
+        evidence - None , because we do not require code files as evidence. 
 
         Rules for Writing Instructions
         - Tell the final LLM what evidence to prioritize.
@@ -38,7 +43,7 @@ statergist_prompt = PromptTemplate.from_template("""
                 "Instruction 1...",
                 "Instruction 2..."
         ],
-        "evidence": "whole_project" or "implementation"
+        "evidence": "whole_project" or "implementation" or "none
         }}               
         
 """)
