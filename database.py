@@ -1,13 +1,8 @@
 import os 
-import json
 import uuid
-import time
 import chromadb
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
-from langchain_community.document_loaders import PyPDFLoader
-from prompts.statergist_prompt import statergist_prompt
 from concurrent.futures import ThreadPoolExecutor
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
@@ -120,10 +115,7 @@ def retriever(queries):
                     })
 
     retrieved_docs.sort(key=lambda x:x["distance"])
-
-
     context = ""
-    
     for document in retrieved_docs:
         doc_metadata = "\n".join(f"{key}:{value}" for key, value in document["metadata"].items())
         context += f"""
