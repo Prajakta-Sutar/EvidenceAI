@@ -23,13 +23,13 @@ api_key = os.getenv("OPENAI_API_KEY")
 # Develope model which will act as router 
 app = FastAPI() 
 classifier_llm = ChatOpenAI(
-    model="gpt-5.4-nano",
+    model="gpt-5.4-mini",
     temperature=0,
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
 assistant_llm = ChatOpenAI(
-    model="gpt-5.4-mini",
+    model="gpt-5.6-luna",
     temperature=0.5,
     api_key=os.getenv("OPENAI_API_KEY")
 )
@@ -57,19 +57,19 @@ def classifier(question: str):
             print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
             return result["response"], None
         else:
+            queries = result["queries"]
             print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
-            return assistant(question) 
+            return assistant(question, queries) 
 
 
 
-def assistant(question):
-    print(question)
+def assistant(question, queries):
     start = time.perf_counter()
     retrieval_start = time.perf_counter()
-    context , instructions = retriever(question)  
+    context  = retriever(queries)  
     print(f"Retriever inside assistant: {time.perf_counter() - retrieval_start:.3f} seconds")
     prompt_start = time.perf_counter()
-    inputs = {"question": question, "context":context, "instructions": instructions }
+    inputs = {"question": question, "context":context }
     agumented_prompt = assistant_prompt.invoke(inputs)
     print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
     llm_start = time.perf_counter()

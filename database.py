@@ -93,32 +93,15 @@ def build_database():
         add_chunks(chunks)
 
 
-statergy_llm = ChatOpenAI(
-    model="gpt-5.4-mini",
-    temperature=0,
-    api_key=os.getenv("OPENAI_API_KEY")
-)
-
-
-def statergy_generator(question):
-    input_question = {'question': question}
-    modified_prompt = statergist_prompt.invoke(input_question)
-    response = statergy_llm.invoke(modified_prompt)
-    result = json.loads(response.content)
-    return result["queries"], result["instructions"]
-
-
 def run_single_query(query):
     return database.query(
         query_texts = [query], 
         n_results = 15
     )
 
-def retriever(question : str):
+def retriever(queries):
     retrieved_docs = []
     seen = set()
-    queries, instructions = statergy_generator(question)
-
     with ThreadPoolExecutor(max_workers=len(queries)) as executor:
         results = list(executor.map(run_single_query, queries))
         for chunks_per_query in results:
@@ -148,7 +131,7 @@ def retriever(question : str):
         content : {document["content"]}
         ----------------------------------------
         """
-    return context , instructions
+    return context 
 
 
 

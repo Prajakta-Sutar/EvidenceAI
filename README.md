@@ -26,5 +26,10 @@
     LLM model. In other words, created dynamic prompting. 
   - The response quality, format has been improved significantly after dynamic prompting 🥳🥳🥳🥳🥳🥳. 
   - Assistant is taking too much time to response - LOOKING FOR BOTTLENECK COMPONENET
-    - Bottleneck is assisant LLM 
-  
+    - Bottleneck is assisant LLM and retriever.
+    - Main reason for retriver time is due to statergist model. 
+        - Combined statergist and classifier as one model. 
+        - Added parallel query execution using threads.
+        - Reduced retrieval latency from several seconds to less than 1 second 🥳🥳🥳🥳🥳🥳.
+
+
