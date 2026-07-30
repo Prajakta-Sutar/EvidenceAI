@@ -25,4 +25,6 @@
   - Evolved query generator to return not only queries, but also instructions for final
     LLM model. In other words, created dynamic prompting. 
   - The response quality, format has been improved significantly after dynamic prompting 🥳🥳🥳🥳🥳🥳. 
+  - Assistant is taking too much time to response - LOOKING FOR BOTTLENECK COMPONENET
+    - Bottleneck is assisant LLM 
   

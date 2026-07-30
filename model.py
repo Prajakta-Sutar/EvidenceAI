@@ -1,5 +1,6 @@
 import os 
 import json
+import time 
 from fastapi import FastAPI 
 from openai import OpenAI 
 from dotenv import load_dotenv
@@ -43,35 +44,40 @@ def analyst(project):
 
 
 def classifier(question: str):
+    start = time.perf_counter()
     user_question = {"question": question}
     modified_prompt = classifier_prompt.invoke(user_question)
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
     if result["category"] != "Relevant":
+        print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
         return result["response"], None
     else:
         if result["clarification"] == "True":
+            print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
             return result["response"], None
         else:
+            print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
             return assistant(question) 
 
 
 
 def assistant(question):
-    context , instructions, evidence = retriever(question)  
+    print(question)
+    start = time.perf_counter()
+    retrieval_start = time.perf_counter()
+    context , instructions = retriever(question)  
+    print(f"Retriever inside assistant: {time.perf_counter() - retrieval_start:.3f} seconds")
+    prompt_start = time.perf_counter()
     inputs = {"question": question, "context":context, "instructions": instructions }
     agumented_prompt = assistant_prompt.invoke(inputs)
+    print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
+    llm_start = time.perf_counter()
     response = assistant_llm.invoke(agumented_prompt)
+    print(f"Final LLM: {time.perf_counter() - llm_start:.3f} seconds")
     result = json.loads(response.content)
     summary = result["summary"]
     evidence = result["evidence"]
-    print(evidence)
+    print(f"Total Assistant: {time.perf_counter() - start:.3f} seconds")
     return summary , evidence
     
-
-
-
-
-
-if __name__ == "__main__":
-    analyst("./evidence/repomix_res/datagenesys.txt")

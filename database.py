@@ -1,12 +1,14 @@
 import os 
 import json
 import uuid
+import time
 import chromadb
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from chromadb.utils import embedding_functions
 from langchain_community.document_loaders import PyPDFLoader
 from prompts.statergist_prompt import statergist_prompt
+from concurrent.futures import ThreadPoolExecutor
 from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
 
 
@@ -98,51 +100,55 @@ statergy_llm = ChatOpenAI(
 )
 
 
-def statergy_generator():
-    while True:
-        user = input("Input question here : ")
-        print(user, "\n")
-        input_question = {'question': user}
-        modified_prompt = statergist_prompt.invoke(input_question)
-        response = statergy_llm.invoke(modified_prompt)
-        result = json.loads(response.content)
-        for i in result["instructions"]:
-            print(i)
-        print(result["evidence"], "\n")
-    #return result["queries"], result["instructions"], result["evidence"]
+def statergy_generator(question):
+    input_question = {'question': question}
+    modified_prompt = statergist_prompt.invoke(input_question)
+    response = statergy_llm.invoke(modified_prompt)
+    result = json.loads(response.content)
+    return result["queries"], result["instructions"]
 
+
+def run_single_query(query):
+    return database.query(
+        query_texts = [query], 
+        n_results = 15
+    )
 
 def retriever(question : str):
-    document_contents = []
-    document_metadata = []
-    document_ids = []
+    retrieved_docs = []
     seen = set()
-    queries, instructions, evidence = statergy_generator(question)
-    for query in queries:
-        retrived_chunks = database.query(
-            query_texts = [query], 
-            n_results = 10
-        )
-        for chunk_id, doc, metadata in zip(retrived_chunks["ids"][0], retrived_chunks["documents"][0],retrived_chunks["metadatas"][0] ):
-            if chunk_id not in seen:
-                seen.add(chunk_id)
-                document_contents.append(doc)  
-                document_metadata.append(metadata)
-                document_ids.append(chunk_id)
+    queries, instructions = statergy_generator(question)
+
+    with ThreadPoolExecutor(max_workers=len(queries)) as executor:
+        results = list(executor.map(run_single_query, queries))
+        for chunks_per_query in results:
+            ids = chunks_per_query["ids"][0]
+            documents = chunks_per_query["documents"][0]
+            metadatas = chunks_per_query["metadatas"][0]
+            distances = chunks_per_query["distances"][0]
+            for chunk_id, doc, metadata, distance in zip(ids, documents, metadatas, distances):
+                if chunk_id not in seen:
+                    seen.add(chunk_id)
+                    retrieved_docs.append({
+                        "id": chunk_id,
+                        "content": doc,
+                        "metadata": metadata,
+                        "distance": distance
+                    })
+
+    retrieved_docs.sort(key=lambda x:x["distance"])
 
 
     context = ""
     
-    for document, metadata in zip(document_contents, document_metadata):
-        doc_metadata = "\n".join(f"{key}:{value}" for key, value in metadata.items())
+    for document in retrieved_docs:
+        doc_metadata = "\n".join(f"{key}:{value}" for key, value in document["metadata"].items())
         context += f"""
         metadata : {doc_metadata}
-        content : {document}
-
+        content : {document["content"]}
         ----------------------------------------
         """
-    return context , instructions, evidence
+    return context , instructions
 
 
-if __name__ == "__main__":
-    statergy_generator()
+
