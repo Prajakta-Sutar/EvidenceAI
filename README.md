@@ -43,8 +43,12 @@
                 Retriever inside assistant: 0.725 seconds
                 Prompt creation: 0.001 seconds
                 Final LLM: 6.965 seconds
-                Total Assistant: 7.692 seconds  
-
-              
+                Total Assistant: 7.692 seconds                
   - Now the main bottleneck is assistant LLM 🚨🚨.
+  - Switched from gpt-5.4-mini to gpt-5.6-luna. Response quality is better and faster. 
+  - Implemented streaming for assistant LLM's response. Instead of printing whole
+  output at once, user can read the response as LLM generates 🥳🥳. 
+  - Added conversation history support to maintain context across recruiter interactions 🥳🥳.
+      - Due to histroy, LLM can understand pronounce like "it", "her" as relation to previous conversation. 
+      - Chat with LLM feels like human conversation 🥳🥳.🥳🥳.🥳🥳.🥳🥳.
 

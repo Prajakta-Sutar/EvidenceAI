@@ -10,7 +10,16 @@ classifier_prompt = PromptTemplate.from_template("""
 
     Your final response should be in JSON format. 
 
+    You are provided with:
+    - Current question from the recruiter.
+    - Previous conversation history (may be empty).
+
+    Use conversation history only to understand context and interpret the current question.
+    If previous questions and current question is not related, do not use history then. 
+    Do not use previous assistant responses as factual evidenc
+
     Question: {question}
+    History : {history}
 
     Category "Relevant":
         prompt can be related to -

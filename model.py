@@ -8,6 +8,7 @@ from langchain_openai import ChatOpenAI
 from prompts.classifier_prompt import classifier_prompt
 from prompts.assistant_prompt import assistant_prompt
 from prompts.analyst_prompt import analyst_prompt
+from collections import deque
 
 
 
@@ -44,7 +45,9 @@ def analyst(project):
 
 def classifier(question: str):
     start = time.perf_counter()
-    user_question = {"question": question}
+    history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
+                                for h in history_queue)
+    user_question = {"question": question, "history" : history}
     modified_prompt = classifier_prompt.invoke(user_question)
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
@@ -58,14 +61,17 @@ def classifier(question: str):
         yield from assistant(question, queries) 
 
 
+history_queue = deque(maxlen=3)
 
 def assistant(question, queries):
     start = time.perf_counter()
     retrieval_start = time.perf_counter()
     context  = retriever(queries)  
     print(f"Retriever inside assistant: {time.perf_counter() - retrieval_start:.3f} seconds")
+    history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
+                        for h in history_queue)
     prompt_start = time.perf_counter()
-    inputs = {"question": question, "context":context }
+    inputs = {"question": question, "context":context , "history" : history}
     agumented_prompt = assistant_prompt.invoke(inputs)
     print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
     summary = ""
@@ -91,6 +97,10 @@ def assistant(question, queries):
         print(text)
         yield summary , None
 
+    history_queue.append({
+        "question" : question, 
+        "assistant_response" : summary
+    })
     print(f"Total Assistant: {time.perf_counter() - start:.3f} seconds")
    
     
