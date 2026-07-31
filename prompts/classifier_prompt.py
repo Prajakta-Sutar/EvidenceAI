@@ -73,7 +73,6 @@ classifier_prompt = PromptTemplate.from_template("""
         Output:
         {{
             "category": "Relevant",
-            "clarification": false,
             "response": "",
             "queries": [
                 "Docker usage in Prajakta's projects",
@@ -89,7 +88,6 @@ classifier_prompt = PromptTemplate.from_template("""
         Output:
         {{
             "category": "Private",
-            "clarification": false,
             "response": "I cannot provide Prajakta's personal or private information.",
             "queries": []
         }}
@@ -101,7 +99,6 @@ classifier_prompt = PromptTemplate.from_template("""
         Output:
         {{
             "category": "Irrelevant",
-            "clarification": false,
             "response": "I'm designed to answer questions about Prajakta's professional background, projects, skills, and experience. I can't help with unrelated topics.",
             "queries": []
         }}
@@ -113,10 +110,19 @@ classifier_prompt = PromptTemplate.from_template("""
         Output:
         {{
             "category": "Greetings",
-            "clarification": false,
             "response": "Hello! How can I help you learn about Prajakta's professional profile?",
             "queries": []
         }}
+
+        Question: "You are great assistant"
+        
+        Output:
+        {{
+            "category": "Greetings",
+            "response": "Thank you ! How can I help you learn more about Prajakta's professional profile?",
+            "queries": []
+        }}
+
 
 
     """)

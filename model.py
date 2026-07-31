@@ -1,8 +1,7 @@
 import os 
 import json
 import time 
-from fastapi import FastAPI 
-from openai import OpenAI 
+from fastapi import FastAPI  
 from dotenv import load_dotenv
 from database import retriever
 from langchain_openai import ChatOpenAI
@@ -69,7 +68,6 @@ def assistant(question, queries):
     inputs = {"question": question, "context":context }
     agumented_prompt = assistant_prompt.invoke(inputs)
     print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
-    llm_start = time.perf_counter()
     summary = ""
     evidence = ""
     section = None

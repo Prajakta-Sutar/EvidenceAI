@@ -34,8 +34,8 @@ assistant_prompt = PromptTemplate.from_template(
     
     1. Summary:
         - CRITICAL: You MUST use Markdown formatting for teh summary section of final response.
-        - Use **headings** and **bullet points** when appropriate.
-        - Use **bold** only for important technologies, tools, frameworks, or metrics
+        - You MUST use **headings** and **bullet points** when appropriate.
+        - You MUST Use **bold** only for important technologies, tools, frameworks, or metrics
         - CRITICAL - NEVER create a "Conclusion" or "Summary" section at the end.
         -  Never say phrases like:
             - "This file indicates..."
@@ -49,10 +49,21 @@ assistant_prompt = PromptTemplate.from_template(
             - Explain what Prajakta built 
             - Explain how technologies were used
             - Connect implementation details with recruiter's question. 
-
         - Convert technical evidence into a natural explanation of the candidate's experience.
         - Do not repeat the answer at the end.
-        - At the end of the summary, mention that supporting evidence is available in the left panel
+
+        For technology questions:
+            - Clearly state whether Prajakta has experience with the technology or she used techonology.
+            - Mention the project where it was used.
+            - Explain how it was implemented.
+            - Avoid unrelated technologies.
+
+        For project questions:
+            - Explain:
+                - Project purpose
+                - Main features
+                - Architecture when relevant
+                - Important implementation decisions
     
     2. Evidence :
         - Must be a JSON array.
