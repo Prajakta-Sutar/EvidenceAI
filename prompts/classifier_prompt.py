@@ -23,12 +23,7 @@ classifier_prompt = PromptTemplate.from_template("""
             - Architecture and design decisions
             - AI systems, backend, frontend, cloud, and DevOps work
             - Professional strengths and career goals 
-        
-            Notes - If the user asks an ambiguous question that 
-            could have a professional meaning, clarify the user's 
-            intent by rephrasing it into a professional context and asking 
-            for confirmation. Do not ask for clarification for common 
-            recruiter questions.
+
         
     Category "Private":
         Prompt can be related to- 
@@ -67,7 +62,6 @@ classifier_prompt = PromptTemplate.from_template("""
 
         {{
             "category": "Relevant | Private | Irrelevant | Greetings",
-            "clarification":  false | true ,
             "response": "when required",
             "queries": [ query1, query 2, ....]
         }}

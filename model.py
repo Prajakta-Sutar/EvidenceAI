@@ -49,17 +49,14 @@ def classifier(question: str):
     modified_prompt = classifier_prompt.invoke(user_question)
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
+    print(result)
     if result["category"] != "Relevant":
         print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
-        return result["response"], None
+        yield result["response"], None
     else:
-        if result["clarification"] == "True":
-            print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
-            return result["response"], None
-        else:
-            queries = result["queries"]
-            print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
-            return assistant(question, queries) 
+        queries = result["queries"]
+        print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
+        yield from assistant(question, queries) 
 
 
 
@@ -73,11 +70,29 @@ def assistant(question, queries):
     agumented_prompt = assistant_prompt.invoke(inputs)
     print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
     llm_start = time.perf_counter()
-    response = assistant_llm.invoke(agumented_prompt)
-    print(f"Final LLM: {time.perf_counter() - llm_start:.3f} seconds")
-    result = json.loads(response.content)
-    summary = result["summary"]
-    evidence = result["evidence"]
+    summary = ""
+    evidence = ""
+    section = None
+    for chunk in assistant_llm.stream(agumented_prompt):
+        text = chunk.content
+
+        if "SUMMARY" in text:
+            section = "summary"
+            continue
+
+        if "EVIDENCE" in text:
+            section = "evidence"
+            continue
+
+        if section == "summary":
+            summary += text
+
+        if section == "evidence":
+            evidence += text
+        
+        print(text)
+        yield summary , None
+
     print(f"Total Assistant: {time.perf_counter() - start:.3f} seconds")
-    return summary , evidence
+   
     

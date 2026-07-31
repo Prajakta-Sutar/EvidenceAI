@@ -13,35 +13,43 @@ assistant_prompt = PromptTemplate.from_template(
     Question : {question}
     Context : {context}
          
-    You will response in two parts. 
-    1. Summary 
-    2. Evidence
-    
+    You must respond in exactly two sections:
 
+        SUMMARY
 
-    {{
-    "summary": "Markdown formatted string",
-    "evidence": [
-        {{
-        "file": "file path",
-        "description": "technical explanation"
-        }}
-    ]
-    }}
+        Write the recruiter-facing answer here.
 
+        EVIDENCE
+
+        Return a JSON array containing the technical evidence.
+
+        [
+            {{
+                "file": "file path",
+                "description": "technical explanation"
+            }}
+        ]
+
+        EVIDENCE_END
     
     1. Summary:
-        - CRITICAL: You MUST use Markdown formatting for teh summaery section of final response.
-        - You MUST use structural headings and bullet points to organize the response.
-        - Use bold text only for emphasis on key technologies or metrics.
+        - CRITICAL: You MUST use Markdown formatting for teh summary section of final response.
+        - Use **headings** and **bullet points** when appropriate.
+        - Use **bold** only for important technologies, tools, frameworks, or metrics
         - CRITICAL - NEVER create a "Conclusion" or "Summary" section at the end.
-        - - Never say phrases like:
+        -  Never say phrases like:
             - "This file indicates..."
             - "This file contains..."
             - "The README states..."
             - "The repository shows..."
             - "According to the retrieved context..."
             - "The evidence suggests..."
+        
+        Instead -
+            - Explain what Prajakta built 
+            - Explain how technologies were used
+            - Connect implementation details with recruiter's question. 
+
         - Convert technical evidence into a natural explanation of the candidate's experience.
         - Do not repeat the answer at the end.
         - At the end of the summary, mention that supporting evidence is available in the left panel
