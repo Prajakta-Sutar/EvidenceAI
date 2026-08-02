@@ -86,7 +86,9 @@ def assistant(question, queries):
             evidence += text
         if section == "summary":
             summary += text
-        yield summary , evidence
+        yield summary , None
+
+    print(evidence)
 
     history_queue.append({
         "question" : question, 
