@@ -76,26 +76,17 @@ def assistant(question, queries):
     print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
     summary = ""
     evidence = ""
-    section = None
+    section = "summary"
     for chunk in assistant_llm.stream(agumented_prompt):
         text = chunk.content
-
-        if "SUMMARY" in text:
-            section = "summary"
-            continue
-
-        if "EVIDENCE" in text:
+        if "@" in text:
             section = "evidence"
-            continue
-
-        if section == "summary":
-            summary += text
-
+            continue 
         if section == "evidence":
             evidence += text
-        
-        print(text)
-        yield summary , None
+        if section == "summary":
+            summary += text
+        yield summary , evidence
 
     history_queue.append({
         "question" : question, 

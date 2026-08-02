@@ -20,11 +20,10 @@ assistant_prompt = PromptTemplate.from_template(
          
     You must respond in exactly two sections:
 
-        SUMMARY
 
         Write the recruiter-facing answer here.
 
-        EVIDENCE
+        @ 
 
         Return a JSON array containing the technical evidence.
 
@@ -35,10 +34,11 @@ assistant_prompt = PromptTemplate.from_template(
             }}
         ]
 
-        EVIDENCE_END
     
     1. Summary:
-        - CRITICAL: You MUST use Markdown formatting for teh summary section of final response.
+        - Write a complete recruiter-facing answer, not a short response.
+        - Explain details rather than simply listing technologies or facts, but avoid repeating information.
+        - CRITICAL: You MUST use Markdown formatting for the summary section of final response.
         - you MUST answer in sections when appropriate. 
         - You MUST use **headings** and **bullet points** when appropriate.
         - You MUST Use **bold** only for important technologies, tools, frameworks, or metrics
@@ -50,18 +50,12 @@ assistant_prompt = PromptTemplate.from_template(
             - "The repository shows..."
             - "According to the retrieved context..."
             - "The evidence suggests..."
-        
-        Instead -
-            - Explain what Prajakta built 
-            - Explain how technologies were used
-            - Connect implementation details with recruiter's question. 
         - Convert technical evidence into a natural explanation of the candidate's experience.
-        - Do not repeat the answer at the end.
 
         For technology questions:
             - Clearly state whether Prajakta has experience with the technology or she used techonology.
             - Mention the project where it was used.
-            - Explain how it was implemented.
+            - Give explaination about how it was implemented.
             - Avoid unrelated technologies.
 
         For project questions:
@@ -93,10 +87,7 @@ assistant_prompt = PromptTemplate.from_template(
                 "this is evidence of"
                 "strong evidence"
                 "important evidence"
-            - Explain the implementation shown by the artifact and connect it naturally
-            to the recruiter's question.
-            - Include technical details only when they help explain how the technology
-            was used
+            - Explain the implementation shown by the artifact and connect it naturally to the recruiter's question.
             - Do not invent information that is not available in the context.
 
     """
