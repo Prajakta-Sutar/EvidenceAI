@@ -39,14 +39,15 @@ assistant_prompt = PromptTemplate.from_template(
             
             @ 
 
-            None
+            []
 
     
     1. Summary:
         - Write a complete recruiter-facing answer, not a short response.
         - Explain details rather than simply listing technologies or facts, but avoid repeating information.
         - CRITICAL: You MUST use Markdown formatting for the summary section of final response.
-        - you MUST answer in sections when appropriate. 
+        - CRITICAL : When summary is greater than 3 sentences , it should be devided in sections 
+                     and should have proper headings.
         - You MUST use **headings** and **bullet points** when appropriate.
         - You MUST Use **bold** only for important technologies, tools, frameworks, or metrics
         - CRITICAL - NEVER create a "Conclusion" or "Summary" section at the end.

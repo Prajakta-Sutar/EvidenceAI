@@ -51,7 +51,6 @@ def classifier(question: str):
     modified_prompt = classifier_prompt.invoke(user_question)
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
-    print(result)
     if result["category"] != "Relevant":
         print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
         yield result["response"], None
@@ -64,16 +63,11 @@ def classifier(question: str):
 history_queue = deque(maxlen=3)
 
 def assistant(question, queries):
-    start = time.perf_counter()
-    retrieval_start = time.perf_counter()
     context  = retriever(queries)  
-    print(f"Retriever inside assistant: {time.perf_counter() - retrieval_start:.3f} seconds")
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                         for h in history_queue)
-    prompt_start = time.perf_counter()
     inputs = {"question": question, "context":context , "history" : history}
     agumented_prompt = assistant_prompt.invoke(inputs)
-    print(f"Prompt creation: {time.perf_counter() - prompt_start:.3f} seconds")
     summary = ""
     evidence = ""
     section = "summary"
@@ -86,14 +80,11 @@ def assistant(question, queries):
             evidence += text
         if section == "summary":
             summary += text
-        yield summary , None
-
-    print(evidence)
+        yield summary , evidence
 
     history_queue.append({
         "question" : question, 
         "assistant_response" : summary
     })
-    print(f"Total Assistant: {time.perf_counter() - start:.3f} seconds")
    
     
