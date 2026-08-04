@@ -6,6 +6,8 @@ import { FaLinkedin } from "react-icons/fa";
 import { Icon } from "@iconify/react";
 import Stack from 'react-bootstrap/Stack';
 import { FaDownload } from "react-icons/fa";
+import { SiLeetcode } from "react-icons/si";
+import { FaGithub } from "react-icons/fa";
 
 
 function App(){
@@ -29,30 +31,98 @@ function App(){
                   <Nav.Link eventKey="link-4">Contact</Nav.Link>
                 </Nav.Item>
             </Nav>
-            <Nav>
-                <Button className="resume-button" size='sm'> Download resume</Button>
-            </Nav>
+            <div className="intro_panel">
+                  <h4 style={{fontWeight:"bold"}}>Hi, I'm</h4>
+                  <h1 className="name_text">Prajakta Sutar</h1>
+                  <h6 className="name_text"> AI and Full-Stack Developer</h6>
+                  <p className='intro_text' style={{marginBottom:"2vw"}}> 
+                    Passionate about AI, 
+                    full-stack development, and solving complex engineering 
+                    challenges, I strive to create applications that make a 
+                    meaningful impact.
+                  </p>
+                  <Button className="resume-button" size='sm'>
+                      <span class="material-symbols-outlined">
+                        download
+                      </span> 
+                      Download resume
+                  </Button>
+            </div>
+      
             <hr className="line"/>
-            <h6 className="headings">About Me</h6>
+
+            <div className="about_me_panel">
+                <Stack direction="horizontal" gap={2} className='panel_heading'>
+                  <span class="material-symbols-outlined person_icon">person</span>
+                    <h6 className="headings">About Me</h6>
+                </Stack>
+                <p className="info_panel">
+                    I am a Computer Science graduate from the University of Saskatchewan. 
+                    I have built full-stack applications, predictive machine learning models, 
+                    and AI-powered RAG systems. I also have experience in IT support, 
+                    helping users troubleshoot technical issues and work with various 
+                    technologies. I enjoy collaborating with teams, solving problems, 
+                    exchanging ideas, and building meaningful software solutions.
+                </p>
+                <Stack direction='horizontal' className='feature_panel' gap={3}>
+                      <div className='feature_card linkedin_card'>
+                          <FaLinkedin size={25} className="linkedin-icon"/>
+                          Linkedin 
+                      </div>
+                      <div className='feature_card github_card'>
+                          <FaGithub size={28} className="github-icon" />
+                          GitHub
+                      </div>
+                      <div className='feature_card leetcode_card'>
+                          <Icon
+                            icon="simple-icons:leetcode"
+                            width="25"
+                            className="leetcode-icon"
+                          />
+                          LeetCode
+                      </div>
+                </Stack>
+            </div>
+            
             <hr className="line"/>
-            <Stack direction="horizontal" gap={3}>
-                <h6 className="headings">Tech Stack</h6>
-                <Nav.Item className="ms-auto">
-                  <Nav.Link eventKey="link-4" className='view_all'>View all skills </Nav.Link>
-                </Nav.Item>
-            </Stack>
+            <div className=' tech_panel'>
+               <Stack direction="horizontal" gap={2} className='panel_heading'>
+                    <span class="material-symbols-outlined stack_icon">stacks</span>
+                    <h6 className="headings">Tech Stack</h6>   
+               </Stack>
+               <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
+               <div className='tech_stack'>
+            
+               </div>
+
+            </div>
+
             <hr className="line"/>
-            <Stack direction="horizontal" gap={3}>
-                <h6 className="headings">Featured Projects</h6>
-                <Nav.Item className=" ms-auto">
-                  <Nav.Link eventKey="link-4" className='view_all'>View all projects</Nav.Link>
-                </Nav.Item>
-            </Stack>
+            <div className=' tech_panel'>
+               <Stack direction="horizontal" gap={2} className='panel_heading'>
+                <span class="material-symbols-outlined code_icon">code_blocks</span>
+                  <h6 className="headings">Featured Projects</h6>
+              </Stack>
+              <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
+            </div>
+
             <hr className="line"/>
-            <h6 className="headings">Professional Experience</h6>
+            <div className=' tech_panel'>
+               <Stack direction="horizontal" gap={2} className='panel_heading'>
+                    <span class="material-symbols-outlined job_icon">enterprise</span>
+                    <h6 className="headings">Professional Experience</h6>
+              </Stack>
+            </div>
+          
             <hr className="line"/>
-            <h6 className="headings">Get In Touch</h6>
-           
+
+            <div className=' tech_panel'>
+               <Stack direction="horizontal" gap={2} className='panel_heading'>
+                    <span class="material-symbols-outlined phone_icon">phone_in_talk</span>
+                    <h6 className="headings">Get In Touch</h6>
+              </Stack>
+            </div>
+
         </Container>
       <Container className="robot_section">
 
