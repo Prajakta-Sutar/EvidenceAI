@@ -51,4 +51,5 @@
   - Added conversation history support to maintain context across recruiter interactions 🥳🥳.
       - Due to histroy, LLM can understand pronounce like "it", "her" as relation to previous conversation. 
       - Chat with LLM feels like human conversation 🥳🥳.🥳🥳.🥳🥳.🥳🥳.
+  - Assistant LLM is successfully choosing when to include evidence , when not. 
 
