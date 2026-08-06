@@ -15,7 +15,7 @@ function Robot({className}){
             <div className="robot_intro">
                 Ask me anything about Prajakta's experience, skills, projects and more.
             </div>
-            <img src="../public/robot.jpeg" style={{width:"100%"}}></img>
+            <img src="../public/robot.jpeg" style={{width:"70%"}}></img>
             <Form className="mt-auto text_div">
                 <Form.Control 
                     as="textarea" 

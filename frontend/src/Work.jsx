@@ -84,7 +84,7 @@ function Work({className}){
                                     <span class="material-symbols-outlined bulb_icon">lightbulb_2</span>
                                 </Col>
                                 <Col>
-                                    <span className='skill_title'> Skills Applied in Role </span>
+                                    <span className='skill_title'> Skills Applied in the Role </span>
                                     <br/>
                                     {(work.skills).map((skill)=>(
                                         <span style={{fontSize:"small", marginRight:"1vh"}}>• {skill}</span>

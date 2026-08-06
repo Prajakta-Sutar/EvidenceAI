@@ -3,7 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
 
-function Projects({className}){
+function Projects({className, setSection}){
     const projects = [
         {
             "name": "EvidenceAI",
@@ -51,7 +51,7 @@ function Projects({className}){
     return (
         <div className={className}>
             {projects.map((project) => ( 
-                <div className="project_card">
+                <div className="project_card" onClick={()=>setSection("project")}>
                     <Row>
                         <Col xs="auto">
                             <div style={{backgroundColor:project.color, borderRadius:"0.5vh"}}>

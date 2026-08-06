@@ -1,0 +1,132 @@
+.intro_panel, .about_me_panel{
+    width:100%;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    color: white;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+.name_text{
+    font-weight: bold;
+    background-image: linear-gradient( 
+        90deg,
+    #8b5cf6,
+    #2563eb,
+    #22d3ee
+        );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+
+.intro_text{
+    width: 50%;
+    font-size: small;
+}
+
+
+.resume-button{
+    border-color: rgb(88, 33, 217) !important;
+    background-color: rgb(88, 33, 217) !important;
+    font-size: small !important;
+    font-weight: bold !important;
+    display: flex !important; 
+    align-items: center !important;
+    justify-content: center !important;
+    padding-left: 1vw !important;
+    padding-right: 1vw !important;
+    gap: 0.1vw;
+    box-shadow: 0 0 20px rgba(98, 0, 238, 0.8), 0 0 40px rgba(73, 215, 220, 0.4); 
+}
+
+.resume-button:hover{
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+
+.panel_heading{
+    display: flex !important;
+    align-items: center !important;
+}
+
+.panel_heading h6{
+    margin: 0;
+    font-weight: bold !important;
+}
+
+
+
+.person_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+
+.headings{
+    color: white;
+}
+
+
+.info_panel{
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+    width: 80%;
+    font-size: small;
+}
+
+.feature_panel{
+    width: 100%;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.feature_card{
+    display: flex;
+    align-items: center;
+    width:32% !important;
+    height: 4vw;
+    background-color: rgb(28, 28, 39);
+    border-radius: 0.5vh;
+    padding-left: 1vh;
+    padding-right: 1vh;
+    font-size: small;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(142, 138, 148, 0.8), 0 0 20px rgba(200, 203, 203, 0.4); 
+}
+
+.feature_card:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+    
+}
+
+.linkedin_card, .github_card, .leetcode_card{
+    display: flex;
+    align-items: center;
+    gap:1vh !important;
+}
+
+.linkedin_card:hover{
+    box-shadow: 0 0 10px rgba(30, 148, 238, 0.8), 0 0 20px rgb(157, 210, 233); 
+}
+
+.github_card:hover{
+    box-shadow: 0 0 10px rgba(233, 236, 239, 0.8), 0 0 20px rgb(245, 248, 249); 
+}
+
+
+.leetcode_card:hover{
+    box-shadow: 0 0 10px rgba(243, 183, 30, 0.8), 0 0 20px rgb(244, 212, 154); 
+}
+
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+}

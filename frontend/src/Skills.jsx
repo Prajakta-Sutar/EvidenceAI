@@ -3,7 +3,7 @@ import './Skills.css';
 import Card from 'react-bootstrap/Card';
 import { Icon } from "@iconify/react";
 
-function Skills({className}){
+function Skills({className, setSection}){
     const skills ={
         "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
         "C": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg",
@@ -27,14 +27,14 @@ function Skills({className}){
     return (
         <div className={className}>
             {Object.entries(skills).map(([name, icon]) => (
-                <Card className='image_card'>
+                <Card className='image_card' onClick={()=>{setSection("skill")}}>
                     <Card.Img variant="top" src={icon} className="skill_image"/>
                     <Card.Body>
                         <Card.Text>{name}</Card.Text>
                     </Card.Body>
                 </Card>
             ))}
-            <Card className='image_card'>
+            <Card className='image_card' onClick={()=>{setSection("skill")}}>
                 <Icon icon="simple-icons:langchain"  height="2vw" />
                 <Card.Body>
                     <Card.Text className='fs-6'>LangChain</Card.Text>
