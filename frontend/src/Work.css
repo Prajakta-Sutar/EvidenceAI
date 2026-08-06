@@ -1,0 +1,61 @@
+
+.work_period{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.work_timeline_item{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding-bottom: 4vw;
+}
+
+.work_timeline_item::before{
+    content: "";
+    position: absolute;
+    left: 0.5vw;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+.work_content{
+    width: 100%;
+    margin-left: 2vh;
+}
+
+.timeline-dot{
+    position: absolute;
+    left: 0.125vw;
+    width: 0.75vw;
+    height: 0.75vw;
+    border-radius: 50%;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+.work_skills{
+    width: 100% !important;
+    margin-top: 1vw;
+    padding: 1vw;
+    border-radius: 1vh;
+    background-color: rgb(28, 28, 39);
+    border: 1px solid rgb(124, 119, 40);
+}
+
+.highlight{ 
+    color: rgb(144, 106, 235);
+}
+
+.bulb_icon{
+    color:rgb(249, 238, 82);
+}
+
+
+.skill_title{
+    color:rgb(249, 238, 82);
+    font-size: small;
+    font-weight: bold;
+}

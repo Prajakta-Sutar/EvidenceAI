@@ -1,0 +1,34 @@
+.project_card{
+    border-radius: 0.5vh;
+    width: 48% !important;
+    padding: 1vh;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(62, 66, 101);
+}
+
+.project_card:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(142, 138, 148, 0.8), 0 0 20px rgba(200, 203, 203, 0.4); 
+}
+
+.skill_name{
+    background-color: rgb(63, 63, 81);
+    color:white;
+    font-size: x-small;
+    padding: 0.5vh;
+    margin-left: 0.5vh;
+    margin-right: 0.5vh;
+    border-radius: 0.5vh;
+    width: fit-content !important;
+}
+
+.skills_row{
+    width: 100% !important;
+    padding-top: 1vh;
+    padding-left: 1vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap:1vh;
+    
+}

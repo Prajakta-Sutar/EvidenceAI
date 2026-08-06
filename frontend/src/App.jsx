@@ -8,6 +8,12 @@ import Stack from 'react-bootstrap/Stack';
 import { FaDownload } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
 import { FaGithub } from "react-icons/fa";
+import Card from 'react-bootstrap/Card';
+import Robot from "./Robot";
+import Skills from "./Skills";
+import Projects from "./Projects";
+import Work from "./Work";
+import Contact from "./Contact";
 
 
 function App(){
@@ -48,7 +54,6 @@ function App(){
                       Download resume
                   </Button>
             </div>
-      
             <hr className="line"/>
 
             <div className="about_me_panel">
@@ -66,20 +71,20 @@ function App(){
                 </p>
                 <Stack direction='horizontal' className='feature_panel' gap={3}>
                       <div className='feature_card linkedin_card'>
-                          <FaLinkedin size={25} className="linkedin-icon"/>
-                          Linkedin 
+                          <img 
+                          src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg"
+                          height='30vw' />
+                         <span>Linkedin</span> 
                       </div>
                       <div className='feature_card github_card'>
                           <FaGithub size={28} className="github-icon" />
                           GitHub
                       </div>
                       <div className='feature_card leetcode_card'>
-                          <Icon
-                            icon="simple-icons:leetcode"
-                            width="25"
-                            className="leetcode-icon"
-                          />
-                          LeetCode
+                            <img 
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/leetcode/leetcode-original.svg"
+                            height="30vw" />
+                            <span>LeetCode</span>
                       </div>
                 </Stack>
             </div>
@@ -91,19 +96,18 @@ function App(){
                     <h6 className="headings">Tech Stack</h6>   
                </Stack>
                <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
-               <div className='tech_stack'>
-            
-               </div>
-
+               <Skills className="tech_stack" />
             </div>
 
             <hr className="line"/>
+
             <div className=' tech_panel'>
-               <Stack direction="horizontal" gap={2} className='panel_heading'>
-                <span class="material-symbols-outlined code_icon">code_blocks</span>
-                  <h6 className="headings">Featured Projects</h6>
-              </Stack>
-              <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
+                <Stack direction="horizontal" gap={2} className='panel_heading'>
+                  <span class="material-symbols-outlined code_icon">code_blocks</span>
+                    <h6 className="headings">Featured Projects</h6>
+                </Stack>
+                <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
+                <Projects className="project_panel" />
             </div>
 
             <hr className="line"/>
@@ -112,6 +116,7 @@ function App(){
                     <span class="material-symbols-outlined job_icon">enterprise</span>
                     <h6 className="headings">Professional Experience</h6>
               </Stack>
+              <Work className="work_panel" />
             </div>
           
             <hr className="line"/>
@@ -121,11 +126,32 @@ function App(){
                     <span class="material-symbols-outlined phone_icon">phone_in_talk</span>
                     <h6 className="headings">Get In Touch</h6>
               </Stack>
+              <p className='suggestion' >Let's connect! I'm always open to new opportunities and meaningful conversations.</p>
+              <Contact className="contact_panel" />
             </div>
-
+            <div className='floating_bar'>
+                <div className='floating_item'>
+                    <span className="material-symbols-outlined floating_icon" >
+                        mail
+                    </span>
+                    prajakta.patil.dev@gmail.com
+                </div>
+                <div className='floating_item'>
+                    <span className="material-symbols-outlined floating_icon">
+                        phone
+                    </span>
+                    +1 (306) XXX-XXXX
+                </div>
+                <div className='floating_item'>
+                    <span className="material-symbols-outlined floating_icon">
+                        location_on
+                    </span>
+                    Canada
+                </div>
+            </div>
         </Container>
       <Container className="robot_section">
-
+          <Robot className="robot" />
       </Container>
   
 
