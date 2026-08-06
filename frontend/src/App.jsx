@@ -23,6 +23,8 @@ import { useEffect, useState } from "react";
 function App(){
   
   const [section, setSection] = useState("portfolio");
+  const [skill, setSkill] = useState("");
+  const [project, setProject] = useState("");
 
   return(
     <div fluid="xl" className="landing_page">
@@ -31,6 +33,7 @@ function App(){
                 {(section === "skill") && (
                      <div className='go_back' 
                           onClick={()=>{
+                            setSkill("");
                             setSection("portfolio");
                             setTimeout(() => {
                               document.getElementById("skills")?.scrollIntoView({
@@ -72,7 +75,8 @@ function App(){
                   <Nav.Link href="#contact" >Contact</Nav.Link>
                 </Nav.Item>
             </Nav>
-            {section === "skill" && (<SkillDetails className="skill_details" setSection={setSection} />)}
+            {section === "skill" && 
+            (<SkillDetails className="skill_details" setSection={setSection}/>)}
             {section === "project" && (<ProjectDetails className="project_details" setSection={setSection}/>)}
             {section === "portfolio" && (
             < Container className="Portfolio_section">
@@ -87,7 +91,7 @@ function App(){
                         <h6 className="headings">Tech Stack</h6>   
                   </Stack>
                   <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
-                  <Skills className="tech_stack" setSection={setSection}/>
+                  <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} />
                 </div>
 
                 <hr className="line"/>
@@ -145,7 +149,7 @@ function App(){
               </div>
         </div>
         <Container className="robot_section">
-            <Robot className="robot" />
+            <Robot className="robot" selectedSkill={skill} />
         </Container>
     </div>
   )

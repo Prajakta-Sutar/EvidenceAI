@@ -3,8 +3,37 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import './Robot.css';
 import './App.css';
+import { useEffect, useState } from "react";
 
-function Robot({className}){
+function Robot({className, selectedSkill}){
+    const [summary, setSummary] = useState("");
+    const [evidence, setEvidence] = useState("");
+
+    useEffect(()=>{
+        if (!selectedSkill){
+            return;
+        }
+        async function callAssistant() {
+            setSummary("");
+            setEvidence("");
+            const response = await fetch(
+
+                "https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/skill",
+                {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    skill: selectedSkill
+                }),
+                }
+            );
+            
+        }
+        callAssistant();
+    },[selectedSkill]);
+
    return(
         <Stack className={className}>
             <Stack direction="horizontal" className="robot_nav">
@@ -14,8 +43,8 @@ function Robot({className}){
             </Stack>
             <div className="robot_intro">
                 Ask me anything about Prajakta's experience, skills, projects and more.
+                current selected skill is {selectedSkill}
             </div>
-            <img src="../public/robot.jpeg" style={{width:"70%"}}></img>
             <Form className="mt-auto text_div">
                 <Form.Control 
                     as="textarea" 
