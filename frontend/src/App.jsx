@@ -26,6 +26,7 @@ function App(){
   const [skill, setSkill] = useState("");
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
+  const [conversation, setConversation] = useState([])
 
   const handleLinks = () =>{
       setSkill("");
@@ -98,7 +99,7 @@ function App(){
                         <h6 className="headings">Tech Stack</h6>   
                   </Stack>
                   <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
-                  <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} />
+                  <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} setConversation={setConversation}/>
                 </div>
 
                 <hr className="line"/>
@@ -156,7 +157,7 @@ function App(){
               </div>
         </div>
         <Container className="robot_section">
-            <Robot className="robot" selectedSkill={skill} setEvidence={setEvidence} />
+            <Robot className="robot" selectedSkill={skill} setEvidence={setEvidence} conversation={conversation} setConversation={setConversation} />
         </Container>
     </div>
   )

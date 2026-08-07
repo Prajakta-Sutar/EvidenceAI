@@ -62,11 +62,31 @@
     border-color: inherit;
 }
 
-.assistant_penel{
+.assistant_panel{
     width: 100% !important;
     flex: 1;
     overflow-y: auto !important;
     color: white !important;
-    padding-top: 2vw;
+    padding-top: 4vw;
     padding-bottom: 4vw;
+    display: flex;
+    flex-direction: column;
 }
+
+.user{
+    font-size: small;
+    right:0 !important;
+    align-self: flex-end;
+    margin-bottom: 30px !important;
+    text-align: right;
+    max-width: 80% !important;
+    background-color: rgb(28, 28, 39);
+    padding: 0.5vh 2vh;
+    border-radius: 1vh;
+}
+
+.assistant{
+    font-size: small;
+    margin-bottom: 30px !important;
+}
+

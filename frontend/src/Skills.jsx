@@ -25,17 +25,23 @@ function Skills({className, setSection, setSkill}){
         "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
     };
 
+
+    const handleSelection =(selected_skill)=>{
+            setSection("skill");
+            setSkill(selected_skill);
+    }
+
     return (
         <div className={className}>
             {Object.entries(skills).map(([name, icon]) => (
-                <Card className='image_card' onClick={()=>{setSection("skill"); setSkill(name);}}>
+                <Card className='image_card' onClick={()=>{handleSelection(name)}}>
                     <Card.Img variant="top" src={icon} className="skill_image"/>
                     <Card.Body>
                         <Card.Text>{name}</Card.Text>
                     </Card.Body>
                 </Card>
             ))}
-            <Card className='image_card' onClick={()=>{setSection("skill"); setSkill("LangChain");}}>
+            <Card className='image_card' onClick={()=>{handleSelection("LangChain")}}>
                 <Icon icon="simple-icons:langchain"  height="2vw" />
                 <Card.Body>
                     <Card.Text className='fs-6'>LangChain</Card.Text>

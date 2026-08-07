@@ -7,16 +7,28 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useRef } from "react";
 
-function Robot({className, selectedSkill, setEvidence}){
-    const [summary, setSummary] = useState("");
+function Robot({className, selectedSkill, setEvidence, conversation, setConversation}){
+
     const inputRef = useRef();
+    const chatRef = useRef();
 
     useEffect(()=>{
         if (!selectedSkill){
             return;
         }
         async function callAssistant() {
-            setSummary("");
+
+            setConversation(prev=>[...prev,  
+                {
+                    role: "user",
+                    content: `Prajakta's ${selectedSkill} experience`
+                }, 
+                {
+                    role: "assistant",
+                    content: ""
+                }
+            
+            ]);
             const response = await fetch(
                 
                 "https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/skill",
@@ -45,10 +57,17 @@ function Robot({className, selectedSkill, setEvidence}){
                     if (!res){
                         return;
                     }
-
                     const output = JSON.parse(res);
                     if (output.type === "summary"){
-                        setSummary(prev => prev + output.content);
+                        setConversation(prev=>{
+                            const updated=[...prev];
+                            const last = updated[updated.length-1];
+                            updated[updated.length-1]={
+                                ...last,
+                                content: updated[updated.length-1].content + output.content
+                            };
+                            return updated;
+                        });
                     }
 
                     if (output.type === "evidence"){
@@ -69,6 +88,12 @@ function Robot({className, selectedSkill, setEvidence}){
         textarea.style.height = `${textarea.scrollHeight}px`;
     }
 
+    useEffect(()=>{
+        if (chatRef.current){
+            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+        }
+
+    }, [conversation]);
 
    return(
         <Stack className={className}>
@@ -82,10 +107,14 @@ function Robot({className, selectedSkill, setEvidence}){
             </div>
             
             <img src="../public/robot.jpeg" width={"80%"} />
-            <div className="assistant_penel">
-                <ReactMarkdown>
-                    {summary}
-                </ReactMarkdown>
+            <div className="assistant_panel" ref={chatRef}>
+                {conversation.map((message) => (
+                    <div className={message.role}>
+                        <ReactMarkdown>
+                            {message.content}
+                        </ReactMarkdown>
+                    </div>
+                ))}
             </div>
             <Form className="mt-auto text_div">
                 <Form.Control 
