@@ -4,10 +4,12 @@ import Form from 'react-bootstrap/Form';
 import './Robot.css';
 import './App.css';
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { useRef } from "react";
 
-function Robot({className, selectedSkill}){
+function Robot({className, selectedSkill, setEvidence}){
     const [summary, setSummary] = useState("");
-    const [evidence, setEvidence] = useState("");
+    const inputRef = useRef();
 
     useEffect(()=>{
         if (!selectedSkill){
@@ -15,9 +17,8 @@ function Robot({className, selectedSkill}){
         }
         async function callAssistant() {
             setSummary("");
-            setEvidence("");
             const response = await fetch(
-
+                
                 "https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/skill",
                 {
                 method: "POST",
@@ -29,10 +30,45 @@ function Robot({className, selectedSkill}){
                 }),
                 }
             );
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let stream = ""
+            while (true){
+                const {value, done} = await reader.read();
+                if (done){
+                    break;
+                }
+                stream  += decoder.decode(value);
+                const responses = stream.split("\n");
+                stream = responses.pop();
+                responses.forEach((res)=>{
+                    if (!res){
+                        return;
+                    }
+
+                    const output = JSON.parse(res);
+                    if (output.type === "summary"){
+                        setSummary(prev => prev + output.content);
+                    }
+
+                    if (output.type === "evidence"){
+                        setEvidence(output.content);
+                    }
+                })
+
+            }
             
         }
         callAssistant();
     },[selectedSkill]);
+
+
+    const handleInput = (e) =>{
+        const textarea = e.target;
+        textarea.style.height = "auto"; 
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
 
    return(
         <Stack className={className}>
@@ -43,19 +79,24 @@ function Robot({className, selectedSkill}){
             </Stack>
             <div className="robot_intro">
                 Ask me anything about Prajakta's experience, skills, projects and more.
-                current selected skill is {selectedSkill}
+            </div>
+            
+            <img src="../public/robot.jpeg" width={"80%"} />
+            <div className="assistant_penel">
+                <ReactMarkdown>
+                    {summary}
+                </ReactMarkdown>
             </div>
             <Form className="mt-auto text_div">
                 <Form.Control 
+                    ref={inputRef}
+                    onInput={handleInput}
                     as="textarea" 
                     className="assistant_text"
                     rows={1} 
                 />
+                <span class="material-symbols-outlined send_icon">send</span>
             </Form>
-            <div className="verify_panel">
-                <span className="material-symbols-outlined verify_icon">verified_user</span>
-                <p className="verify_text">Answers are based on verified information from Prajakta's portfolio.</p>
-            </div>
         </Stack>
    )
 }

@@ -179,9 +179,12 @@ html{
     font-size: small;
 }
 
+
+
 .robot{
     height: 100% !important;
     display: flex;
+    position: relative;
 }
 
 

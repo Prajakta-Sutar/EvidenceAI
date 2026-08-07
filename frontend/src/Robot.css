@@ -29,41 +29,44 @@
 
 
 .text_div{
-    width: 100% !important;
+    position: absolute !important;
+    bottom: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    border-radius: 1vh;
-    flex-direction: row; 
+    width: 100%;
+    z-index: 10;
+    flex-direction: row;
     align-items: center;
-    background-color: rgb(28, 28, 39) !important;
-    border: 0.1vh solid rgb(68, 80, 96) !important;
-}
-
-.verify_panel{
-    display: flex;
-    align-items: center !important;
-}
-
-.verify_icon{
-    color: white;
+    color:white;
+    border-radius: 1vw;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(34, 34, 41) !important;
     font-size: small;
-    margin: 0% !important;
 }
 
-.verify_text{
-    color: white;
-    font-size: x-small;
-    margin: 0 !important;
-}
 
 .assistant_text{
+    resize: none;
     color:white !important;
     border: none !important;
     margin-bottom: 0 !important;
     background-color: transparent !important;
+    max-height: 10vw;
+    overflow-y: auto !important;
 }
 
 .assistant_text:focus{
     box-shadow: none !important;
     outline: none !important;
     border-color: inherit;
+}
+
+.assistant_penel{
+    width: 100% !important;
+    flex: 1;
+    overflow-y: auto !important;
+    color: white !important;
+    padding-top: 2vw;
+    padding-bottom: 4vw;
 }

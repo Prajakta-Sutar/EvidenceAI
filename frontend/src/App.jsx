@@ -25,6 +25,7 @@ function App(){
   const [section, setSection] = useState("portfolio");
   const [skill, setSkill] = useState("");
   const [project, setProject] = useState("");
+  const [evidence, setEvidence] = useState([]);
 
   return(
     <div fluid="xl" className="landing_page">
@@ -75,8 +76,8 @@ function App(){
                   <Nav.Link href="#contact" >Contact</Nav.Link>
                 </Nav.Item>
             </Nav>
-            {section === "skill" && 
-            (<SkillDetails className="skill_details" setSection={setSection}/>)}
+            {section === "skill" &&
+            (<SkillDetails className="skill_details" setSection={setSection} evidence={evidence} />)}
             {section === "project" && (<ProjectDetails className="project_details" setSection={setSection}/>)}
             {section === "portfolio" && (
             < Container className="Portfolio_section">
@@ -149,7 +150,7 @@ function App(){
               </div>
         </div>
         <Container className="robot_section">
-            <Robot className="robot" selectedSkill={skill} />
+            <Robot className="robot" selectedSkill={skill} setEvidence={setEvidence} />
         </Container>
     </div>
   )

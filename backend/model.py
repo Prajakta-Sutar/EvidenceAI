@@ -11,6 +11,7 @@ from prompts.analyst_prompt import analyst_prompt
 from collections import deque
 from fastapi import Request
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -23,6 +24,14 @@ api_key = os.getenv("OPENAI_API_KEY")
 
 # Develope model which will act as router 
 app = FastAPI() 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 classifier_llm = ChatOpenAI(
     model="gpt-5.4-mini",
     temperature=0,
@@ -80,13 +89,9 @@ def assistant(question, queries):
         text = chunk.content
         if "@" in text:
             section = "evidence"
-            continue 
+            text = text.replace("@", "")
         if section == "evidence":
             evidence += text
-            yield{
-                "type" : "evidence", 
-                "content" : text
-            }
         if section == "summary":
             summary += text
             yield{
@@ -98,12 +103,12 @@ def assistant(question, queries):
         "question" : question, 
         "assistant_response" : summary
     })
+    evidence_json = json.loads(evidence.strip())
+    yield{
+        "type" : "evidence", 
+        "content" : evidence_json
+    }
 
-
-@app.get("/")
-def root():
-    print("root hit")
-    return {"status": "running"}
     
 @app.post("/skill")
 async def skill_endpoint(request: Request):
@@ -118,9 +123,10 @@ async def skill_endpoint(request: Request):
 
     def stream():
         for response in assistant( f"Explain Ptrajakta's {skill} experience", queries):
-            yield json.dump(response) + "\n"
+            yield json.dumps(response) + "\n"
 
     return StreamingResponse(
         stream(),
         media_type="application/json"
     )
+ 
