@@ -27,6 +27,13 @@ function App(){
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
 
+  const handleLinks = () =>{
+      setSkill("");
+      setProject("");
+      setEvidence([]);
+      setSection("portfolio");
+  }
+
   return(
     <div fluid="xl" className="landing_page">
         <div className='portfolio'>
@@ -34,8 +41,7 @@ function App(){
                 {(section === "skill") && (
                      <div className='go_back' 
                           onClick={()=>{
-                            setSkill("");
-                            setSection("portfolio");
+                            handleLinks();
                             setTimeout(() => {
                               document.getElementById("skills")?.scrollIntoView({
                                 behavior: "smooth"
@@ -49,7 +55,7 @@ function App(){
                 {(section === "project") && (
                      <div className='go_back' 
                           onClick={()=>{
-                            setSection("portfolio");
+                            handleLinks();
                             setTimeout(() => {
                               document.getElementById("projects")?.scrollIntoView({
                                 behavior: "smooth"
@@ -60,19 +66,19 @@ function App(){
                           <p style={{margin:'0'}}>Back to Portfolio</p>
                      </div>
                 )}
-                <Nav.Item className="small ms-auto" onClick={()=>setSection("portfolio")}>
+                <Nav.Item className="small ms-auto" onClick={()=>handleLinks()}>
                   <Nav.Link href="#about" >About</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>setSection("portfolio")}>
+                <Nav.Item className="small" onClick={()=>handleLinks()}>
                   <Nav.Link href="#skills">Skills</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>setSection("portfolio")}>
+                <Nav.Item className="small" onClick={()=>handleLinks()}>
                   <Nav.Link href="#projects" >Projects</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>setSection("portfolio")}>
+                <Nav.Item className="small" onClick={()=>handleLinks()}>
                   <Nav.Link href="#work" >Work Experince</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>setSection("portfolio")}>
+                <Nav.Item className="small" onClick={()=>handleLinks()}>
                   <Nav.Link href="#contact" >Contact</Nav.Link>
                 </Nav.Item>
             </Nav>

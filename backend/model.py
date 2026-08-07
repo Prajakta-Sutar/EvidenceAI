@@ -1,6 +1,7 @@
 import os 
 import json
 import time 
+from pathlib import Path
 from fastapi import FastAPI  
 from dotenv import load_dotenv
 from database import retriever
@@ -77,7 +78,7 @@ history_queue = deque(maxlen=3)
 
 def assistant(question, queries):
     print("I am here in assistat\n")
-    context  = retriever(queries)  
+    context, retrieved_paths  = retriever(queries)  
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                         for h in history_queue)
     inputs = {"question": question, "context":context , "history" : history}
@@ -104,6 +105,23 @@ def assistant(question, queries):
         "assistant_response" : summary
     })
     evidence_json = json.loads(evidence.strip())
+    evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md"]]
+    for item in evidence_json:
+        evidence_path = Path(item["file"]).as_posix()
+        for full_path in retrieved_paths:
+            full_path_normalized = Path(full_path).as_posix()
+
+            if full_path_normalized.endswith(evidence_path):
+                item["file"] = full_path
+                break
+        file_path = Path(item["file"])
+        if file_path.exists():
+            with open(file_path, "r", encoding="utf-8") as f:
+                item["code"] = f.read()                
+        else:
+            item["code"] = None
+
+
     yield{
         "type" : "evidence", 
         "content" : evidence_json

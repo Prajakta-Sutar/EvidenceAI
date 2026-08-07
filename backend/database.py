@@ -97,6 +97,7 @@ def run_single_query(query):
 def retriever(queries):
     retrieved_docs = []
     seen = set()
+    seen_path = set()
     with ThreadPoolExecutor(max_workers=len(queries)) as executor:
         results = list(executor.map(run_single_query, queries))
         for chunks_per_query in results:
@@ -106,6 +107,8 @@ def retriever(queries):
             distances = chunks_per_query["distances"][0]
             for chunk_id, doc, metadata, distance in zip(ids, documents, metadatas, distances):
                 if chunk_id not in seen:
+                    if metadata["file"] not in seen_path:
+                        seen_path.add(metadata["file"])
                     seen.add(chunk_id)
                     retrieved_docs.append({
                         "id": chunk_id,
@@ -123,7 +126,7 @@ def retriever(queries):
         content : {document["content"]}
         ----------------------------------------
         """
-    return context 
+    return context , seen_path
 
 
 

@@ -53,6 +53,7 @@ html{
     margin: 0% !important;
     background-color: transparent !important;
     overflow-y: auto !important;
+    padding-bottom: 10vw !important;
 }
 
 .skill_details, .project_details{

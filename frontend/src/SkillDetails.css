@@ -1,0 +1,19 @@
+.evidence_item{
+    color: white;
+}
+
+.evidence_heading{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size: large;
+}
+
+.evidence_code{
+    width: 80% !important;
+    font-size: small;
+    max-height: 40vw;
+    overflow-y: auto;
+    padding: 1vw;
+    color: black;
+    background-color: rgb(244, 236, 226);
+}
