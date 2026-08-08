@@ -1,0 +1,187 @@
+.project_name{
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.askmentor_intro{
+    color: white;
+    width: 70% !important;
+    font-size: small;
+}
+
+.askmentor_details{
+    width: 100%;
+    margin-top: 2vw;
+    color: white;
+    
+}
+
+.project_headings{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    font-weight: bold;
+    color: white;
+    gap: 1vh;
+    margin-bottom: 1vh;
+}
+
+.error_icon{
+    color: rgb(154, 120, 233);
+}
+
+.project_table{
+    font-size: small;
+    color: white;
+    margin-top: 3vh;
+}
+
+
+.second_col{
+    flex: 0 0 150px !important;
+    max-width: 100px !important;
+}
+
+.category{
+    background-color:rgb(31, 4, 94);
+    color: rgb(214, 202, 243);
+    padding: 0.5vh 1vh;
+    width: fit-content;
+    border-radius: 0.5vh;
+}
+
+.table_icon{
+    font-size: medium;
+}
+
+.code_link{
+    color: rgb(154, 120, 233);
+}
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+}
+
+.project_tech{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 2vh;
+}
+
+.skill_image{
+    height: 2vw !important;
+    object-fit: contain;
+    flex-shrink: 0;
+    background-color: transparent !important;
+}
+
+
+.stack_item{
+    width: fit-content;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(28, 28, 39) !important;
+    color: white !important;
+    margin: 1vh;
+    padding-top: 1vh;
+}
+
+
+
+.project_tech_features{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 2vh;
+
+}
+
+.feature{
+    width: 46% !important;
+    background-color:rgb(28, 28, 39) !important;
+    margin: 1vh;
+    padding: 1vh;
+}
+
+.feature_description{
+    margin: 0;
+    font-size: small;
+}
+
+.feature_tech_list{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 1vh;
+}
+
+.feature_tech{
+    background-color:rgb(43, 34, 65);
+    color: rgb(154, 120, 233);
+    font-size: small;
+    padding:0.25vh 1vh;
+    margin-right: 1vh;
+    margin-bottom: 1vh;
+    border-radius: 0.5vh;
+}
+
+.implementation_category{
+    margin-bottom: 2vh;
+}
+
+.category_name{
+    font-size: medium;
+    font-weight: bold;
+    color: rgb(249, 193, 73);
+    margin-left: 1vh;
+}
+
+.key_features{
+    font-size: small;
+}
+
+.project_flow{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-bottom: 4vw;
+    margin-top: 2vw;
+}
+
+.project_flow::before{
+    content: "";
+    position: absolute;
+    left: 0.5vw;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+.flow_content{
+   width: 100%;
+    margin-left: 2vh; 
+    margin-bottom: 3vh;
+}
+
+.flow_heading{
+    font-weight: bold;
+    margin:0;
+}

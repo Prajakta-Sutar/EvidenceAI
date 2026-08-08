@@ -15,7 +15,7 @@ import Projects from "./Projects";
 import Work from "./Work";
 import Contact from "./Contact";
 import Introduction from './Introduction';
-import SkillDetails from './SkillDetails';
+import Evidence from './Evidence';
 import ProjectDetails from './ProjectDetails';
 import { useEffect, useState } from "react";
 
@@ -39,16 +39,9 @@ function App(){
     <div fluid="xl" className="landing_page">
         <div className='portfolio'>
            <Nav className="nav_bar" >
-                {(section === "skill") && (
+                {(section === "evidence") && (
                      <div className='go_back' 
-                          onClick={()=>{
-                            handleLinks();
-                            setTimeout(() => {
-                              document.getElementById("skills")?.scrollIntoView({
-                                behavior: "smooth"
-                              });
-                            }, 100);
-                          }}>
+                          onClick={()=>{handleLinks()}}>
                           <span class="material-symbols-outlined">arrow_back</span>
                           <p style={{margin:'0'}}>Back to Portfolio</p>
                      </div>
@@ -83,9 +76,9 @@ function App(){
                   <Nav.Link href="#contact" >Contact</Nav.Link>
                 </Nav.Item>
             </Nav>
-            {section === "skill" &&
-            (<SkillDetails className="skill_details" setSection={setSection} evidence={evidence} />)}
-            {section === "project" && (<ProjectDetails className="project_details" setSection={setSection}/>)}
+            {section === "evidence" &&
+            (<Evidence className="skill_details" setSection={setSection} evidence={evidence} />)}
+            {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} />)}
             {section === "portfolio" && (
             < Container className="Portfolio_section">
                 <span id="about"></span>
@@ -110,7 +103,7 @@ function App(){
                         <h6 className="headings">Featured Projects</h6>
                     </Stack>
                     <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
-                    <Projects className="project_panel" setSection={setSection}/>
+                    <Projects className="project_panel" setSection={setSection} setProject={setProject}/>
                 </div>
 
                 <hr className="line"/>

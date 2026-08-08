@@ -3,7 +3,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
 
-function Projects({className, setSection}){
+function Projects({className, setSection, setProject}){
     const projects = [
         {
             "name": "EvidenceAI",
@@ -35,7 +35,7 @@ function Projects({className, setSection}){
 
         },
         {
-            "name": "Data Predictify", 
+            "name": "DataPredictify", 
             "color": "rgb(244, 200, 44)",
             "Description": "Machine learning web application that predicts disease outcomes using data preprocessing, model evaluation, and interactive visualizations.",
             "Skills" : [
@@ -51,7 +51,7 @@ function Projects({className, setSection}){
     return (
         <div className={className}>
             {projects.map((project) => ( 
-                <div className="project_card" onClick={()=>setSection("project")}>
+                <div className="project_card" onClick={()=>{setSection("project"); setProject(project.name)}}>
                     <Row>
                         <Col xs="auto">
                             <div style={{backgroundColor:project.color, borderRadius:"0.5vh"}}>

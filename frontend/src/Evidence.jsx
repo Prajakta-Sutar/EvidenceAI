@@ -1,9 +1,12 @@
-import './SkillDetails.css';
+import './Evidence.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-function SkillDetails({className, setSection, evidence}){
+
+function Evidence({className, setSection, evidence}){
     const getProject=(path)=>{
         if (path.includes("askmentor")) {
             return "AskMentor";
@@ -54,9 +57,12 @@ function SkillDetails({className, setSection, evidence}){
                             <Col>{item.description}</Col>
                         </Row>
                         <div className='evidence_code'>
-                            <pre>
+                            <SyntaxHighlighter 
+                                language="javascript"
+                                style={oneDark}
+                                showLineNumbers>
                                 {item.code}
-                            </pre>
+                            </SyntaxHighlighter>
                         </div>
                         <hr className="line"/>
                     </div>
@@ -66,4 +72,4 @@ function SkillDetails({className, setSection, evidence}){
     );
 }
 
-export default SkillDetails;
+export default Evidence;

@@ -21,13 +21,14 @@ function Skills({className, setSection, setSkill}){
         "Linux": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg",
         "ChromaDB": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/datatables/datatables-original.svg",
         "Pandas": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg",
+        "numpy" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg",
         "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
         "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
     };
 
 
     const handleSelection =(selected_skill)=>{
-            setSection("skill");
+            setSection("evidence");
             setSkill(selected_skill);
     }
 

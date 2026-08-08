@@ -1,0 +1,186 @@
+{
+    "name" : "DataPredictify", 
+    "color": "rgb(244, 200, 44)",
+    "category" : "ML Development", 
+    "code": "https://github.com/ByteBelle-21/dataGenisys",
+    "type": "Personal Project", 
+    "description" : "A Django-based data science web application that analyzes an Alzheimer's Disease dataset, performs preprocessing and encoding, generates exploratory graphs for dataset columns, and trains multiple machine learning classifiers to predict the target diagnosis from user-provided data.",
+    "skills":{
+        "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        "HTML": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg",
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "Django": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg",
+        "Pandas": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg",
+        "numpy" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg",
+        "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
+        "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
+        },
+    "technical_implementation": {
+            "Frontend": {
+                "Django Templates": {
+                    "description":
+                        "Built the application interface using Django templates with HTML, CSS, JavaScript, and jQuery for dynamic content rendering.",
+                    "technologies": [
+                        "Django Templates",
+                        "HTML",
+                        "CSS",
+                        "JavaScript"
+                    ]
+                },
+
+                "AJAX Integration": {
+                    "description":
+                        "Implemented asynchronous requests for graph generation and prediction results without requiring full page reloads.",
+                    "technologies": [
+                        "jQuery",
+                        "AJAX",
+                        "JSON"
+                    ]
+                },
+
+                "Data Visualization": {
+                    "description":
+                        "Displayed dynamically generated graphs and model results within the web interface.",
+                    "technologies": [
+                        "JavaScript",
+                        "jQuery",
+                        "Django"
+                    ]
+                }
+            },
+
+            "Backend": {
+                "Request Handling": {
+                    "description":
+                        "Implemented Django views to load datasets, process data, generate visualizations, and handle prediction requests.",
+                    "technologies": [
+                        "Django",
+                        "Python"
+                    ]
+                },
+
+                "Data Preprocessing": {
+                    "description":
+                        "Handled missing values, removed high-missingness columns, and transformed categorical and datetime features into machine-learning-ready data.",
+                    "technologies": [
+                        "Pandas",
+                        "NumPy",
+                        "Scikit-learn"
+                    ]
+                },
+
+                "Correlation Analysis": {
+                    "description":
+                        "Computed feature correlations to identify relationships between dataset columns and determine suitable visualizations.",
+                    "technologies": [
+                        "Pandas",
+                        "NumPy"
+                    ]
+                },
+
+                "Graph Generation": {
+                    "description":
+                        "Generated statistical visualizations from selected dataset columns and returned them to the frontend as encoded images.",
+                    "technologies": [
+                        "Matplotlib",
+                        "Seaborn",
+                        "Python"
+                    ]
+                }
+            },
+
+            "Machine Learning": {
+                "Model Training": {
+                    "description":
+                        "Trained multiple classification models on the processed dataset and optimized their hyperparameters using GridSearchCV.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "GridSearchCV"
+                    ]
+                },
+
+                "Model Evaluation": {
+                    "description":
+                        "Evaluated Logistic Regression, Support Vector Machine, Decision Tree, and K-Nearest Neighbors classifiers using accuracy metrics, optimized parameters, and model performance.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Logistic Regression",
+                        "Support Vector Machine",
+                        "Decision Tree",
+                        "K-Nearest Neighbors",
+                        "GridSearchCV"
+                    ]
+                },
+
+                "Diagnosis Prediction": {
+                    "description":
+                        "Processed user-provided feature values and used trained classifiers to predict the target diagnosis.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Pandas"
+                    ]
+                }
+            },
+            "Data Storage": {
+                "Application Database": {
+                    "description":
+                        "Configured SQLite as the Django application database for local application data.",
+                    "technologies": [
+                        "SQLite",
+                        "Django"
+                    ]
+                }
+            }
+        },
+    "key_features": {
+        "Dataset Insights":
+            "View dataset structure, column information, data types, and missing-value summaries after preprocessing.",
+
+        "Feature Encoding":
+            "View numerical representations of categorical and datetime values used for model training.",
+
+        "Correlation-Based Visualization":
+            "View relationships between correlated dataset columns through graphical visualizations.",
+
+        "Multi-Model Predictions":
+            "Compare predictions and performance results from four different machine learning classifiers.",
+
+        "Final Diagnosis":
+            "View the final predicted diagnosis based on the trained classification models.",
+
+        "Interactive Results":
+            "Explore preprocessing details, visualizations, model results, and predictions through the Django interface."
+        },
+    "data_flow": {
+            "Dataset Loading":
+                "Django loads the local Alzheimer’s Disease CSV dataset and verifies the expected target column.",
+
+            "Data Preprocessing":
+                "Missing values are handled, high-missingness columns are removed, and categorical and datetime features are encoded.",
+
+            "Dataset Analysis":
+                "The processed dataframe is analyzed to identify correlations between dataset columns.",
+
+            "Dataset Presentation":
+                "Dataset summaries, including column names, data types, and missing-value counts, are displayed in the Django interface.",
+
+            "Graph Generation":
+                "The browser sends the selected column to Django, which generates the graph using Matplotlib and Seaborn.",
+
+            "Model Training":
+                "Multiple machine learning classifiers are trained and optimized using GridSearchCV.",
+
+            "Model Evaluation":
+                "The trained models are evaluated using accuracy metrics, and their best parameters and results are displayed.",
+
+            "Prediction Input":
+                "The user enters feature values through the prediction form, which are aligned with the processed dataset columns.",
+
+            "Diagnosis Prediction":
+                "The trained models use the user-provided features to predict the target diagnosis.",
+
+            "Web Interface":
+                "The Django interface displays dataset insights, generated graphs, model results, and diagnosis predictions."
+        }
+
+    }

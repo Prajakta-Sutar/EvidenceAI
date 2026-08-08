@@ -1,0 +1,133 @@
+{
+        "skills":{
+        "JavaScript": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+        "React": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
+        "Node.js": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
+        "SQL": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azuresqldatabase/azuresqldatabase-original.svg" ,
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "Docker": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg",
+        },
+        "technical_implementation": {
+            "Frontend": {
+                "Component-Based UI": {
+                    description:
+                        "Built the application interface using reusable React components and dynamic rendering.",
+                    technologies: ["React"]
+                },
+                "Client-Side Routing": {
+                    description:
+                        "Implemented navigation between application views and protected authenticated pages.",
+                    technologies: ["React Router", "React"]
+                },
+                "State Management": {
+                    description:
+                        "Managed component state and user interactions using React Hooks.",
+                    technologies: ["React", "React Hooks"]
+                },
+                "API Integration": {
+                    description:
+                        "Connected the frontend to backend services for retrieving and updating application data.",
+                    technologies: ["Axios", "REST API"]
+                }
+            },
+            "Backend": {
+                "Authentication & Authorization": {
+                    description:
+                        "Implemented session-based authentication with protected routes and access control.",
+                    technologies: ["Node.js", "Express", "React"]
+                },
+
+                "REST API": {
+                    description:
+                        "Built API endpoints for users, discussions, replies, messaging, connections, and file operations.",
+                    technologies: ["Node.js", "Express"]
+                },
+
+                "File Handling": {
+                    description:
+                        "Implemented backend functionality for uploading and sharing files.",
+                    technologies: ["Node.js", "Express"]
+                }
+            },
+
+            "Database": {
+                "Relational Data Model": {
+                    description:
+                        "Designed relational tables for users, discussions, replies, messages, connections, and files uploads.",
+                    technologies: ["MySQL", "SQL"]
+                },
+                "Nested Discussions": {
+                    description:
+                        "Used recursive CTEs to retrieve and structure hierarchical discussion replies.",
+                    technologies: ["MySQL", "SQL"]
+                }
+            },
+            "Infrastructure": {
+                "Containerization": {
+                    description:
+                        "Containerized the application services and database for a consistent development environment.",
+                    technologies: ["Docker", "Docker Compose"]
+                }
+            }
+        },
+        "key_features":{
+            "Discussion Channels":
+                "Explore and participate in conversations organized around different topics.",
+
+            "Threaded Discussions":
+                "Follow conversations through organized posts and nested replies.",
+
+            "Direct Messaging":
+                "Send private messages and have one-on-one conversations with other users.",
+
+            "User Profiles":
+                "View and manage user profiles, information, and activity.",
+
+            "File Sharing":
+                "Upload and share files within discussions and conversations.",
+
+            "Search":
+                "Quickly find users, discussions, and conversations across the platform.",
+
+            "Post Interactions":
+                "Like or dislike posts and engage with other users' discussions.",
+
+            "User Connections":
+                "Connect with other users and communicate within the platform.",
+
+            "Admin Management":
+                "Manage users and moderate discussions and platform content."
+        }, 
+        "data_flow": {
+            "Authentication":
+                "The user logs in or signs up through the React frontend. Axios sends the credentials to the Express backend, which validates the user or creates a new account in MySQL.",
+
+            "Session & Route Protection":
+                "After successful authentication, the frontend stores the authenticated user information in sessionStorage. App.js uses this information to protect application routes and allow access to authenticated pages.",
+
+            "Application Data Loading":
+                "Once authenticated, Channels, Profile, and Messages request the required data from the Express backend using Axios. The backend retrieves the data from MySQL and returns it to the React frontend.",
+
+            "Discussion Flow":
+                "The Channels page retrieves available channels and posts. When a channel is selected, its posts and nested replies are fetched from MySQL and rendered as threaded discussions in the React interface.",
+
+            "Post & Reply Creation":
+                "When a user creates a post or reply, the request is sent to the Express backend, which stores the content in MySQL. The frontend then refreshes the discussion to display the new content.",
+
+            "File Sharing":
+                "When a post, reply, or message contains an attachment, the frontend sends the file to the backend through the upload endpoint. The backend stores the file information in fileTable and associates it with the relevant content.",
+
+            "Messaging":
+                "The Messages page retrieves the selected user's conversation from the backend. Messages and their associated attachments are retrieved from MySQL and displayed in the conversation interface. Sending a message creates a new database record and optionally uploads an attachment.",
+
+            "Search":
+                "When a user searches for content, the selected search type determines which backend endpoint is called. The returned results are displayed in the search interface, and selecting a result navigates the user to the relevant page.",
+
+            "Profile Management":
+                "The Profile page retrieves the user's information, media links, and authored posts. Users can update their profile information and manage connected social accounts through backend API requests.",
+
+            "Administration":
+                "Administrators can view users and remove users, channels, or posts. These actions are processed by the backend and reflected in the frontend after the data is refreshed."
+        } 
+
+    }

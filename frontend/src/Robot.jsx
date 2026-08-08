@@ -106,7 +106,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                 Ask me anything about Prajakta's experience, skills, projects and more.
             </div>
             
-            <img src="../public/robot.jpeg" width={"80%"} />
+            <img src="../public/robot.png" width={"30%"} />
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>
