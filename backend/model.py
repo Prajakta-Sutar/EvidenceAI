@@ -147,4 +147,25 @@ async def skill_endpoint(request: Request):
         stream(),
         media_type="application/json"
     )
- 
+
+
+@app.post("/project_skill")
+async def skill_endpoint(request: Request):
+    print("I am here in skill endpoint\n")
+    request_data = await request.json()
+    skill = request_data["skill"]
+    project = request_data["project"]
+    queries = [
+        f"{skill} implementation in project {project}",
+        f"{skill} configuration in project {project}",
+        f"{skill} usage in in project {project}"
+    ]
+
+    def stream():
+        for response in assistant( f"Explain how prajakta utilize {skill} in {project} project", queries):
+            yield json.dumps(response) + "\n"
+
+    return StreamingResponse(
+        stream(),
+        media_type="application/json"
+    )

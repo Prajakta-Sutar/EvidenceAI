@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useRef } from "react";
 
-function Robot({className, selectedSkill, setEvidence, conversation, setConversation}){
+function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, project}){
 
     const inputRef = useRef();
     const chatRef = useRef();
@@ -17,11 +17,31 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             return;
         }
         async function callAssistant() {
+            let user_question = "";
+            let endpoint = "";
+            let message_body = {};
+            
+            if (section === "project_evidence") {
+                user_question = `How ${selectedSkill} was used to build ${project}?`;
+                endpoint = "project_skill";
+                message_body = {
+                    skill: selectedSkill,
+                    project: project
+                };
+            }
+
+            if (section === "skill_section") {
+                user_question = `Experience with ${selectedSkill}`;
+                endpoint = "skill";
+                message_body = {
+                    skill: selectedSkill
+                };
+            }
 
             setConversation(prev=>[...prev,  
                 {
                     role: "user",
-                    content: `Prajakta's ${selectedSkill} experience`
+                    content: user_question
                 }, 
                 {
                     role: "assistant",
@@ -31,15 +51,13 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             ]);
             const response = await fetch(
                 
-                "https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/skill",
+                `https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/${endpoint}`,
                 {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    skill: selectedSkill
-                }),
+                body: JSON.stringify(message_body),
                 }
             );
             const reader = response.body.getReader();
@@ -74,12 +92,10 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                         setEvidence(output.content);
                     }
                 })
-
             }
-            
         }
         callAssistant();
-    },[selectedSkill]);
+    },[selectedSkill,  project]);
 
 
     const handleInput = (e) =>{
@@ -105,8 +121,9 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             <div className="robot_intro">
                 Ask me anything about Prajakta's experience, skills, projects and more.
             </div>
-            
-            <img src="../public/robot.png" width={"30%"} />
+            <div className="robot_figure_section">
+                 <img src="./public/robot.png" className="robot_figure" />
+            </div>
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>

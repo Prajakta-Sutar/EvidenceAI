@@ -5,7 +5,7 @@ import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { useState, useEffect } from 'react';
 
-function ProjectDetails({className, setSection, project}){
+function ProjectDetails({className, setSection, project, setSkill}){
 
     const [details, setDetails] = useState(null);
     useEffect(() => {
@@ -21,6 +21,11 @@ function ProjectDetails({className, setSection, project}){
                 <p>Loading project...</p>
             </div>
         );
+    }
+
+    const handleSelection =(selected_skill)=>{
+        setSection("project_evidence");
+        setSkill(selected_skill);
     }
 
     return(
@@ -69,9 +74,10 @@ function ProjectDetails({className, setSection, project}){
                         <span className="material-symbols-outlined error_icon">bookmark_stacks</span>
                         <p style={{margin:"0"}}>Tech Stack</p>
                     </div>
+                     <p className='suggestion'> Select a skill to see how it contributed to building {project}.</p>
                     <div className='project_tech'>
                         {Object.entries(details.skills).map(([name, icon]) => (
-                            <Card className='stack_item' >
+                            <Card className='stack_item'  onClick={()=>{handleSelection(name)}}>
                                 <Card.Img variant="top" src={icon} className="skill_image"/>
                                 <Card.Body>
                                     <Card.Text>{name}</Card.Text>

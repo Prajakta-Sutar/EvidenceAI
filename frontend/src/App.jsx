@@ -29,21 +29,49 @@ function App(){
   const [conversation, setConversation] = useState([])
 
   const handleLinks = () =>{
-      setSkill("");
-      setProject("");
-      setEvidence([]);
-      setSection("portfolio");
+      if (section === "skill_section"){
+          setSkill("");
+          setProject("");
+          setEvidence([]);
+          setSection("portfolio");
+          setTimeout(() => {
+            document.getElementById("skills")?.scrollIntoView({
+              behavior: "smooth"
+            });
+          }, 100);
+      }
+      else if (section === "project_evidence"){
+        setSkill("");
+        setEvidence([]);
+        setSection("project")
+      }
+      else{
+        setSkill("");
+        setProject("");
+        setEvidence([]);
+        setSection("portfolio");
+      }
+      
+
+    
   }
 
   return(
     <div fluid="xl" className="landing_page">
         <div className='portfolio'>
            <Nav className="nav_bar" >
-                {(section === "evidence") && (
+                {(section === "evidence" || section === "skill_section") && (
                      <div className='go_back' 
                           onClick={()=>{handleLinks()}}>
                           <span class="material-symbols-outlined">arrow_back</span>
                           <p style={{margin:'0'}}>Back to Portfolio</p>
+                     </div>
+                )}
+                {(section === "project_evidence") && (
+                     <div className='go_back' 
+                          onClick={()=>{handleLinks()}}>
+                          <span class="material-symbols-outlined">arrow_back</span>
+                          <p style={{margin:'0'}}>Back to Project</p>
                      </div>
                 )}
                 {(section === "project") && (
@@ -72,13 +100,10 @@ function App(){
                 <Nav.Item className="small" onClick={()=>handleLinks()}>
                   <Nav.Link href="#work" >Work Experince</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>handleLinks()}>
-                  <Nav.Link href="#contact" >Contact</Nav.Link>
-                </Nav.Item>
             </Nav>
-            {section === "evidence" &&
+            {(section === "evidence" || section === "skill_section" || section === "project_evidence")  &&
             (<Evidence className="skill_details" setSection={setSection} evidence={evidence} />)}
-            {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} />)}
+            {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
             {section === "portfolio" && (
             < Container className="Portfolio_section">
                 <span id="about"></span>
@@ -115,17 +140,6 @@ function App(){
                   </Stack>
                   <Work className="work_panel" />
                 </div>
-              
-                <hr className="line"/>
-
-                <div id="contact" className=' tech_panel'>
-                  <Stack direction="horizontal" gap={2} className='panel_heading'>
-                        <span class="material-symbols-outlined phone_icon">phone_in_talk</span>
-                        <h6 className="headings">Get In Touch</h6>
-                  </Stack>
-                  <p className='suggestion' >Let's connect! I'm always open to new opportunities and meaningful conversations.</p>
-                  <Contact className="contact_panel" />
-                </div>
             </Container>
             )}
             <div className='floating_bar'>
@@ -137,20 +151,26 @@ function App(){
                   </div>
                   <div className='floating_item'>
                       <span className="material-symbols-outlined floating_icon">
-                          phone
-                      </span>
-                      +1 (306) 290-7042
-                  </div>
-                  <div className='floating_item'>
-                      <span className="material-symbols-outlined floating_icon">
                           location_on
                       </span>
                       Canada
                   </div>
+                  <div className='floating_item'>
+                      <span className="material-symbols-outlined floating_icon">
+                          business_center
+                      </span>
+                      Open to opportunities
+                  </div>
               </div>
         </div>
         <Container className="robot_section">
-            <Robot className="robot" selectedSkill={skill} setEvidence={setEvidence} conversation={conversation} setConversation={setConversation} />
+            <Robot className="robot" 
+                  selectedSkill={skill} 
+                  setEvidence={setEvidence} 
+                  conversation={conversation} 
+                  setConversation={setConversation} 
+                  section={section}
+                  project={project}/>
         </Container>
     </div>
   )

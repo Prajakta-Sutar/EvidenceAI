@@ -96,6 +96,11 @@
 }
 
 
+.stack_item:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
 
 .project_tech_features{
     width: 100% !important;

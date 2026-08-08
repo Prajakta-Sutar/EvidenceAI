@@ -51,7 +51,7 @@ function Work({className}){
                 "Academic Support"
             ]
         }
-    ]
+    ] 
     return(
         <div className={className}>
             {(experience).map((work)=>(
@@ -93,6 +93,7 @@ function Work({className}){
                             </Row>
                         </div>
                     </div>
+                    <div className="timeline-dot"></div>
                 </div>
             ))}
 

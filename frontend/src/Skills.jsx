@@ -28,7 +28,7 @@ function Skills({className, setSection, setSkill}){
 
 
     const handleSelection =(selected_skill)=>{
-            setSection("evidence");
+            setSection("skill_section");
             setSkill(selected_skill);
     }
 
