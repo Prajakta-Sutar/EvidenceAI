@@ -7,94 +7,109 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useRef } from "react";
 
-function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, project}){
+function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, setSection, project}){
 
     const inputRef = useRef();
     const chatRef = useRef();
+    const [curr_question, setQuestion] = useState("");
 
-    useEffect(()=>{
-        if (!selectedSkill){
-            return;
+    const callAssistant = async (question, endpoint, message_body, fromUser) =>{
+        if (fromUser){
+            setSection("assistant");
+            setEvidence([]);
         }
-        async function callAssistant() {
-            let user_question = "";
-            let endpoint = "";
-            let message_body = {};
-            
-            if (section === "project_evidence") {
-                user_question = `How ${selectedSkill} was used to build ${project}?`;
-                endpoint = "project_skill";
-                message_body = {
-                    skill: selectedSkill,
-                    project: project
-                };
+        setConversation(prev=>[...prev,  
+            {
+                role: "user",
+                content: question
+            }, 
+            {
+                role: "assistant",
+                content: ""
             }
-
-            if (section === "skill_section") {
-                user_question = `Experience with ${selectedSkill}`;
-                endpoint = "skill";
-                message_body = {
-                    skill: selectedSkill
-                };
-            }
-
-            setConversation(prev=>[...prev,  
-                {
-                    role: "user",
-                    content: user_question
-                }, 
-                {
-                    role: "assistant",
-                    content: ""
-                }
+        
+        ]);
+        const response = await fetch(
             
-            ]);
-            const response = await fetch(
-                
-                `https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/${endpoint}`,
-                {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(message_body),
+            `https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/${endpoint}`,
+            {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(message_body),
+            }
+        );
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let stream = ""
+        while (true){
+            const {value, done} = await reader.read();
+            if (done){
+                break;
+            }
+            stream  += decoder.decode(value);
+            const responses = stream.split("\n");
+            stream = responses.pop();
+            responses.forEach((res)=>{
+                if (!res){
+                    return;
                 }
-            );
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder("utf-8");
-            let stream = ""
-            while (true){
-                const {value, done} = await reader.read();
-                if (done){
-                    break;
+                const output = JSON.parse(res);
+                if (output.type === "summary"){
+                    setConversation(prev=>{
+                        const updated=[...prev];
+                        const last = updated[updated.length-1];
+                        updated[updated.length-1]={
+                            ...last,
+                            content: updated[updated.length-1].content + output.content
+                        };
+                        return updated;
+                    });
                 }
-                stream  += decoder.decode(value);
-                const responses = stream.split("\n");
-                stream = responses.pop();
-                responses.forEach((res)=>{
-                    if (!res){
-                        return;
-                    }
-                    const output = JSON.parse(res);
-                    if (output.type === "summary"){
-                        setConversation(prev=>{
-                            const updated=[...prev];
-                            const last = updated[updated.length-1];
-                            updated[updated.length-1]={
-                                ...last,
-                                content: updated[updated.length-1].content + output.content
-                            };
-                            return updated;
-                        });
-                    }
-
-                    if (output.type === "evidence"){
+                setQuestion("");
+                if (output.type === "evidence"){
+                    if (output.content.length > 0) {
                         setEvidence(output.content);
                     }
-                })
+                }
+            })
+        }
+    }
+
+    useEffect(()=>{
+        let user_question = "";
+        let rest_endpoint = "";
+        let message = {};
+
+        if (section === "portfolio" || section === "project" || section === "assistant"){
+            return; 
+        }
+
+        if (section === "project_evidence") {
+            if (!selectedSkill || !project) {
+                return;
+            }
+            user_question = `How ${selectedSkill} was used to build ${project}?`;
+            rest_endpoint = "project_skill";
+            message = {
+                skill: selectedSkill,
+                project: project
+            };
+        }
+
+        if (section === "skill_section") {
+            if (!selectedSkill){
+                return;
+            }
+            user_question = `Experience with ${selectedSkill}`;
+            rest_endpoint = "skill";
+            message = {
+                skill: selectedSkill
             }
         }
-        callAssistant();
+        callAssistant(user_question, rest_endpoint, message, false);
+
     },[selectedSkill,  project]);
 
 
@@ -108,7 +123,6 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
         if (chatRef.current){
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
-
     }, [conversation]);
 
    return(
@@ -136,12 +150,17 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             <Form className="mt-auto text_div">
                 <Form.Control 
                     ref={inputRef}
+                    value={curr_question}
+                    onChange={(e) => setQuestion(e.target.value)}
                     onInput={handleInput}
                     as="textarea" 
                     className="assistant_text"
                     rows={1} 
                 />
-                <span class="material-symbols-outlined send_icon">send</span>
+                <span class="material-symbols-outlined send_icon" 
+                      onClick={()=>callAssistant(curr_question, "assistant", {question: curr_question}, true)}>
+                    send
+                </span>
             </Form>
         </Stack>
    )

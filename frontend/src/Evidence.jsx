@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 
-function Evidence({className, setSection, evidence}){
+function Evidence({className, evidence}){
     const getProject=(path)=>{
         if (path.includes("askmentor")) {
             return "AskMentor";

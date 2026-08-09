@@ -58,7 +58,6 @@ def analyst(project):
 
 
 def classifier(question: str):
-    start = time.perf_counter()
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                                 for h in history_queue)
     user_question = {"question": question, "history" : history}
@@ -66,11 +65,18 @@ def classifier(question: str):
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
     if result["category"] != "Relevant":
-        print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
-        yield result["response"], None
+        yield {
+            "type": "summary",
+            "content": result["response"]
+        }
+        yield {
+            "type": "evidence",
+            "content": []
+        }
+        return
     else:
         queries = result["queries"]
-        print(f"Classifier: {time.perf_counter() - start:.3f} seconds")
+        
         yield from assistant(question, queries) 
 
 
@@ -163,6 +169,21 @@ async def skill_endpoint(request: Request):
 
     def stream():
         for response in assistant( f"Explain how prajakta utilize {skill} in {project} project", queries):
+            yield json.dumps(response) + "\n"
+
+    return StreamingResponse(
+        stream(),
+        media_type="application/json"
+    )
+
+
+@app.post("/assistant") 
+async def skill_endpoint(request: Request):
+    print("I am here in skill endpoint\n")
+    request_data = await request.json()
+    question = request_data["question"]
+    def stream():
+        for response in classifier(question):
             yield json.dumps(response) + "\n"
 
     return StreamingResponse(

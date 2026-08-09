@@ -26,7 +26,13 @@ function App(){
   const [skill, setSkill] = useState("");
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
-  const [conversation, setConversation] = useState([])
+  const [conversation, setConversation] = useState([]);
+  const [lastSection, setLastSection] = useState("portfolio");
+
+  useEffect(()=>{
+      if(section !== "skill_section" && section !== "project_evidence" && section !== "assistant")
+          setLastSection(section);
+  }, [section]);
 
   const handleLinks = () =>{
       if (section === "skill_section"){
@@ -44,6 +50,10 @@ function App(){
         setSkill("");
         setEvidence([]);
         setSection("project")
+      }
+      else if (section === "assistant"){
+          setEvidence([]);
+          setSection(lastSection);
       }
       else{
         setSkill("");
@@ -65,6 +75,13 @@ function App(){
                           onClick={()=>{handleLinks()}}>
                           <span class="material-symbols-outlined">arrow_back</span>
                           <p style={{margin:'0'}}>Back to Portfolio</p>
+                     </div>
+                )}
+                 {(section === "assistant") && (
+                     <div className='go_back' 
+                          onClick={()=>{handleLinks()}}>
+                          <span class="material-symbols-outlined">arrow_back</span>
+                          <p style={{margin:'0'}}>Go Back</p>
                      </div>
                 )}
                 {(section === "project_evidence") && (
@@ -101,8 +118,8 @@ function App(){
                   <Nav.Link href="#work" >Work Experince</Nav.Link>
                 </Nav.Item>
             </Nav>
-            {(section === "evidence" || section === "skill_section" || section === "project_evidence")  &&
-            (<Evidence className="skill_details" setSection={setSection} evidence={evidence} />)}
+            {(section === "skill_section" || section === "project_evidence" || section === "assistant")  &&
+            (<Evidence className="skill_details"  evidence={evidence} />)}
             {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
             {section === "portfolio" && (
             < Container className="Portfolio_section">
@@ -170,6 +187,7 @@ function App(){
                   conversation={conversation} 
                   setConversation={setConversation} 
                   section={section}
+                  setSection={setSection}
                   project={project}/>
         </Container>
     </div>
