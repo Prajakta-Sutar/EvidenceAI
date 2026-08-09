@@ -92,14 +92,29 @@
 
 .robot_figure_section{
     width: 100%;
-    height: 25%;
+    background:
+    radial-gradient(
+        circle at 50% 30%,
+        rgba(38, 14, 176, 0.22) 0%,
+        rgba(80, 50, 255, 0.08) 40%,
+        transparent 70%
+    ),
+    #030817;
+}
+
+
+.robot_moving_section{
+    width:100%;
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
+
+
 .robot_figure{
-    width: 40%;
+    width: 35%;
+    left: 50%;
     animation: float 2s ease-in-out infinite;
 }
 
@@ -109,6 +124,7 @@
     }
 
     50% {
-        transform: translateY(-15px);
+        transform:  translateY(-20px);
     }
 }
+

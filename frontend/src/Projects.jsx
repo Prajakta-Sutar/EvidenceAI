@@ -7,7 +7,7 @@ function Projects({className, setSection, setProject}){
     const projects = [
         {
             "name": "EvidenceAI",
-            "color" : "rgb(88, 33, 217)",
+            "color" : "rgb(217, 33, 33)",
             "Description": "RAG-powered engineering portfolio assistant that retrieves project evidence from code repositories and generates grounded, evidence-backed responses using LLMs.",
             "Skills" : [
                 "Python",

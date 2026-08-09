@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { useState, useEffect } from 'react';
+import { Icon } from '@iconify/react';
 
 function ProjectDetails({className, setSection, project, setSkill}){
 
@@ -84,6 +85,14 @@ function ProjectDetails({className, setSection, project, setSkill}){
                                 </Card.Body>
                             </Card>
                         ))}
+                        {(project === "EvidenceAI") &&
+                            <Card className='stack_item'  onClick={()=>{handleSelection("LangChain")}}>
+                                   <Icon icon="simple-icons:langchain" className="skill_image"/>
+                                <Card.Body>
+                                    <Card.Text>LangChain</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        }
                     </div>
                 </div>
                 <hr className='line'></hr>

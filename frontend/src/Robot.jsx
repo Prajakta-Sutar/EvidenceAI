@@ -85,7 +85,6 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
         if (section === "portfolio" || section === "project" || section === "assistant"){
             return; 
         }
-
         if (section === "project_evidence") {
             if (!selectedSkill || !project) {
                 return;
@@ -127,21 +126,29 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
    return(
         <Stack className={className}>
-            <Stack direction="horizontal" className="robot_nav">
+            <div className="robot_figure_section">
+                <Stack direction="horizontal" className="robot_nav">
                 <span class="material-symbols-outlined star_icon">stars_2</span>
                 <h6>AI Assistant</h6>
                 <p className="ms-auto power_button">Powered by LLM + RAG</p>
-            </Stack>
-            <div className="robot_intro">
-                Ask me anything about Prajakta's experience, skills, projects and more.
+                </Stack>
+                <div className="robot_intro">
+                    Ask me anything about Prajakta's experience, skills, projects and more.
+                </div>
+                <div className="robot_moving_section">
+                    <img src="./public/robot.png" className="robot_figure" />
+                </div>
             </div>
-            <div className="robot_figure_section">
-                 <img src="./public/robot.png" className="robot_figure" />
-            </div>
+
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>
-                        <ReactMarkdown>
+                        <ReactMarkdown
+                            components={{
+                                h1: ({ children }) => <h5>{children}</h5>,
+                                h2: ({ children }) => <h6>{children}</h6>,
+                                h3: ({ children }) => <strong>{children}</strong>,
+                            }}>
                             {message.content}
                         </ReactMarkdown>
                     </div>
