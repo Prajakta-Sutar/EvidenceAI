@@ -10,4 +10,4 @@ langchain_community
 langchain_text_splitters
 tree-sitter 
 tree-sitter-language-pack
-beautifulsoup4
+beautifulsoup4 
