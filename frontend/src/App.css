@@ -2,6 +2,40 @@ html{
     scroll-behavior: smooth !important;
 }
 
+
+
+.device_not_supported{
+    background-image: linear-gradient( 
+        180deg,
+    #0d0229,
+    #06308a,
+    #023d46
+        );
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    color:white;
+}
+
+.not_supported_text{
+     animation: text_float 2s ease-in-out infinite;
+}
+
+
+@keyframes text_float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform:  translateY(-20px);
+    }
+}
+
 .landing_page{
     background-color: rgb(2, 2, 15);
     width: 100vw !important;

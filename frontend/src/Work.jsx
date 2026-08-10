@@ -59,7 +59,7 @@ function Work({className}){
                     <div className="timeline-dot"></div>
                     <div className='work_content'>
                         <Stack direction='horizontal'>
-                            <h5 style={{fontWeight:"bold"}}>{work.position}</h5>
+                            <p style={{fontWeight:"bold", fontSize:"large"}}>{work.position}</p>
                             <span className='ms-auto work_period'>
                                 <span class="material-symbols-outlined">calendar_month</span>
                                 {work.period}
