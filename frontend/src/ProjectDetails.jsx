@@ -26,7 +26,10 @@ function ProjectDetails({className, setSection, project, setSkill}){
 
     const handleSelection =(selected_skill)=>{
         setSection("project_evidence");
-        setSkill(selected_skill);
+            setSkill(prev => ({
+            name: selected_skill,
+            id: prev.id + 1
+        }));
     }
 
     return(

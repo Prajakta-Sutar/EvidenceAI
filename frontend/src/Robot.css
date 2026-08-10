@@ -68,9 +68,13 @@
     overflow-y: auto !important;
     color: white !important;
     padding-top: 4vw;
-    padding-bottom: 4vw;
+    padding-bottom: 8vw;
     display: flex;
     flex-direction: column;
+}
+
+.assistant_panel::-webkit-scrollbar{
+    display: none !important;
 }
 
 .user{
@@ -78,6 +82,7 @@
     right:0 !important;
     align-self: flex-end;
     margin-bottom: 30px !important;
+    margin-top: 30px !important;
     text-align: right;
     max-width: 80% !important;
     background-color: rgb(28, 28, 39);
@@ -87,7 +92,11 @@
 
 .assistant{
     font-size: small;
-    margin-bottom: 30px !important;
+}
+
+.evidence{
+    color:rgb(238, 196, 80);
+    font-size: small;
 }
 
 .robot_figure_section{
@@ -125,6 +134,44 @@
 
     50% {
         transform:  translateY(-20px);
+    }
+}
+
+.dot_section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2vw;
+}
+
+.dot_section span{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: typing 1.4s infinite ease-in-out;
+    margin-right: 10px;
+}
+
+.first_dot{
+    animation-delay: 0s;
+}
+
+.second_dot{
+    animation-delay: 0.2s !important;
+}
+
+.third_dot{
+    animation-delay: 0.4s !important;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-6px);
     }
 }
 

@@ -7,15 +7,17 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useRef } from "react";
 
-function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, setSection, project}){
+function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, setSection, project, lastSection}){
 
     const inputRef = useRef();
     const chatRef = useRef();
     const [curr_question, setQuestion] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
+        setIsLoading(true);
         if (fromUser){
-            setSection("assistant");
+            setSection(lastSection);
             setEvidence([]);
         }
         setConversation(prev=>[...prev,  
@@ -40,6 +42,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             body: JSON.stringify(message_body),
             }
         );
+        setIsLoading(false);
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
         let stream = ""
@@ -67,10 +70,17 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                         return updated;
                     });
                 }
-                setQuestion("");
                 if (output.type === "evidence"){
                     if (output.content.length > 0) {
+                        setSection("assistant");
                         setEvidence(output.content);
+                        setConversation(prev=>[...prev,  
+                            {
+                                role: "evidence",
+                                content: "Available evidence is displayed in the left panel"
+                            }
+                        
+                        ])
                     }
                 }
             })
@@ -86,30 +96,30 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             return; 
         }
         if (section === "project_evidence") {
-            if (!selectedSkill || !project) {
+            if (!selectedSkill.name || !project) {
                 return;
             }
-            user_question = `How ${selectedSkill} was used to build ${project}?`;
+            user_question = `How ${selectedSkill.name} was used to build ${project}?`;
             rest_endpoint = "project_skill";
             message = {
-                skill: selectedSkill,
+                skill: selectedSkill.name,
                 project: project
             };
         }
 
         if (section === "skill_section") {
-            if (!selectedSkill){
+            if (!selectedSkill.name){
                 return;
             }
-            user_question = `Experience with ${selectedSkill}`;
+            user_question = `Experience with ${selectedSkill.name}`;
             rest_endpoint = "skill";
             message = {
-                skill: selectedSkill
+                skill: selectedSkill.name
             }
         }
         callAssistant(user_question, rest_endpoint, message, false);
 
-    },[selectedSkill,  project]);
+    },[selectedSkill.name, selectedSkill.id, project]);
 
 
     const handleInput = (e) =>{
@@ -123,6 +133,21 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
     }, [conversation]);
+
+
+    const handleKeyDown =(e)=>{
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                const query = curr_question.trim();
+                if(!query){
+                    return;
+                }
+                setQuestion("");
+                callAssistant(query, "assistant", {question: query}, true);
+
+            }
+
+    }
 
    return(
         <Stack className={className}>
@@ -143,7 +168,15 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>
-                        <ReactMarkdown
+                        {
+                        (message.role === "assistant" && message.content === "" && isLoading)?
+                                <div className="dot_section">
+                                <span className="first_dot"></span>
+                                <span className="second_dot"></span>
+                                <span className="third_dot"></span>
+                            </div>
+                    
+                        : <ReactMarkdown
                             components={{
                                 h1: ({ children }) => <h5>{children}</h5>,
                                 h2: ({ children }) => <h6>{children}</h6>,
@@ -151,6 +184,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                             }}>
                             {message.content}
                         </ReactMarkdown>
+                        }
                     </div>
                 ))}
             </div>
@@ -160,12 +194,18 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     value={curr_question}
                     onChange={(e) => setQuestion(e.target.value)}
                     onInput={handleInput}
+                    onKeyDown={handleKeyDown}
                     as="textarea" 
                     className="assistant_text"
                     rows={1} 
                 />
                 <span class="material-symbols-outlined send_icon" 
-                      onClick={()=>callAssistant(curr_question, "assistant", {question: curr_question}, true)}>
+                      onClick={()=>{
+                        const query = curr_question;
+                        setQuestion("");
+                        callAssistant(query, "assistant", {question: query}, true)
+                    
+                    }}>
                     send
                 </span>
             </Form>

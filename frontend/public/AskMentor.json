@@ -17,42 +17,56 @@
         "Frontend": {
             "Component-Based UI": {
                 "description":
-                    "Built the application interface using reusable React components and dynamic rendering.",
-                "technologies": ["React"]
-            },
-            "Client-Side Routing": {
-                "description":
-                    "Implemented navigation between application views and protected authenticated pages.",
-                "technologies": ["React Router", "React"]
-            },
-            "State Management": {
-                "description":
-                    "Managed component state and user interactions using React Hooks.",
-                "technologies": ["React", "React Hooks"]
-            },
-            "API Integration": {
-                "description":
-                    "Connected the frontend to backend services for retrieving and updating application data.",
-                "technologies": ["Axios", "REST API"]
-            }
-        },
-        "Backend": {
-            "Authentication & Authorization": {
-                "description":
-                    "Implemented session-based authentication with protected routes and access control.",
-                "technologies": ["Node.js", "Express", "React"]
+                "Built the application as a React application using reusable components for authentication, channels, discussions, messaging, profiles, and navigation.",
+                "technologies": ["React", "JavaScript"]
             },
 
-            "REST API": {
+            "Client-Side Routing": {
                 "description":
-                    "Built API endpoints for users, discussions, replies, messaging, connections, and file operations.",
-                "technologies": ["Node.js", "Express"]
+                    "Implemented navigation between application views and protected authenticated pages using React Router and authentication state.",
+                "technologies": ["React Router", "React"]
+            },
+
+            "State Management": {
+                "description":
+                    "Managed form inputs, API data, modal states, file selections, conversations, posts, and profile interactions using React Hooks.",
+                "technologies": ["React Hooks", "React"]
+            },
+
+            "UI Components": {
+                "description":
+                    "Built interactive forms, buttons, modals, navigation bars, off-canvas panels, lists, popovers, badges, and other interface elements using Bootstrap-based components.",
+                "technologies": ["React Bootstrap", "Bootstrap CSS"]
+            },
+
+            "API Integration": {
+                "description":
+                    "Connected the frontend to backend services through Axios REST API calls for authentication, channels, posts, messaging, profiles, search, and file operations.",
+                "technologies": ["Axios", "REST API"]
             },
 
             "File Handling": {
                 "description":
-                    "Implemented backend functionality for uploading and sharing files.",
-                "technologies": ["Node.js", "Express"]
+                    "Implemented file attachment uploads using FormData and handled returned binary files using Blob and browser-generated object URLs.",
+                "technologies": ["JavaScript", "FormData", "Blob"]
+            }
+
+        },
+        "Backend": {
+            "Authentication & Authorization": {
+                "description":
+                "Implemented signup and login functionality with authentication state used to protect application routes and user-specific features.",
+                "technologies": ["Node.js", "Express", "sessionStorage"]
+                },
+            "REST API": {
+                "description":
+                    "Built REST API endpoints for authentication, channels, posts, threaded replies, direct messaging, profiles, search, and administrative operations.",
+                "technologies": ["Node.js", "Express", "REST API"]
+            },
+            "File Handling": {
+                "description":
+                    "Implemented multipart file uploads using Multer and stored file metadata and binary content in MySQL for posts and messages.",
+                "technologies": ["Multer", "Node.js", "MySQL"]
             }
         },
 

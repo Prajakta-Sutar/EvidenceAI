@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 function App(){
   
   const [section, setSection] = useState("portfolio");
-  const [skill, setSkill] = useState("");
+  const [skill, setSkill] = useState({name:"", id:0});
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
   const [conversation, setConversation] = useState([]);
@@ -36,7 +36,7 @@ function App(){
 
   const handleLinks = () =>{
       if (section === "skill_section"){
-          setSkill("");
+          setSkill({name:"", id:0});
           setProject("");
           setEvidence([]);
           setSection("portfolio");
@@ -47,7 +47,7 @@ function App(){
           }, 100);
       }
       else if (section === "project_evidence"){
-        setSkill("");
+        setSkill({name:"", id:0});
         setEvidence([]);
         setSection("project")
       }
@@ -56,14 +56,18 @@ function App(){
           setSection(lastSection);
       }
       else{
-        setSkill("");
+        setSkill({name:"", id:0});
         setProject("");
         setEvidence([]);
         setSection("portfolio");
       }
-      
+  }
 
-    
+  const handleNavLinks=()=>{
+    setSkill({name:"", id:0});
+    setProject("");
+    setEvidence([]);
+    setSection("portfolio");
   }
 
   return(
@@ -105,16 +109,48 @@ function App(){
                           <p style={{margin:'0'}}>Back to Portfolio</p>
                      </div>
                 )}
-                <Nav.Item className="small ms-auto" onClick={()=>handleLinks()}>
+                <Nav.Item className="small ms-auto" onClick={()=>
+                  {
+                    handleNavLinks();
+                     setTimeout(() => {
+                        document.getElementById("about")?.scrollIntoView({
+                          behavior: "smooth"
+                        });
+                      }, 100);
+                  }}>
                   <Nav.Link href="#about" >About</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>handleLinks()}>
+                <Nav.Item className="small" onClick={()=>
+                  {
+                    handleNavLinks();
+                     setTimeout(() => {
+                        document.getElementById("skills")?.scrollIntoView({
+                          behavior: "smooth"
+                        });
+                      }, 100);
+                  }}>
                   <Nav.Link href="#skills">Skills</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>handleLinks()}>
+                <Nav.Item className="small" onClick={()=>
+                  {
+                    handleNavLinks();
+                     setTimeout(() => {
+                        document.getElementById("projects")?.scrollIntoView({
+                          behavior: "smooth"
+                        });
+                      }, 100);
+                  }}>
                   <Nav.Link href="#projects" >Projects</Nav.Link>
                 </Nav.Item>
-                <Nav.Item className="small" onClick={()=>handleLinks()}>
+                <Nav.Item className="small" onClick={()=>
+                  {
+                    handleNavLinks();
+                     setTimeout(() => {
+                        document.getElementById("work")?.scrollIntoView({
+                          behavior: "smooth"
+                        });
+                      }, 100);
+                  }}>
                   <Nav.Link href="#work" >Work Experince</Nav.Link>
                 </Nav.Item>
             </Nav>
@@ -188,7 +224,8 @@ function App(){
                   setConversation={setConversation} 
                   section={section}
                   setSection={setSection}
-                  project={project}/>
+                  project={project}
+                  lastSection={lastSection}/>
         </Container>
     </div>
   )

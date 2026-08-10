@@ -23,13 +23,18 @@ function Skills({className, setSection, setSkill}){
         "Pandas": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg",
         "numpy" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg",
         "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
-        "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
+        "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg",
+        "OpenAI API" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
+        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg"
     };
 
 
     const handleSelection =(selected_skill)=>{
             setSection("skill_section");
-            setSkill(selected_skill);
+            setSkill(prev => ({
+                        name: selected_skill,
+                        id: prev.id + 1
+                    }));
     }
 
     return (

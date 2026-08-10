@@ -16,52 +16,73 @@
         "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
         },
     "technical_implementation": {
-            "Frontend": {
-                "Django Templates": {
+           "Frontend": {
+                "Template-Based UI": {
                     "description":
-                        "Built the application interface using Django templates with HTML, CSS, JavaScript, and jQuery for dynamic content rendering.",
-                    "technologies": [
-                        "Django Templates",
-                        "HTML",
-                        "CSS",
-                        "JavaScript"
-                    ]
+                    "Built the application interface using Django templates, HTML, and CSS to display dataset information, preprocessing results, visualizations, and prediction results.",
+                    "technologies": ["Django Templates", "HTML", "CSS"]
+                    },
+
+                "Dynamic Data Visualization": {
+                    "description":
+                        "Implemented interactive graph generation where users select dataset columns and view dynamically generated visualizations without reloading the page.",
+                    "technologies": ["JavaScript", "jQuery", "AJAX", "Matplotlib", "Seaborn"]
                 },
 
-                "AJAX Integration": {
+                "AJAX Interactions": {
                     "description":
-                        "Implemented asynchronous requests for graph generation and prediction results without requiring full page reloads.",
-                    "technologies": [
-                        "jQuery",
-                        "AJAX",
-                        "JSON"
-                    ]
+                        "Used asynchronous requests to send dataset and prediction inputs to Django endpoints and update the interface dynamically with returned results.",
+                    "technologies": ["JavaScript", "jQuery", "AJAX"]
                 },
 
-                "Data Visualization": {
+                "Prediction Interface": {
                     "description":
-                        "Displayed dynamically generated graphs and model results within the web interface.",
-                    "technologies": [
-                        "JavaScript",
-                        "jQuery",
-                        "Django"
-                    ]
+                        "Built an interactive prediction form that accepts feature values and dynamically displays the predicted diagnosis, submitted features, model accuracies, and hyperparameters.",
+                    "technologies": ["HTML", "JavaScript", "jQuery"]
+                },
+
+                "Responsive UI": {
+                    "description":
+                        "Styled the application interface with custom CSS for navigation, tables, forms, graph containers, modals, and other interactive elements.",
+                    "technologies": ["CSS", "HTML"]
                 }
+
             },
 
-            "Backend": {
+           "Backend": {
                 "Request Handling": {
                     "description":
-                        "Implemented Django views to load datasets, process data, generate visualizations, and handle prediction requests.",
+                        "Implemented Django views and URL routing to load datasets, process user requests, and coordinate data analysis, visualization, and prediction workflows.",
                     "technologies": [
                         "Django",
                         "Python"
                     ]
                 },
 
+                "AJAX API": {
+                    "description":
+                        "Implemented Django endpoints that receive asynchronous requests from the frontend and return processed data, generated graphs, predictions, and model results as JSON responses.",
+                    "technologies": [
+                        "Django",
+                        "AJAX",
+                        "JSON"
+                    ]
+                },
+
+                "Data Serialization": {
+                    "description":
+                        "Serialized processed dataframe data and preprocessing information so the cleaned dataset and feature transformations could be reused across asynchronous requests.",
+                    "technologies": [
+                        "Pandas",
+                        "JSON"
+                    ]
+                }
+            },
+
+            "Machine Learning": {
                 "Data Preprocessing": {
                     "description":
-                        "Handled missing values, removed high-missingness columns, and transformed categorical and datetime features into machine-learning-ready data.",
+                        "Processed the Alzheimer’s dataset by handling missing values, removing unsuitable columns, encoding categorical and datetime-like features, and preparing the data for machine-learning models.",
                     "technologies": [
                         "Pandas",
                         "NumPy",
@@ -71,28 +92,35 @@
 
                 "Correlation Analysis": {
                     "description":
-                        "Computed feature correlations to identify relationships between dataset columns and determine suitable visualizations.",
+                        "Calculated correlations between dataset features to identify relationships between variables and support exploration of the dataset.",
                     "technologies": [
                         "Pandas",
                         "NumPy"
                     ]
                 },
 
-                "Graph Generation": {
+                "Data Visualization": {
                     "description":
-                        "Generated statistical visualizations from selected dataset columns and returned them to the frontend as encoded images.",
+                        "Generated statistical visualizations from selected dataset columns to help users explore relationships and patterns within the data.",
                     "technologies": [
                         "Matplotlib",
-                        "Seaborn",
-                        "Python"
+                        "Seaborn"
                     ]
-                }
-            },
+                },
 
-            "Machine Learning": {
                 "Model Training": {
                     "description":
-                        "Trained multiple classification models on the processed dataset and optimized their hyperparameters using GridSearchCV.",
+                        "Built a classification pipeline that scaled features, split the dataset into training and testing sets, and trained multiple machine-learning models.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Pandas",
+                        "NumPy"
+                    ]
+                },
+
+                "Hyperparameter Tuning": {
+                    "description":
+                        "Used GridSearchCV to systematically tune model hyperparameters and identify optimized configurations for each classifier.",
                     "technologies": [
                         "Scikit-learn",
                         "GridSearchCV"
@@ -101,26 +129,28 @@
 
                 "Model Evaluation": {
                     "description":
-                        "Evaluated Logistic Regression, Support Vector Machine, Decision Tree, and K-Nearest Neighbors classifiers using accuracy metrics, optimized parameters, and model performance.",
+                        "Compared Logistic Regression, Support Vector Machine, Decision Tree, and K-Nearest Neighbors models using accuracy and their optimized configurations.",
                     "technologies": [
                         "Scikit-learn",
                         "Logistic Regression",
                         "Support Vector Machine",
                         "Decision Tree",
-                        "K-Nearest Neighbors",
-                        "GridSearchCV"
+                        "K-Nearest Neighbors"
                     ]
                 },
 
                 "Diagnosis Prediction": {
                     "description":
-                        "Processed user-provided feature values and used trained classifiers to predict the target diagnosis.",
+                        "Processed user-provided feature values and used the trained classification pipeline to predict the target diagnosis and return model performance results.",
                     "technologies": [
                         "Scikit-learn",
-                        "Pandas"
+                        "Pandas",
+                        "NumPy"
                     ]
                 }
-            },
+
+            }
+            ,
             "Data Storage": {
                 "Application Database": {
                     "description":

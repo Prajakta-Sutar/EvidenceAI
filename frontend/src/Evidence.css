@@ -40,6 +40,12 @@
     margin-bottom: 2vw;
 }
 
+.evidence_code::-webkit-scrollbar{
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
 .evidence_item_heading{
     color: rgb(181, 154, 245);
 }
