@@ -52,4 +52,13 @@
       - Due to histroy, LLM can understand pronounce like "it", "her" as relation to previous conversation. 
       - Chat with LLM feels like human conversation 🥳🥳.🥳🥳.🥳🥳.🥳🥳.
   - Assistant LLM is successfully choosing when to include evidence , when not. 
+  - Built the frontend UI using React and React Bootstrap.
+  - Implemented a responsive interface that adapts to different screen sizes. Successfully implemented 
+    navigation and dynamic rendering of different pages based on user interactions.
+  - 🏆🏆🏆 Win : 
+      - When a user selects a skill from the main portfolio or project page, the assistant LLM explains how the candidate has used that skill and provides relevant evidence alongside the response.
+      - Implemented support for answering questions submitted directly through the assistant's text input.
+      - When relevant evidence is unavailable, the evidence panel remains closed.
+      - LLM do not provide answers for irrelevant questions or questions asking for personal information. 
+
 
