@@ -37,6 +37,11 @@ Collaborated on a group project to develop a mini operating system on a BeagleBo
 Used QEMU to develop, run, and test operating-system implementations in an emulated environment.
 Worked with VirtualBox as well.
 
+#Git / GitHub
+Used Git and GitHub for version control and source-code management across all three major projects.
+Maintained project repositories on GitHub and used Git to track, commit, and manage changes throughout development.
+Used GitHub Codespaces as the development environment for building and developing EvidenceAI
+
 #Leetcode
 Completed 100+ LeetCode problems, strengthening skills in data structures, algorithms, and problem-solving.
 

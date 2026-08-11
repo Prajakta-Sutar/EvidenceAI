@@ -29,7 +29,7 @@ function Skills({className, setSection, setSkill}){
 
 
     const handleSelection =(selected_skill)=>{
-        if (selected_skill.toLowerCase() === "c") {
+        if (selected_skill.toLowerCase() === "c" || selected_skill.toLowerCase() === "git") {
             setSection("portfolio");
         } else {
             setSection("skill_section");

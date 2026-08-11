@@ -71,6 +71,9 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     });
                 }
                 if (output.type === "evidence"){
+                    if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
+                        return;
+                    }
                     if (output.content.length > 0) {
                         setSection("assistant");
                         setEvidence(output.content);
@@ -96,7 +99,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
             if (!selectedSkill?.name) {
                 return;
             }
-            if (selectedSkill.name.toLowerCase() === "c"){
+            if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
                 user_question = `Experience with ${selectedSkill.name}`;
                 rest_endpoint = "skill";
                 message = {

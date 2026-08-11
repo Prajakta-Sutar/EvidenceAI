@@ -144,9 +144,9 @@ async def skill_endpoint(request: Request):
     print("I am here in skill endpoint\n")
     request_data = await request.json()
     skill = request_data["skill"]
-    if skill.lower() == "c":
+    if skill.lower() == "c" or skill.lower() == "git":
         queries = [
-            "find how Prajakta has experience in C programming as mentioned in resume.md"
+            f"find how Prajakta has experience in {skill} programming as mentioned in resume.md"
         ]
     else:
         queries = [
