@@ -1,5 +1,7 @@
 # EvidenceAI
 
+## Application Screenshots
+
 ![](./images/1.jpeg)
 
 ![](./images/2.jpeg)
