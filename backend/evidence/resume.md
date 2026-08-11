@@ -1,6 +1,7 @@
 #Education
 Bachelor of Science– Computer Science
-From July 2021 to Apr 2026
+Started  July 2021 
+Graduated April 2026
 University of Saskatchewan, Saskatoon, SK, Canada 
 Relevant Coursework - Algorithm Design & Analysis, Object-Oriented Systems, Advanced Operating Systems,
 Computer Architecture, Full Stack Web Development.
@@ -28,6 +29,16 @@ Responsibilities -
 - Evaluated assignments, labs, and exams and provided feedback to support student learning and – ensuring
 grading accuracy
 
+
+#C / Linux / Operating Systems
+Completed three senior-level Operating Systems courses, gaining hands-on experience with C and Linux-based systems programming.
+Implemented core operating-system concepts including process scheduling, memory management, filesystems, device drivers, and system calls.
+Collaborated on a group project to develop a mini operating system on a BeagleBone.
+Used QEMU to develop, run, and test operating-system implementations in an emulated environment.
+Worked with VirtualBox as well.
+
+#Leetcode
+Completed 100+ LeetCode problems, strengthening skills in data structures, algorithms, and problem-solving.
 
 #Interpersonal skills
 - Team Player

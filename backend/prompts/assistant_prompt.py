@@ -58,6 +58,7 @@ assistant_prompt = PromptTemplate.from_template(
             - "The repository shows..."
             - "According to the retrieved context..."
             - "The evidence suggests..."
+        - Never provide heading like "Recruiter-facing answer".
         - Convert technical evidence into a natural explanation of the candidate's experience.
 
         For technology questions:
