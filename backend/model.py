@@ -102,6 +102,7 @@ def assistant(question, queries):
     evidence_json = json.loads(evidence.strip())
     evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]]
     print("Evidence path is : \n")
+    evidence_by_file = {}
     for item in evidence_json:
         path_to_display = ""
         full_path = ""
@@ -119,17 +120,22 @@ def assistant(question, queries):
             path_to_display = "askmentor/" +evidence_path.split("askmentor")[1].lstrip("/")
             full_path = Path("./evidence/repository/ASKMENTOR/") / path_to_display
             item["file"] = path_to_display
-            
-        if full_path.exists():
-            with open(full_path, "r", encoding="utf-8") as f:
-                item["code"] = f.read()                
+
+        if full_path in evidence_by_file:
+            evidence_by_file[full_path]["description"] += ("\n"+item["description"])
         else:
-            item["code"] = None
-
-
+            if full_path.exists():
+                with open(full_path, "r", encoding="utf-8") as f:
+                    code = f.read()  
+            evidence_by_file[full_path] = {
+                "file" : path_to_display, 
+                "description" : item["description"],
+                "code": code
+            }             
+    evidence_list = list(evidence_by_file.values())
     yield{
         "type" : "evidence", 
-        "content" : evidence_json
+        "content" : evidence_list
     }
 
     
@@ -138,11 +144,16 @@ async def skill_endpoint(request: Request):
     print("I am here in skill endpoint\n")
     request_data = await request.json()
     skill = request_data["skill"]
-    queries = [
-        f"{skill} implementation",
-        f"{skill} configuration",
-        f"{skill} usage in projects"
-    ]
+    if skill.lower() == "c":
+        queries = [
+            "find how Prajakta has experience in C programming as mentioned in resume.md"
+        ]
+    else:
+        queries = [
+            f"{skill} implementation",
+            f"{skill} configuration",
+            f"{skill} usage in projects"
+        ]
 
     def stream():
         for response in assistant( f"Explain Ptrajakta's {skill} experience", queries):

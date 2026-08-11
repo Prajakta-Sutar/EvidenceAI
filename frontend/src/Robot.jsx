@@ -92,7 +92,23 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
         let rest_endpoint = "";
         let message = {};
 
-        if (section === "portfolio" || section === "project" || section === "assistant"){
+        if (section === "portfolio"){
+            if (!selectedSkill?.name) {
+                return;
+            }
+            if (selectedSkill.name.toLowerCase() === "c"){
+                user_question = `Experience with ${selectedSkill.name}`;
+                rest_endpoint = "skill";
+                message = {
+                    skill: selectedSkill.name
+                };
+
+                callAssistant(user_question, rest_endpoint, message, false);
+            }
+            return;
+        }
+
+        if (section === "project" || section === "assistant"){
             return; 
         }
         if (section === "project_evidence") {

@@ -29,12 +29,17 @@ function Skills({className, setSection, setSkill}){
 
 
     const handleSelection =(selected_skill)=>{
+        if (selected_skill.toLowerCase() === "c") {
+            setSection("portfolio");
+        } else {
             setSection("skill_section");
-            setSkill(prev => ({
-                        name: selected_skill,
-                        id: prev.id + 1
-                    }));
-    }
+        }
+        
+        setSkill(prev => ({
+                    name: selected_skill,
+                    id: prev.id + 1
+                }));
+}
 
     return (
         <div className={className}>
