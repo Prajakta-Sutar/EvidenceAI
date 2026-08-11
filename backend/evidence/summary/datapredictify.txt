@@ -1,0 +1,653 @@
+{
+  "project_overview": {
+    "project_name": "DataPredictify",
+    "Description": "A Django-based data science web application that presents preprocessing, visualization, categorical encoding, correlation analysis, and machine-learning predictions for an Alzheimer's disease dataset. The application currently loads a bundled CSV dataset, cleans and transforms it, generates graphs on demand, and predicts the target variable Diagnosis from user-provided feature values.",
+    "main_features": [
+      "Displays a landing page describing the DataPredictify project and its Alzheimer’s disease dataset.",
+      "Loads the Alzheimer's disease CSV dataset from the application's static directory.",
+      "Reports initial column names, data types, and null-value counts.",
+      "Handles missing values by replacing or dropping values and columns according to missingness rules.",
+      "Detects and bins numeric and date/time columns.",
+      "Encodes Boolean and categorical object columns using scikit-learn LabelEncoder.",
+      "Encodes date/time components with cyclic sine and cosine transformations.",
+      "Drops constant columns and some apparent identifier columns.",
+      "Calculates per-column correlation relationships.",
+      "Generates column-specific statistical graphs asynchronously through a jQuery AJAX request.",
+      "Trains Logistic Regression, Support Vector Machine, Decision Tree, and K-Nearest Neighbors classifiers.",
+      "Tunes model hyperparameters using GridSearchCV.",
+      "Accepts comma-separated prediction features through the browser.",
+      "Decodes categorical input values and prediction values using generated encoding maps.",
+      "Displays the selected prediction and a table of trained model performance and hyperparameters."
+    ]
+  },
+  "architecture": {
+    "frontend": {
+      "technology": "Django Templates, HTML, CSS, JavaScript, jQuery",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+          "reason": "Defines the rendered homepage, navigation links, dataset overview tables, prediction form, graph controls, and inline JavaScript for AJAX graph and prediction requests."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/static/datagenisys/css/home_page.css",
+          "reason": "Provides the visual layout and styling for the navigation bar, landing page, preprocessing sections, graph modal, prediction model panel, forms, tables, buttons, and animations."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+          "reason": "Loads the Django static tag, references the application stylesheet, loads jQuery from a CDN, and uses Django template tags to display server-generated data."
+        }
+      ]
+    },
+    "backend": {
+      "technology": "Django",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/dataScience/settings.py",
+          "reason": "Configures Django installed applications, middleware, templates, URL root, static files, CSRF trusted origins, and WSGI settings."
+        },
+        {
+          "file": "datagenesys/dataScience/dataScience/urls.py",
+          "reason": "Defines the project-level URL configuration and mounts the datagenisys application URL configuration at the site root."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/urls.py",
+          "reason": "Maps the root page, graph endpoint, and prediction endpoint to Django view functions."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/views.py",
+          "reason": "Implements request handlers that load and process the dataset, render the template, generate graphs in response to POST requests, and execute prediction requests."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/apps.py",
+          "reason": "Declares the datagenisys Django application configuration."
+        }
+      ]
+    },
+    "data_processing": {
+      "technology": "pandas and NumPy",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/views.py",
+          "reason": "Uses pandas to read and serialize the CSV dataset, inspect dtypes and null counts, reconstruct request dataframes, and coordinate preprocessing."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/nan_handler.py",
+          "reason": "Uses pandas null handling and NumPy values while applying imputation, replacement, and column-dropping rules."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/binning.py",
+          "reason": "Uses pandas date conversion, date ranges, categorical cuts, and NumPy linspace to transform continuous values into bins."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/data_encoder.py",
+          "reason": "Uses pandas dtype inspection and date conversion plus NumPy-based cyclic transformations for feature encoding."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/correlations.py",
+          "reason": "Uses the dataframe correlation matrix to identify relatively strongly related columns."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/machine_learning_models.py",
+          "reason": "Uses NumPy arrays to separate target and feature matrices and prepare model inputs."
+        }
+      ]
+    },
+    "machine_learning": {
+      "technology": "scikit-learn",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/nan_handler.py",
+          "reason": "Uses sklearn.impute.SimpleImputer for most-frequent imputation."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/data_encoder.py",
+          "reason": "Uses sklearn.preprocessing.LabelEncoder to convert Boolean and categorical values to integers."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/machine_learning_models.py",
+          "reason": "Defines classification models, StandardScaler preprocessing, train/test splitting, and GridSearchCV hyperparameter tuning."
+        }
+      ]
+    },
+    "visualization": {
+      "technology": "Seaborn and Matplotlib",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/graphs.py",
+          "reason": "Generates count plots, KDE plots, boxen plots, FacetGrid histograms, and scatterplots, then serializes each figure as a base64 PNG data URL."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/views.py",
+          "reason": "Invokes graph_generator from the graph endpoint and returns the generated image URLs as JSON."
+        }
+      ]
+    },
+    "database_storage": {
+      "technology": "SQLite configured by Django, with CSV-based application data",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/dataScience/settings.py",
+          "reason": "Configures the default Django database engine as sqlite3 and sets its database path to BASE_DIR / db.sqlite3."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/views.py",
+          "reason": "Loads the primary analytical dataset directly from a CSV path under datagenisys/static/datagenisys rather than querying Django models."
+        }
+      ]
+    },
+    "external_apis": {
+      "technology": "jQuery CDN and Google Material Symbols/Fonts",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+          "reason": "Loads jQuery 3.6.0 from code.jquery.com and Material Symbols Outlined from fonts.googleapis.com."
+        }
+      ]
+    },
+    "communication_flow": {
+      "technology": "HTTP requests, Django URL routing, JSON responses, and browser AJAX",
+      "evidence": [
+        {
+          "file": "datagenesys/dataScience/datagenisys/urls.py",
+          "reason": "Routes browser requests to get_dataset, get_graphs, and get_prediction."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+          "reason": "Sends POST AJAX requests to the graph and prediction endpoints, serializes form and dataframe values, and updates the page with returned JSON."
+        },
+        {
+          "file": "datagenesys/dataScience/datagenisys/views.py",
+          "reason": "Receives POSTed graph and prediction parameters and returns JsonResponse objects containing generated graph data, predictions, and model summaries."
+        }
+      ]
+    }
+  },
+  "file_level_analysis": [
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/static/datagenisys/css/home_page.css",
+      "purpose": "Styles the DataPredictify homepage and its preprocessing, graph, and prediction interfaces.",
+      "main_classes_functions_components": [
+        {
+          "name": ".main-body",
+          "type": "CSS class",
+          "description": "Creates a vertically arranged, centered page layout."
+        },
+        {
+          "name": "#nav-bar",
+          "type": "CSS selector",
+          "description": "Styles the black horizontal navigation bar."
+        },
+        {
+          "name": ".home-container",
+          "type": "CSS class",
+          "description": "Creates the large centered landing-page panel with shadow."
+        },
+        {
+          "name": ".step-blocks",
+          "type": "CSS class",
+          "description": "Styles the preprocessing, visualization, and predictive-model feature cards."
+        },
+        {
+          "name": ".upload-form",
+          "type": "CSS class",
+          "description": "Defines a hidden fixed-position form overlay, although the corresponding upload form is not present in the supplied template."
+        },
+        {
+          "name": ".graph-container",
+          "type": "CSS class",
+          "description": "Defines the fixed graph display modal and its scrolling behavior."
+        },
+        {
+          "name": ".predictive-model",
+          "type": "CSS class",
+          "description": "Creates the two-column predictive-model panel."
+        },
+        {
+          "name": "@keyframes drop_text",
+          "type": "CSS animation",
+          "description": "Animates title letters into view from above."
+        },
+        {
+          "name": "@keyframes spin",
+          "type": "CSS animation",
+          "description": "Rotates the loading spinner used during graph and model requests."
+        }
+      ],
+      "technologies_used": [
+        "CSS",
+        "Flexbox",
+        "CSS animations",
+        "Responsive viewport-based sizing"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+      "purpose": "Renders the complete user interface for the dataset overview, preprocessing results, graph generation, and machine-learning prediction workflow.",
+      "main_classes_functions_components": [
+        {
+          "name": "Homepage layout",
+          "type": "Django template component",
+          "description": "Displays navigation, project title, project description, dataset citation, and workflow cards."
+        },
+        {
+          "name": "Dataset Information section",
+          "type": "HTML component",
+          "description": "Explains the Alzheimer's disease dataset and displays its BibTeX citation."
+        },
+        {
+          "name": "Pre-Processing Data Snapshot",
+          "type": "Django template component",
+          "description": "Displays initial column metadata and invalid-value counts when dataset processing is available."
+        },
+        {
+          "name": "Post-Cleanup Dataset Overview",
+          "type": "Django template component",
+          "description": "Displays cleaning steps, cleaned column metadata, and graph buttons for each cleaned column."
+        },
+        {
+          "name": "graph-button click handler",
+          "type": "jQuery event handler",
+          "description": "Posts the selected column, serialized dataframe, categorical columns, target, and correlation map to get_graphs, then inserts returned base64 image URLs into the graph modal."
+        },
+        {
+          "name": "Prediction form submit handler",
+          "type": "jQuery event handler",
+          "description": "Prevents normal form submission, posts serialized feature input to get_prediction, displays the prediction, and builds the trained-model results table."
+        },
+        {
+          "name": "Predictive Model section",
+          "type": "Django template component",
+          "description": "Shows the feature input form when valid processed data exists and otherwise displays a placeholder."
+        }
+      ],
+      "technologies_used": [
+        "HTML",
+        "Django template language",
+        "JavaScript",
+        "jQuery",
+        "AJAX",
+        "JSON",
+        "CSRF tokens",
+        "Google Material Symbols"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/apps.py",
+      "purpose": "Defines the Django application configuration for datagenisys.",
+      "main_classes_functions_components": [
+        {
+          "name": "DatagenisysConfig",
+          "type": "Django AppConfig class",
+          "description": "Registers the datagenisys application name and configures the default auto field type."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "Django AppConfig"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/binning.py",
+      "purpose": "Transforms numeric and date/time columns into categorical bins and records cleaning operations.",
+      "main_classes_functions_components": [
+        {
+          "name": "column_bins",
+          "type": "function",
+          "description": "Detects date-like object columns, determines date/time frequency ranges, creates pandas bins, and bins integer or floating-point columns into five intervals."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "datetime",
+        "warnings",
+        "Feature engineering",
+        "Discretization/binning"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/correlations.py",
+      "purpose": "Identifies columns that are relatively strongly correlated with each dataframe column.",
+      "main_classes_functions_components": [
+        {
+          "name": "get_corr",
+          "type": "function",
+          "description": "Computes the dataframe correlation matrix, removes each column's self-correlation, calculates the 75th percentile threshold, and returns columns above that threshold for each source column."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "pandas",
+        "Correlation analysis"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/data_encoder.py",
+      "purpose": "Encodes categorical, Boolean, and date/time data for machine-learning use while tracking mappings and cleaning steps.",
+      "main_classes_functions_components": [
+        {
+          "name": "category_encoder",
+          "type": "function",
+          "description": "Drops constant and apparent identifier columns, label-encodes Boolean and categorical object columns, and creates cyclic date/time features such as hour_sin, month_cos, and day_sin."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "sklearn.preprocessing.LabelEncoder",
+        "Categorical encoding",
+        "Cyclic feature encoding"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/graphs.py",
+      "purpose": "Creates statistical visualizations for a selected column and its correlated columns, using target and categorical-column context.",
+      "main_classes_functions_components": [
+        {
+          "name": "graph_generator",
+          "type": "function",
+          "description": "Selects plot types based on whether the input, correlated, and target columns are categorical, generates plots, and returns base64-encoded PNG data URLs."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "pandas",
+        "Seaborn",
+        "Matplotlib",
+        "BytesIO",
+        "Base64 image serialization",
+        "Conditional visualization generation"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/machine_learning_models.py",
+      "purpose": "Trains and tunes multiple supervised classification models and uses the best model for prediction.",
+      "main_classes_functions_components": [
+        {
+          "name": "predictive_model",
+          "type": "function",
+          "description": "Separates target and predictors, standardizes data, splits training and testing sets, performs GridSearchCV over four classifiers, selects the highest recorded accuracy, and predicts the supplied input row."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "NumPy",
+        "scikit-learn",
+        "StandardScaler",
+        "train_test_split",
+        "GridSearchCV",
+        "LogisticRegression",
+        "SVC",
+        "DecisionTreeClassifier",
+        "KNeighborsClassifier",
+        "Supervised classification"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/nan_handler.py",
+      "purpose": "Handles missing values and removes columns with excessive missingness.",
+      "main_classes_functions_components": [
+        {
+          "name": "NaN_handler",
+          "type": "function",
+          "description": "Processes object, numeric, and Boolean columns; replaces some null object values with none, imputes selected missing values, replaces numeric nulls with means, and drops columns meeting the 30 percent missingness threshold."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "sklearn.impute.SimpleImputer",
+        "Missing-data imputation",
+        "Data cleaning"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/urls.py",
+      "purpose": "Defines URL routes for the datagenisys Django application.",
+      "main_classes_functions_components": [
+        {
+          "name": "urlpatterns",
+          "type": "Django URL configuration",
+          "description": "Maps the empty path to get_dataset, graphs/ to get_graphs, and model/ to get_prediction."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "Django URL routing"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/datagenisys/views.py",
+      "purpose": "Coordinates dataset loading, preprocessing, graph generation, and prediction HTTP requests.",
+      "main_classes_functions_components": [
+        {
+          "name": "home_page",
+          "type": "Django view function",
+          "description": "Renders the homepage template without adding dataset-processing context."
+        },
+        {
+          "name": "get_dataset",
+          "type": "Django view function",
+          "description": "Loads the bundled Alzheimer’s CSV, checks for the Diagnosis target, records initial metadata, runs missing-value handling and categorical encoding, computes correlations, and renders the homepage with processing results."
+        },
+        {
+          "name": "get_graphs",
+          "type": "Django view function",
+          "description": "Accepts a POST request containing a selected column and serialized preprocessing data, invokes graph_generator, and returns graph data URLs as JSON."
+        },
+        {
+          "name": "get_prediction",
+          "type": "Django view function",
+          "description": "Parses comma-separated feature input, maps categorical values to encoded integers, reconstructs the processed dataframe, invokes predictive_model, decodes the prediction, and returns prediction and model metadata as JSON."
+        },
+        {
+          "name": "trained_model_array",
+          "type": "module-level variable",
+          "description": "Initializes an empty list intended to hold trained model summaries; the prediction view also assigns a local variable with the same name."
+        },
+        {
+          "name": "scaler",
+          "type": "module-level variable",
+          "description": "Initializes a module-level scaler reference, but it is not used elsewhere in the supplied code."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "Django views",
+        "pandas",
+        "NumPy",
+        "JsonResponse",
+        "JSON serialization",
+        "CSV file loading",
+        "HTTP POST processing"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/dataScience/settings.py",
+      "purpose": "Configures the Django project runtime.",
+      "main_classes_functions_components": [
+        {
+          "name": "BASE_DIR",
+          "type": "module configuration value",
+          "description": "Defines the project base path using pathlib.Path."
+        },
+        {
+          "name": "INSTALLED_APPS",
+          "type": "Django configuration",
+          "description": "Registers datagenisys and Django's built-in admin, authentication, contenttypes, sessions, messages, and staticfiles applications."
+        },
+        {
+          "name": "MIDDLEWARE",
+          "type": "Django configuration",
+          "description": "Enables security, sessions, common HTTP behavior, CSRF protection, authentication, messages, and clickjacking protection."
+        },
+        {
+          "name": "DATABASES",
+          "type": "Django configuration",
+          "description": "Configures SQLite as the default database."
+        },
+        {
+          "name": "STATIC_URL",
+          "type": "Django configuration",
+          "description": "Sets the URL prefix for static assets to static/."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "Django 5 project configuration",
+        "SQLite",
+        "pathlib",
+        "Django middleware",
+        "Django static files"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/dataScience/urls.py",
+      "purpose": "Defines project-level URL routing.",
+      "main_classes_functions_components": [
+        {
+          "name": "urlpatterns",
+          "type": "Django URL configuration",
+          "description": "Registers the Django admin route and includes the datagenisys application routes at the root URL."
+        }
+      ],
+      "technologies_used": [
+        "Python",
+        "Django URL routing",
+        "Django admin"
+      ]
+    },
+    {
+      "file_path": "datagenesys/dataScience/package.json",
+      "purpose": "Declares a package dependency entry for the project.",
+      "main_classes_functions_components": [],
+      "technologies_used": [
+        "JSON",
+        "npm package manifest format",
+        "Django dependency declaration"
+      ]
+    },
+    {
+      "file_path": "datagenesys/README.md",
+      "purpose": "Documents the project's purpose, technology stack, dataset citation, intended setup process, and example prediction input.",
+      "main_classes_functions_components": [
+        {
+          "name": "Overview",
+          "type": "documentation section",
+          "description": "Describes DataPredictify as a personal data science project for Alzheimer’s disease analysis and prediction."
+        },
+        {
+          "name": "Technology Stack",
+          "type": "documentation section",
+          "description": "Lists Django, Python, Pandas, scikit-learn, Seaborn, and Matplotlib as project technologies."
+        },
+        {
+          "name": "How to run the application",
+          "type": "documentation section",
+          "description": "Describes navigating to the dataScience directory, installing dependencies, running migrations, and starting the Django server."
+        },
+        {
+          "name": "Example prediction input",
+          "type": "documentation example",
+          "description": "Provides the expected comma-separated feature order and an example patient feature string."
+        }
+      ],
+      "technologies_used": [
+        "Markdown",
+        "Django",
+        "Python",
+        "Pandas",
+        "scikit-learn",
+        "Seaborn",
+        "Matplotlib",
+        "Kaggle dataset citation"
+      ]
+    }
+  ],
+  "project_relationship_map": {
+    "component_relationships": [
+      {
+        "source": "datagenesys/dataScience/dataScience/urls.py",
+        "destination": "datagenesys/dataScience/datagenisys/urls.py",
+        "how": "Includes the datagenisys application URL configuration at the root site path."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/urls.py",
+        "destination": "datagenesys/dataScience/datagenisys/views.py:get_dataset",
+        "how": "Routes the root URL to the dataset-processing and homepage-rendering view."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/urls.py",
+        "destination": "datagenesys/dataScience/datagenisys/views.py:get_graphs",
+        "how": "Routes POST requests to graphs/ to the graph-generation view."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/urls.py",
+        "destination": "datagenesys/dataScience/datagenisys/views.py:get_prediction",
+        "how": "Routes POST requests to model/ to the prediction view."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_dataset",
+        "destination": "datagenesys/dataScience/datagenisys/nan_handler.py:NaN_handler",
+        "how": "Passes the loaded dataframe and cleaning metadata to the missing-value processing stage."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_dataset",
+        "destination": "datagenesys/dataScience/datagenisys/data_encoder.py:category_encoder",
+        "how": "Passes the cleaned dataframe to categorical, Boolean, identifier, and datetime encoding."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_dataset",
+        "destination": "datagenesys/dataScience/datagenisys/correlations.py:get_corr",
+        "how": "Computes correlation relationships from the encoded dataframe for use by graph generation."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_dataset",
+        "destination": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "how": "Passes dataset metadata, cleaning steps, serialized data, encoding maps, correlations, and target information into the rendered template."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "destination": "datagenesys/dataScience/datagenisys/views.py:get_graphs",
+        "how": "The graph-button jQuery handler sends the selected column and serialized processing context in a POST AJAX request."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_graphs",
+        "destination": "datagenesys/dataScience/datagenisys/graphs.py:graph_generator",
+        "how": "Reconstructs the dataframe and invokes graph generation for the requested column and its correlated columns."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_graphs",
+        "destination": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "how": "Returns generated graph data URLs as JSON, which the browser inserts into the graph modal."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "destination": "datagenesys/dataScience/datagenisys/views.py:get_prediction",
+        "how": "The prediction form's jQuery handler serializes user-entered feature values and hidden encoded dataframe fields into a POST AJAX request."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_prediction",
+        "destination": "datagenesys/dataScience/datagenisys/machine_learning_models.py:predictive_model",
+        "how": "Passes the reconstructed encoded dataframe, target variable, and encoded input feature array for model training and inference."
+      },
+      {
+        "source": "datagenesys/dataScience/datagenisys/views.py:get_prediction",
+        "destination": "datagenesys/dataScience/datagenisys/templates/datagenisys/home_page.html",
+        "how": "Returns the decoded prediction, provided input values, and trained model summaries as JSON for display in the prediction panel."
+      }
+    ],
+    "data_flow": [
+      "Browser requests the root URL -> project URL configuration includes datagenisys.urls -> get_dataset loads the bundled static Alzheimer's CSV.",
+      "get_dataset records initial dataframe metadata -> NaN_handler applies missing-value rules -> category_encoder encodes categories and date/time fields -> get_corr calculates correlated-column mappings.",
+      "get_dataset serializes the raw-cleaned dataframe and encoded dataframe into JSON and renders home_page.html with metadata, cleaning steps, correlations, encoding mappings, and target variable Diagnosis.",
+      "User clicks See Graphs for a column -> jQuery sends a POST request containing the selected column and serialized dataframe context -> get_graphs reconstructs the dataframe -> graph_generator creates plots as base64 PNG data URLs -> JSON response is inserted into the graph modal.",
+      "User enters comma-separated feature values -> the prediction AJAX handler sends the input plus encoded dataframe and encoding map -> get_prediction maps textual categorical values to encoded integers and constructs a one-row feature array.",
+      "get_prediction calls predictive_model -> the function standardizes features, splits data, tunes four classifiers with GridSearchCV, chooses the model with the highest recorded accuracy, and predicts the input row.",
+      "get_prediction converts the numeric prediction back through the target encoding map -> the browser displays the decoded target result and the trained model table."
+    ]
+  }
+}

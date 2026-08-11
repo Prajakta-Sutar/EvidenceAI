@@ -1,0 +1,5345 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+evidenceai/
+  .git/
+    hooks/
+      applypatch-msg.sample
+      commit-msg.sample
+      fsmonitor-watchman.sample
+      post-update.sample
+      pre-applypatch.sample
+      pre-commit.sample
+      pre-merge-commit.sample
+      pre-push.sample
+      pre-rebase.sample
+      pre-receive.sample
+      prepare-commit-msg.sample
+      push-to-checkout.sample
+      sendemail-validate.sample
+      update.sample
+    info/
+      exclude
+    logs/
+      refs/
+        heads/
+          main
+        remotes/
+          origin/
+            HEAD
+      HEAD
+    objects/
+      pack/
+        pack-f77fe867078b2de5d0030dd534e88be557251641.idx
+        pack-f77fe867078b2de5d0030dd534e88be557251641.pack
+        pack-f77fe867078b2de5d0030dd534e88be557251641.rev
+    refs/
+      heads/
+        main
+      remotes/
+        origin/
+          HEAD
+    config
+    description
+    HEAD
+    index
+    packed-refs
+  backend/
+    prompts/
+      analyst_prompt.py
+      assistant_prompt.py
+      classifier_prompt.py
+    app.py
+    chunking.py
+    database.py
+    ingest.py
+    model.py
+  frontend/
+    public/
+      AskMentor.json
+      DataPredictify.json
+      EvidenceAI.json
+      PrajaktaSutarResume.pdf
+      robot.png
+    src/
+      App.css
+      App.jsx
+      Contact.css
+      Contact.jsx
+      Evidence.css
+      Evidence.jsx
+      Introduction.css
+      Introduction.jsx
+      ProjectDetails.css
+      ProjectDetails.jsx
+      Projects.css
+      Projects.jsx
+      Robot.css
+      Robot.jsx
+      Skills.css
+      Skills.jsx
+      Work.css
+      Work.jsx
+    package.json
+  README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="evidenceai/.git/hooks/applypatch-msg.sample">
+#!/bin/sh
+#
+# An example hook script to check the commit log message taken by
+# applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.  The hook is
+# allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "applypatch-msg".
+
+. git-sh-setup
+commitmsg="$(git rev-parse --git-path hooks/commit-msg)"
+test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
+:
+</file>
+
+<file path="evidenceai/.git/hooks/commit-msg.sample">
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
+	echo >&2 Duplicate Signed-off-by lines.
+	exit 1
+}
+</file>
+
+<file path="evidenceai/.git/hooks/fsmonitor-watchman.sample">
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use IPC::Open2;
+
+# An example hook script to integrate Watchman
+# (https://facebook.github.io/watchman/) with git to speed up detecting
+# new and modified files.
+#
+# The hook is passed a version (currently 2) and last update token
+# formatted as a string and outputs to stdout a new update token and
+# all files that have been modified since the update token. Paths must
+# be relative to the root of the working tree and separated by a single NUL.
+#
+# To enable this hook, rename this file to "query-watchman" and set
+# 'git config core.fsmonitor .git/hooks/query-watchman'
+#
+my ($version, $last_update_token) = @ARGV;
+
+# Uncomment for debugging
+# print STDERR "$0 $version $last_update_token\n";
+
+# Check the hook interface version
+if ($version ne 2) {
+	die "Unsupported query-fsmonitor hook version '$version'.\n" .
+	    "Falling back to scanning...\n";
+}
+
+my $git_work_tree = get_working_dir();
+
+my $retry = 1;
+
+my $json_pkg;
+eval {
+	require JSON::XS;
+	$json_pkg = "JSON::XS";
+	1;
+} or do {
+	require JSON::PP;
+	$json_pkg = "JSON::PP";
+};
+
+launch_watchman();
+
+sub launch_watchman {
+	my $o = watchman_query();
+	if (is_work_tree_watched($o)) {
+		output_result($o->{clock}, @{$o->{files}});
+	}
+}
+
+sub output_result {
+	my ($clockid, @files) = @_;
+
+	# Uncomment for debugging watchman output
+	# open (my $fh, ">", ".git/watchman-output.out");
+	# binmode $fh, ":utf8";
+	# print $fh "$clockid\n@files\n";
+	# close $fh;
+
+	binmode STDOUT, ":utf8";
+	print $clockid;
+	print "\0";
+	local $, = "\0";
+	print @files;
+}
+
+sub watchman_clock {
+	my $response = qx/watchman clock "$git_work_tree"/;
+	die "Failed to get clock id on '$git_work_tree'.\n" .
+		"Falling back to scanning...\n" if $? != 0;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub watchman_query {
+	my $pid = open2(\*CHLD_OUT, \*CHLD_IN, 'watchman -j --no-pretty')
+	or die "open2() failed: $!\n" .
+	"Falling back to scanning...\n";
+
+	# In the query expression below we're asking for names of files that
+	# changed since $last_update_token but not from the .git folder.
+	#
+	# To accomplish this, we're using the "since" generator to use the
+	# recency index to select candidate nodes and "fields" to limit the
+	# output to file names only. Then we're using the "expression" term to
+	# further constrain the results.
+	my $last_update_line = "";
+	if (substr($last_update_token, 0, 1) eq "c") {
+		$last_update_token = "\"$last_update_token\"";
+		$last_update_line = qq[\n"since": $last_update_token,];
+	}
+	my $query = <<"	END";
+		["query", "$git_work_tree", {$last_update_line
+			"fields": ["name"],
+			"expression": ["not", ["dirname", ".git"]]
+		}]
+	END
+
+	# Uncomment for debugging the watchman query
+	# open (my $fh, ">", ".git/watchman-query.json");
+	# print $fh $query;
+	# close $fh;
+
+	print CHLD_IN $query;
+	close CHLD_IN;
+	my $response = do {local $/; <CHLD_OUT>};
+
+	# Uncomment for debugging the watch response
+	# open ($fh, ">", ".git/watchman-response.json");
+	# print $fh $response;
+	# close $fh;
+
+	die "Watchman: command returned no output.\n" .
+	"Falling back to scanning...\n" if $response eq "";
+	die "Watchman: command returned invalid output: $response\n" .
+	"Falling back to scanning...\n" unless $response =~ /^\{/;
+
+	return $json_pkg->new->utf8->decode($response);
+}
+
+sub is_work_tree_watched {
+	my ($output) = @_;
+	my $error = $output->{error};
+	if ($retry > 0 and $error and $error =~ m/unable to resolve root .* directory (.*) is not watched/) {
+		$retry--;
+		my $response = qx/watchman watch "$git_work_tree"/;
+		die "Failed to make watchman watch '$git_work_tree'.\n" .
+		    "Falling back to scanning...\n" if $? != 0;
+		$output = $json_pkg->new->utf8->decode($response);
+		$error = $output->{error};
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		# Uncomment for debugging watchman output
+		# open (my $fh, ">", ".git/watchman-output.out");
+		# close $fh;
+
+		# Watchman will always return all files on the first query so
+		# return the fast "everything is dirty" flag to git and do the
+		# Watchman query just to get it over with now so we won't pay
+		# the cost in git to look up each individual file.
+		my $o = watchman_clock();
+		$error = $output->{error};
+
+		die "Watchman: $error.\n" .
+		"Falling back to scanning...\n" if $error;
+
+		output_result($o->{clock}, ("/"));
+		$last_update_token = $o->{clock};
+
+		eval { launch_watchman() };
+		return 0;
+	}
+
+	die "Watchman: $error.\n" .
+	"Falling back to scanning...\n" if $error;
+
+	return 1;
+}
+
+sub get_working_dir {
+	my $working_dir;
+	if ($^O =~ 'msys' || $^O =~ 'cygwin') {
+		$working_dir = Win32::GetCwd();
+		$working_dir =~ tr/\\/\//;
+	} else {
+		require Cwd;
+		$working_dir = Cwd::cwd();
+	}
+
+	return $working_dir;
+}
+</file>
+
+<file path="evidenceai/.git/hooks/post-update.sample">
+#!/bin/sh
+#
+# An example hook script to prepare a packed repository for use over
+# dumb transports.
+#
+# To enable this hook, rename this file to "post-update".
+
+exec git update-server-info
+</file>
+
+<file path="evidenceai/.git/hooks/pre-applypatch.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed
+# by applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-applypatch".
+
+. git-sh-setup
+precommit="$(git rev-parse --git-path hooks/pre-commit)"
+test -x "$precommit" && exec "$precommit" ${1+"$@"}
+:
+</file>
+
+<file path="evidenceai/.git/hooks/pre-commit.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# If you want to allow non-ASCII filenames set this variable to true.
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Cross platform projects tend to avoid non-ASCII filenames; prevent
+# them from being added to the repository. We exploit the fact that the
+# printable range starts at the space character and ends with tilde.
+if [ "$allownonascii" != "true" ] &&
+	# Note that the use of brackets around a tr range is ok here, (it's
+	# even required, for portability to Solaris 10's /usr/bin/tr), since
+	# the square bracket bytes happen to fall in the designated range.
+	test $(git diff-index --cached --name-only --diff-filter=A -z $against |
+	  LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
+then
+	cat <<\EOF
+Error: Attempt to add a non-ASCII file name.
+
+This can cause problems if you want to work with people on other platforms.
+
+To be portable it is advisable to rename the file.
+
+If you know what you are doing you can disable this check using:
+
+  git config hooks.allownonascii true
+EOF
+	exit 1
+fi
+
+# If there are whitespace errors, print the offending file names and fail.
+exec git diff-index --check --cached $against --
+</file>
+
+<file path="evidenceai/.git/hooks/pre-merge-commit.sample">
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git merge" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message to
+# stderr if it wants to stop the merge commit.
+#
+# To enable this hook, rename this file to "pre-merge-commit".
+
+. git-sh-setup
+test -x "$GIT_DIR/hooks/pre-commit" &&
+        exec "$GIT_DIR/hooks/pre-commit"
+:
+</file>
+
+<file path="evidenceai/.git/hooks/pre-push.sample">
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local oid> <remote ref> <remote oid>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+remote="$1"
+url="$2"
+
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+
+while read local_ref local_oid remote_ref remote_oid
+do
+	if test "$local_oid" = "$zero"
+	then
+		# Handle delete
+		:
+	else
+		if test "$remote_oid" = "$zero"
+		then
+			# New branch, examine all commits
+			range="$local_oid"
+		else
+			# Update to existing branch, examine new commits
+			range="$remote_oid..$local_oid"
+		fi
+
+		# Check for WIP commit
+		commit=$(git rev-list -n 1 --grep '^WIP' "$range")
+		if test -n "$commit"
+		then
+			echo >&2 "Found WIP commit in $local_ref, not pushing"
+			exit 1
+		fi
+	fi
+done
+
+exit 0
+</file>
+
+<file path="evidenceai/.git/hooks/pre-rebase.sample">
+#!/bin/sh
+#
+# Copyright (c) 2006, 2008 Junio C Hamano
+#
+# The "pre-rebase" hook is run just before "git rebase" starts doing
+# its job, and can prevent the command from running by exiting with
+# non-zero status.
+#
+# The hook is called with the following parameters:
+#
+# $1 -- the upstream the series was forked from.
+# $2 -- the branch being rebased (or empty when rebasing the current branch).
+#
+# This sample shows how to prevent topic branches that are already
+# merged to 'next' branch from getting rebased, because allowing it
+# would result in rebasing already published history.
+
+publish=next
+basebranch="$1"
+if test "$#" = 2
+then
+	topic="refs/heads/$2"
+else
+	topic=`git symbolic-ref HEAD` ||
+	exit 0 ;# we do not interrupt rebasing detached HEAD
+fi
+
+case "$topic" in
+refs/heads/??/*)
+	;;
+*)
+	exit 0 ;# we do not interrupt others.
+	;;
+esac
+
+# Now we are dealing with a topic branch being rebased
+# on top of master.  Is it OK to rebase it?
+
+# Does the topic really exist?
+git show-ref -q "$topic" || {
+	echo >&2 "No such branch $topic"
+	exit 1
+}
+
+# Is topic fully merged to master?
+not_in_master=`git rev-list --pretty=oneline ^master "$topic"`
+if test -z "$not_in_master"
+then
+	echo >&2 "$topic is fully merged to master; better remove it."
+	exit 1 ;# we could allow it, but there is no point.
+fi
+
+# Is topic ever merged to next?  If so you should not be rebasing it.
+only_next_1=`git rev-list ^master "^$topic" ${publish} | sort`
+only_next_2=`git rev-list ^master           ${publish} | sort`
+if test "$only_next_1" = "$only_next_2"
+then
+	not_in_topic=`git rev-list "^$topic" master`
+	if test -z "$not_in_topic"
+	then
+		echo >&2 "$topic is already up to date with master"
+		exit 1 ;# we could allow it, but there is no point.
+	else
+		exit 0
+	fi
+else
+	not_in_next=`git rev-list --pretty=oneline ^${publish} "$topic"`
+	/usr/bin/perl -e '
+		my $topic = $ARGV[0];
+		my $msg = "* $topic has commits already merged to public branch:\n";
+		my (%not_in_next) = map {
+			/^([0-9a-f]+) /;
+			($1 => 1);
+		} split(/\n/, $ARGV[1]);
+		for my $elem (map {
+				/^([0-9a-f]+) (.*)$/;
+				[$1 => $2];
+			} split(/\n/, $ARGV[2])) {
+			if (!exists $not_in_next{$elem->[0]}) {
+				if ($msg) {
+					print STDERR $msg;
+					undef $msg;
+				}
+				print STDERR " $elem->[1]\n";
+			}
+		}
+	' "$topic" "$not_in_next" "$not_in_master"
+	exit 1
+fi
+
+<<\DOC_END
+
+This sample hook safeguards topic branches that have been
+published from being rewound.
+
+The workflow assumed here is:
+
+ * Once a topic branch forks from "master", "master" is never
+   merged into it again (either directly or indirectly).
+
+ * Once a topic branch is fully cooked and merged into "master",
+   it is deleted.  If you need to build on top of it to correct
+   earlier mistakes, a new topic branch is created by forking at
+   the tip of the "master".  This is not strictly necessary, but
+   it makes it easier to keep your history simple.
+
+ * Whenever you need to test or publish your changes to topic
+   branches, merge them into "next" branch.
+
+The script, being an example, hardcodes the publish branch name
+to be "next", but it is trivial to make it configurable via
+$GIT_DIR/config mechanism.
+
+With this workflow, you would want to know:
+
+(1) ... if a topic branch has ever been merged to "next".  Young
+    topic branches can have stupid mistakes you would rather
+    clean up before publishing, and things that have not been
+    merged into other branches can be easily rebased without
+    affecting other people.  But once it is published, you would
+    not want to rewind it.
+
+(2) ... if a topic branch has been fully merged to "master".
+    Then you can delete it.  More importantly, you should not
+    build on top of it -- other people may already want to
+    change things related to the topic as patches against your
+    "master", so if you need further changes, it is better to
+    fork the topic (perhaps with the same name) afresh from the
+    tip of "master".
+
+Let's look at this example:
+
+		   o---o---o---o---o---o---o---o---o---o "next"
+		  /       /           /           /
+		 /   a---a---b A     /           /
+		/   /               /           /
+	       /   /   c---c---c---c B         /
+	      /   /   /             \         /
+	     /   /   /   b---b C     \       /
+	    /   /   /   /             \     /
+    ---o---o---o---o---o---o---o---o---o---o---o "master"
+
+
+A, B and C are topic branches.
+
+ * A has one fix since it was merged up to "next".
+
+ * B has finished.  It has been fully merged up to "master" and "next",
+   and is ready to be deleted.
+
+ * C has not merged to "next" at all.
+
+We would want to allow C to be rebased, refuse A, and encourage
+B to be deleted.
+
+To compute (1):
+
+	git rev-list ^master ^topic next
+	git rev-list ^master        next
+
+	if these match, topic has not merged in next at all.
+
+To compute (2):
+
+	git rev-list master..topic
+
+	if this is empty, it is fully merged to "master".
+
+DOC_END
+</file>
+
+<file path="evidenceai/.git/hooks/pre-receive.sample">
+#!/bin/sh
+#
+# An example hook script to make use of push options.
+# The example simply echoes all push options that start with 'echoback='
+# and rejects all pushes when the "reject" push option is used.
+#
+# To enable this hook, rename this file to "pre-receive".
+
+if test -n "$GIT_PUSH_OPTION_COUNT"
+then
+	i=0
+	while test "$i" -lt "$GIT_PUSH_OPTION_COUNT"
+	do
+		eval "value=\$GIT_PUSH_OPTION_$i"
+		case "$value" in
+		echoback=*)
+			echo "echo from the pre-receive-hook: ${value#*=}" >&2
+			;;
+		reject)
+			exit 1
+		esac
+		i=$((i + 1))
+	done
+fi
+</file>
+
+<file path="evidenceai/.git/hooks/prepare-commit-msg.sample">
+#!/bin/sh
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+
+# case "$COMMIT_SOURCE,$SHA1" in
+#  ,|template,)
+#    /usr/bin/perl -i.bak -pe '
+#       print "\n" . `git diff --cached --name-status -r`
+# 	 if /^#/ && $first++ == 0' "$COMMIT_MSG_FILE" ;;
+#  *) ;;
+# esac
+
+# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
+# if test -z "$COMMIT_SOURCE"
+# then
+#   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
+# fi
+</file>
+
+<file path="evidenceai/.git/hooks/push-to-checkout.sample">
+#!/bin/sh
+
+# An example hook script to update a checked-out tree on a git push.
+#
+# This hook is invoked by git-receive-pack(1) when it reacts to git
+# push and updates reference(s) in its repository, and when the push
+# tries to update the branch that is currently checked out and the
+# receive.denyCurrentBranch configuration variable is set to
+# updateInstead.
+#
+# By default, such a push is refused if the working tree and the index
+# of the remote repository has any difference from the currently
+# checked out commit; when both the working tree and the index match
+# the current commit, they are updated to match the newly pushed tip
+# of the branch. This hook is to be used to override the default
+# behaviour; however the code below reimplements the default behaviour
+# as a starting point for convenient modification.
+#
+# The hook receives the commit with which the tip of the current
+# branch is going to be updated:
+commit=$1
+
+# It can exit with a non-zero status to refuse the push (when it does
+# so, it must not modify the index or the working tree).
+die () {
+	echo >&2 "$*"
+	exit 1
+}
+
+# Or it can make any necessary changes to the working tree and to the
+# index to bring them to the desired state when the tip of the current
+# branch is updated to the new commit, and exit with a zero status.
+#
+# For example, the hook can simply run git read-tree -u -m HEAD "$1"
+# in order to emulate git fetch that is run in the reverse direction
+# with git push, as the two-tree form of git read-tree -u -m is
+# essentially the same as git switch or git checkout that switches
+# branches while keeping the local changes in the working tree that do
+# not interfere with the difference between the branches.
+
+# The below is a more-or-less exact translation to shell of the C code
+# for the default behaviour for git's push-to-checkout hook defined in
+# the push_to_deploy() function in builtin/receive-pack.c.
+#
+# Note that the hook will be executed from the repository directory,
+# not from the working tree, so if you want to perform operations on
+# the working tree, you will have to adapt your code accordingly, e.g.
+# by adding "cd .." or using relative paths.
+
+if ! git update-index -q --ignore-submodules --refresh
+then
+	die "Up-to-date check failed"
+fi
+
+if ! git diff-files --quiet --ignore-submodules --
+then
+	die "Working directory has unstaged changes"
+fi
+
+# This is a rough translation of:
+#
+#   head_has_history() ? "HEAD" : EMPTY_TREE_SHA1_HEX
+if git cat-file -e HEAD 2>/dev/null
+then
+	head=HEAD
+else
+	head=$(git hash-object -t tree --stdin </dev/null)
+fi
+
+if ! git diff-index --quiet --cached --ignore-submodules $head --
+then
+	die "Working directory has staged changes"
+fi
+
+if ! git read-tree -u -m "$commit"
+then
+	die "Could not update working tree to new HEAD"
+fi
+</file>
+
+<file path="evidenceai/.git/hooks/sendemail-validate.sample">
+#!/bin/sh
+
+# An example hook script to validate a patch (and/or patch series) before
+# sending it via email.
+#
+# The hook should exit with non-zero status after issuing an appropriate
+# message if it wants to prevent the email(s) from being sent.
+#
+# To enable this hook, rename this file to "sendemail-validate".
+#
+# By default, it will only check that the patch(es) can be applied on top of
+# the default upstream branch without conflicts in a secondary worktree. After
+# validation (successful or not) of the last patch of a series, the worktree
+# will be deleted.
+#
+# The following config variables can be set to change the default remote and
+# remote ref that are used to apply the patches against:
+#
+#   sendemail.validateRemote (default: origin)
+#   sendemail.validateRemoteRef (default: HEAD)
+#
+# Replace the TODO placeholders with appropriate checks according to your
+# needs.
+
+validate_cover_letter () {
+	file="$1"
+	# TODO: Replace with appropriate checks (e.g. spell checking).
+	true
+}
+
+validate_patch () {
+	file="$1"
+	# Ensure that the patch applies without conflicts.
+	git am -3 "$file" || return
+	# TODO: Replace with appropriate checks for this patch
+	# (e.g. checkpatch.pl).
+	true
+}
+
+validate_series () {
+	# TODO: Replace with appropriate checks for the whole series
+	# (e.g. quick build, coding style checks, etc.).
+	true
+}
+
+# main -------------------------------------------------------------------------
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = 1
+then
+	remote=$(git config --default origin --get sendemail.validateRemote) &&
+	ref=$(git config --default HEAD --get sendemail.validateRemoteRef) &&
+	worktree=$(mktemp --tmpdir -d sendemail-validate.XXXXXXX) &&
+	git worktree add -fd --checkout "$worktree" "refs/remotes/$remote/$ref" &&
+	git config --replace-all sendemail.validateWorktree "$worktree"
+else
+	worktree=$(git config --get sendemail.validateWorktree)
+fi || {
+	echo "sendemail-validate: error: failed to prepare worktree" >&2
+	exit 1
+}
+
+unset GIT_DIR GIT_WORK_TREE
+cd "$worktree" &&
+
+if grep -q "^diff --git " "$1"
+then
+	validate_patch "$1"
+else
+	validate_cover_letter "$1"
+fi &&
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = "$GIT_SENDEMAIL_FILE_TOTAL"
+then
+	git config --unset-all sendemail.validateWorktree &&
+	trap 'git worktree remove -ff "$worktree"' EXIT &&
+	validate_series
+fi
+</file>
+
+<file path="evidenceai/.git/hooks/update.sample">
+#!/bin/sh
+#
+# An example hook script to block unannotated tags from entering.
+# Called by "git receive-pack" with arguments: refname sha1-old sha1-new
+#
+# To enable this hook, rename this file to "update".
+#
+# Config
+# ------
+# hooks.allowunannotated
+#   This boolean sets whether unannotated tags will be allowed into the
+#   repository.  By default they won't be.
+# hooks.allowdeletetag
+#   This boolean sets whether deleting tags will be allowed in the
+#   repository.  By default they won't be.
+# hooks.allowmodifytag
+#   This boolean sets whether a tag may be modified after creation. By default
+#   it won't be.
+# hooks.allowdeletebranch
+#   This boolean sets whether deleting branches will be allowed in the
+#   repository.  By default they won't be.
+# hooks.denycreatebranch
+#   This boolean sets whether remotely creating branches will be denied
+#   in the repository.  By default this is allowed.
+#
+
+# --- Command line
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+	echo "Don't run this script from the command line." >&2
+	echo " (if you want, you could supply GIT_DIR then run" >&2
+	echo "  $0 <ref> <oldrev> <newrev>)" >&2
+	exit 1
+fi
+
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+	echo "usage: $0 <ref> <oldrev> <newrev>" >&2
+	exit 1
+fi
+
+# --- Config
+allowunannotated=$(git config --type=bool hooks.allowunannotated)
+allowdeletebranch=$(git config --type=bool hooks.allowdeletebranch)
+denycreatebranch=$(git config --type=bool hooks.denycreatebranch)
+allowdeletetag=$(git config --type=bool hooks.allowdeletetag)
+allowmodifytag=$(git config --type=bool hooks.allowmodifytag)
+
+# check for no description
+projectdesc=$(sed -e '1q' "$GIT_DIR/description")
+case "$projectdesc" in
+"Unnamed repository"* | "")
+	echo "*** Project description file hasn't been set" >&2
+	exit 1
+	;;
+esac
+
+# --- Check types
+# if $newrev is 0000...0000, it's a commit to delete a ref.
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+if [ "$newrev" = "$zero" ]; then
+	newrev_type=delete
+else
+	newrev_type=$(git cat-file -t $newrev)
+fi
+
+case "$refname","$newrev_type" in
+	refs/tags/*,commit)
+		# un-annotated tag
+		short_refname=${refname##refs/tags/}
+		if [ "$allowunannotated" != "true" ]; then
+			echo "*** The un-annotated tag, $short_refname, is not allowed in this repository" >&2
+			echo "*** Use 'git tag [ -a | -s ]' for tags you want to propagate." >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,delete)
+		# delete tag
+		if [ "$allowdeletetag" != "true" ]; then
+			echo "*** Deleting a tag is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/tags/*,tag)
+		# annotated tag
+		if [ "$allowmodifytag" != "true" ] && git rev-parse $refname > /dev/null 2>&1
+		then
+			echo "*** Tag '$refname' already exists." >&2
+			echo "*** Modifying a tag is not allowed in this repository." >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,commit)
+		# branch
+		if [ "$oldrev" = "$zero" -a "$denycreatebranch" = "true" ]; then
+			echo "*** Creating a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/heads/*,delete)
+		# delete branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	refs/remotes/*,commit)
+		# tracking branch
+		;;
+	refs/remotes/*,delete)
+		# delete tracking branch
+		if [ "$allowdeletebranch" != "true" ]; then
+			echo "*** Deleting a tracking branch is not allowed in this repository" >&2
+			exit 1
+		fi
+		;;
+	*)
+		# Anything else (is there anything else?)
+		echo "*** Update hook: unknown type of update to ref $refname of type $newrev_type" >&2
+		exit 1
+		;;
+esac
+
+# --- Finished
+exit 0
+</file>
+
+<file path="evidenceai/.git/info/exclude">
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+</file>
+
+<file path="evidenceai/.git/logs/refs/heads/main">
+0000000000000000000000000000000000000000 4476c2569114fbf1ebc3a5e127bc7824c69bf625 Prajakta-Sutar <prajaktas.connect@gmail.com> 1786410644 +0000	clone: from https://github.com/Prajakta-Sutar/EvidenceAI.git
+</file>
+
+<file path="evidenceai/.git/logs/refs/remotes/origin/HEAD">
+0000000000000000000000000000000000000000 4476c2569114fbf1ebc3a5e127bc7824c69bf625 Prajakta-Sutar <prajaktas.connect@gmail.com> 1786410644 +0000	clone: from https://github.com/Prajakta-Sutar/EvidenceAI.git
+</file>
+
+<file path="evidenceai/.git/logs/HEAD">
+0000000000000000000000000000000000000000 4476c2569114fbf1ebc3a5e127bc7824c69bf625 Prajakta-Sutar <prajaktas.connect@gmail.com> 1786410644 +0000	clone: from https://github.com/Prajakta-Sutar/EvidenceAI.git
+</file>
+
+<file path="evidenceai/.git/refs/heads/main">
+4476c2569114fbf1ebc3a5e127bc7824c69bf625
+</file>
+
+<file path="evidenceai/.git/refs/remotes/origin/HEAD">
+ref: refs/remotes/origin/main
+</file>
+
+<file path="evidenceai/.git/config">
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/Prajakta-Sutar/EvidenceAI.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+</file>
+
+<file path="evidenceai/.git/description">
+Unnamed repository; edit this file 'description' to name the repository.
+</file>
+
+<file path="evidenceai/.git/HEAD">
+ref: refs/heads/main
+</file>
+
+<file path="evidenceai/.git/packed-refs">
+# pack-refs with: peeled fully-peeled sorted 
+4476c2569114fbf1ebc3a5e127bc7824c69bf625 refs/remotes/origin/main
+</file>
+
+<file path="evidenceai/backend/prompts/analyst_prompt.py">
+from langchain_core.prompts import PromptTemplate
+
+analyst_prompt = PromptTemplate.from_template(
+    """
+    Repository : {project}
+    You are Senior Software Engineer analysing the project repository. 
+    Analyze the project repository provid above. 
+    
+    Your goal is to create a knowledge that will be used in 
+    Retrival Agumented generation system. 
+    Do not give a generic summary. 
+    Extract detailed technical information that helps answer 
+    questions about the codebase. 
+
+    Return only valid JSON.
+    Do not include explanations outside JSON
+
+    Analyze:
+
+    1. Project Overview
+    - Project name 
+    - What problem does this project solve? What is main focus of the project ?
+    - Main features
+
+    For example -
+    {{
+     "project_overview": {{
+        "project_name": "AskMentor",
+        "Description": "A desktop-oriented discussion forum for computer science topics where users can create channels, publish posts and replies, attach files, search content and people, manage profiles, and send direct messages.",
+        "main_features": [
+            "User signup and login",
+            "Channel creation and browsing",
+            "Threaded posts and replies within channels",
+            "File uploads attached to posts and messages",
+            "Post likes and dislikes",
+            "Direct messaging between connected users",
+            "Search for posts, people, and channels",
+            "Profile editing and avatar selection",
+            "Social media link management on profiles",
+            "Admin deletion of channels, posts, and users"
+        ]
+    }}
+
+    }}
+
+    2. Architecture
+    - Frontend technologies
+    - Backend technologies
+    - Database/storage
+    - External APIs
+    - Communication flow between these components
+
+
+    For each technology or architectural decision provide:
+        - Technology name
+        - Supporting file path(s)
+        - Evidence explaining why this technology is used
+
+        Create a separate evidence entry for each supporting file.
+        Do not combine multiple files into a single evidence explanation.
+
+        For Example:
+
+        {{
+        "frontend": {{
+            "technology": "React",
+            "evidence": [
+                {{
+                    "file": "src/App.js",
+                    "reason": "Defines the main React component and configures application routing."
+                }},
+                {{
+                    "file": "src/channels.js",
+                    "reason": "Implements a React functional component for displaying and managing channel data."
+                }}
+            ]
+        }}
+        }}
+
+    3. File-Level Analysis
+    For each file:
+    -File path
+    - Purpose
+    - Main classes/functions/components
+        - For each main component/class/function:
+            - use name of main componenet/class/function as shown in code
+            - Provide a short description of its responsibility
+    - Technologies/skill used such as Programming languages, Frameworks, 
+       Libraries, Software engineering concept , Architecture patterns
+    Do not miss any file 
+
+    For example :
+    {{
+        "file_path": "dataScience/datagenisys/nan_handler.py",
+        "purpose": "Handles missing values and drops columns with excessive missingness.",
+        "main_classes_functions_components": [
+            {{
+            "name": "NaN_handler",
+            "type": "function",
+            "description": "Processes missing values in a dataset using imputation strategies and performs column cleaning based on missing value thresholds."
+            }},
+            {{
+            "name": "remove_high_missing_columns",
+            "type": "function",
+            "description": "Identifies and removes columns that contain missing values above the configured threshold."
+            }}
+        ],
+        "technologies_used": [
+            "sklearn.impute.SimpleImputer",
+            "NumPy",
+            "pandas"
+        ]
+        }}
+
+    
+    4. Project Relationship Map
+    Explain:
+    - Identify important communication relationships between files or components.
+        -The goal is to understand how different parts of the application interact.
+         For each relationship include:
+            - Source: The file/component that initiates the interaction.
+            - Destination: The file/component/service it communicates with.
+            - how: Explain the purpose of this communication  
+        Do NOT include:
+            - Third-party library imports
+            - Standard library imports
+            - Dependency package relationships
+    
+    - Data flow
+
+    For example -
+    {{
+       "project_relationship_map": {{
+            "component_relationships": [
+            {{
+                "source": "frontend/src/Channels.jsx",
+                "destination": "backend/server.js",
+                "how": "Channels component sends API requests to backend endpoints to retrieve and update channel and post data."
+        
+            }},
+            {{
+                "source": "backend/server.js",
+                "destination": "database/models/User.js",
+                "how": "Backend uses the User model to retrieve and update user information."
+            }}
+            ],
+            "data_flow": [
+            "User submits signup/login on Homepage -> axios POST to server.js -> server validates against MySQL -> frontend stores session_user and possibly isAdmin -> App routing unlocks protected pages.",
+            "Channels page loads session_user -> fetches current user details and connections -> fetches channel list -> user selects a channel -> posts are retrieved and displayed with nested replies and files.",
+            "Creating a post or reply in Channels -> server inserts post -> frontend optionally uploads files -> server stores files in fileTable -> frontend refreshes channel data.",
+            "Messages page loads session_user and selected conversation partner -> fetches messages and attached files -> user sends message -> server inserts message and frontend uploads attachments if present.",
+            "Search in Navlink -> backend queries by search type -> user navigates to chosen entity -> route state is passed to channels or messages to display the target.",
+            "Profile page loads current user and suggestion lists -> user can edit profile fields or add/remove media -> admin mode changes the sidebar to list all users and enable deletions."
+            ]
+        }}
+    
+    }}
+
+    
+    Together your response should look like -
+    {{
+        "project_overview": {{
+            "project_name": "AskMentor",
+            "Description": "A desktop-oriented discussion forum for computer science topics where users can create channels, publish posts and replies, attach files, search content and people, manage profiles, and send direct messages.",
+            "main_features": [
+                "User signup and login",
+                "Channel creation and browsing",
+                "Threaded posts and replies within channels",
+                "File uploads attached to posts and messages",
+                "Post likes and dislikes",
+                "Direct messaging between connected users",
+                "Search for posts, people, and channels",
+                "Profile editing and avatar selection",
+                "Social media link management on profiles",
+                "Admin deletion of channels, posts, and users"
+            ]
+        }}
+        "architecture":{{
+            "frontend": {{
+                "technology": "React",
+                "evidence": [
+                    {{
+                        "file": "src/App.js",
+                        "reason": "Defines the main React component and configures application routing."
+                    }},
+                    {{
+                        "file": "src/channels.js",
+                        "reason": "Implements a React functional component for displaying and managing channel data."
+                    }}
+                ]
+            }}
+        }}
+        "file_level_analysis":{{
+            "file_path": "dataScience/datagenisys/nan_handler.py",
+            "purpose": "Handles missing values and drops columns with excessive missingness.",
+            "main_classes_functions_components": [
+                {{
+                "name": "NaN_handler",
+                "type": "function",
+                "description": "Processes missing values in a dataset using imputation strategies and performs column cleaning based on missing value thresholds."
+                }},
+                {{
+                "name": "remove_high_missing_columns",
+                "type": "function",
+                "description": "Identifies and removes columns that contain missing values above the configured threshold."
+                }}
+            ],
+            "technologies_used": [
+                "sklearn.impute.SimpleImputer",
+                "NumPy",
+                "pandas"
+            ]
+        }}
+        "project_relationship_map": {{
+            "component_relationships": [
+            {{
+                "source": "frontend/src/Channels.jsx",
+                "destination": "backend/server.js",
+                "how": "Channels component sends API requests to backend endpoints to retrieve and update channel and post data."
+        
+            }},
+            {{
+                "source": "backend/server.js",
+                "destination": "database/models/User.js",
+                "how": "Backend uses the User model to retrieve and update user information."
+            }}
+            ],
+            "data_flow": [
+            "User submits signup/login on Homepage -> axios POST to server.js -> server validates against MySQL -> frontend stores session_user and possibly isAdmin -> App routing unlocks protected pages.",
+            "Channels page loads session_user -> fetches current user details and connections -> fetches channel list -> user selects a channel -> posts are retrieved and displayed with nested replies and files.",
+            "Creating a post or reply in Channels -> server inserts post -> frontend optionally uploads files -> server stores files in fileTable -> frontend refreshes channel data.",
+            "Messages page loads session_user and selected conversation partner -> fetches messages and attached files -> user sends message -> server inserts message and frontend uploads attachments if present.",
+            "Search in Navlink -> backend queries by search type -> user navigates to chosen entity -> route state is passed to channels or messages to display the target.",
+            "Profile page loads current user and suggestion lists -> user can edit profile fields or add/remove media -> admin mode changes the sidebar to list all users and enable deletions."
+            ]
+        }}      
+    
+    }}
+    
+    
+    Use same field name. Do not change field names. 
+    
+    Avoid:
+    - DO NOT HALLUCINATE
+    - Making assumptions
+    - Adding technologies not present in the code
+    - Inventing features
+
+    """
+)
+</file>
+
+<file path="evidenceai/backend/prompts/assistant_prompt.py">
+from langchain_core.prompts import PromptTemplate
+
+assistant_prompt = PromptTemplate.from_template(
+    """
+    You are Prajakta's AI Portfolio assistant. 
+
+    Your role - 
+        - Answer the recruiter's or interviewer's questions professionally, honestly. 
+        - You have provided question, context and chat history between you and recruiter (may be empty). 
+        - Use conversation history only to understand the conversation flow and resolve 
+          relevant context from previous exchanges.
+        - Ignore previous conversation history when it is unrelated to the current question.
+        - Use the retrieved context as the primary source for factual information.
+        - Do not treat previous responses as factual evidence.
+        - Do not hallucinate   
+
+    Question : {question}
+    Context : {context}
+    History : {history}
+         
+    You must respond in exactly two sections:
+        When evidence is included - 
+
+            Write the recruiter-facing answer here.
+
+            @ 
+
+            Return a JSON array containing the technical evidence.
+
+            [
+                {{
+                    "file": "file path",
+                    "description": "technical explanation"
+                }}
+            ]
+        
+        When evidence is not included - 
+            Write the recruiter-facing answer here.
+            
+            @ 
+
+            []
+
+    
+    1. Summary:
+        - Write a complete recruiter-facing answer, not a short response.
+        - Explain details rather than simply listing technologies or facts, but avoid repeating information.
+        - CRITICAL: You MUST use Markdown formatting for the summary section of final response.
+        - CRITICAL : When summary is greater than 3 sentences , it should be devided in sections 
+                     and should have proper headings.
+        - You MUST use **headings** and **bullet points** when appropriate.
+        - You MUST Use **bold** only for important technologies, tools, frameworks, or metrics
+        - CRITICAL - NEVER create a "Conclusion" or "Summary" section at the end.
+        -  Never say phrases like:
+            - "This file indicates..."
+            - "This file contains..."
+            - "The README states..."
+            - "The repository shows..."
+            - "According to the retrieved context..."
+            - "The evidence suggests..."
+        - Never provide heading like "Recruiter-facing answer".
+        - Convert technical evidence into a natural explanation of the candidate's experience.
+
+        For technology questions:
+            - Clearly state whether Prajakta has experience with the technology or she used techonology.
+            - Mention the project where it was used.
+            - Give explaination about how it was implemented.
+            - Avoid unrelated technologies.
+
+        For project questions:
+            - Explain:
+                - Project purpose
+                - Main features
+                - Architecture when relevant
+                - Important implementation decisions
+    
+    2. Evidence :
+        - Must be a JSON array.
+        - For each evidence item:
+            -Include the file path from the evidence metadata field called "file".
+            - You can use this files to answer recruiter's questions in summary sections. 
+            - Explain how the technology was implemented in the project using information
+                from that artifact.
+            - Describe the technical role of the artifact in the project.
+
+
+        Evidence explanation rules:
+            - Do not describe the file like documentation.
+            - Do not explain why the AI selected this artifact as evidence.
+            - Do not start decription as "This file" or "This evidence" or 
+            "This components" or "This". 
+            - Do not mention phrases like:
+                "this supports the answer"
+                "this demonstrates experience"
+                "this is evidence of"
+                "strong evidence"
+                "important evidence"
+
+        
+        Evidence Selection rules :
+            - Include evidence only when the question requires technical verification or implementation details.
+            - Include evidence for -
+                - Technology question :
+                    - Does she have docker experience ?
+                    - How she used react in that project ?
+                    - Has she worked with SQL ?
+                - Implementation questions :
+                    - How did she implemented frontend ?
+                    - How she created graphs ?
+                - Project implementation :
+                    - Tell me about askmetor project ?
+                    - How data flow in data predictify ?
+                    - What are main componenets of this project ?
+            - Do not include evidence for -
+                - General introductions -
+                    - Tell me about her ?
+                    - Why should we hire you ?
+                    - Tell me about her background. 
+                    - What are her skills ?
+                - Career goals
+                - Behavioral questions
+
+
+    """
+)
+</file>
+
+<file path="evidenceai/backend/prompts/classifier_prompt.py">
+from langchain_core.prompts import PromptTemplate
+
+classifier_prompt = PromptTemplate.from_template(""" 
+    You are Prajakta's AI Portfolio Assistant Classifier. 
+    There are 4 categories - Relevant, Greetings, Irrelevant and Private
+    Your job is - 
+        1. Classify the user question.
+        2. If the question is relevant to Prajakta's professional profile, create retrieval queries.
+        3. If the question does not require retrieval, provide the response directly.
+
+    Your final response should be in JSON format. 
+
+    You are provided with:
+    - Current question from the recruiter.
+    - Previous conversation history (may be empty).
+
+    Use conversation history only to understand context and interpret the current question.
+    If previous questions and current question is not related, do not use history then. 
+    Do not use previous assistant responses as factual evidenc
+
+    Question: {question}
+    History : {history}
+
+    Category "Relevant":
+        prompt can be related to -
+            - Prajakta's education
+            - Technical skills
+            - Projects
+            - Software engineering experience
+            - Technologies she has used
+            - How she built her projects
+            - Architecture and design decisions
+            - AI systems, backend, frontend, cloud, and DevOps work
+            - Professional strengths and career goals 
+
+        
+    Category "Private":
+        Prompt can be related to- 
+            - Private or confidential information about Prajakta
+            - Personal details unrelated to her professional profile
+
+    Category "Irrelevant":
+        Prompt can be realted to -
+            - General questions unrelated to Prajakta or her work or her portfolio.
+
+    
+    Category "Greetings":
+        Prompt can be like -
+            - Hello, Hi , Bye
+            - Good morning, good night, good afternoon
+            - Compliments
+
+
+    Rules for writing queries -
+        - Create 3 new queries. 
+        - Every query should target different aspects of the recruiter's question.
+        - Prefer project names, technologies, frameworks, and implementation concepts when required.
+        - Do not include generic hiring language.
+        - Only create retrival queries.
+        - Do not provide answer to question. 
+        - DO not provide explaination
+        - Just provide queries. 
+
+    Important rules:
+        - Do not invent information.
+        - Do not assume the user's intent when a question is unclear.
+        - Ask for clarification when needed.
+        - Keep responses professional and recruiter-friendly.
+
+    Output format -
+
+        {{
+            "category": "Relevant | Private | Irrelevant | Greetings",
+            "response": "when required",
+            "queries": [ query1, query 2, ....]
+        }}
+
+    for example - 
+        # Relevant
+        Question: "Does she have Docker experience?"
+
+        Output:
+        {{
+            "category": "Relevant",
+            "response": "",
+            "queries": [
+                "Docker usage in Prajakta's projects",
+                "Dockerfile and docker-compose implementation details",
+                "Containerization workflow"
+            ]
+        }}
+
+
+        # Private
+        Question: "What is her phone number?"
+
+        Output:
+        {{
+            "category": "Private",
+            "response": "I cannot provide Prajakta's personal or private information.",
+            "queries": []
+        }}
+
+
+        # Irrelevant
+        Question:"What is the weather today?"
+
+        Output:
+        {{
+            "category": "Irrelevant",
+            "response": "I'm designed to answer questions about Prajakta's professional background, projects, skills, and experience. I can't help with unrelated topics.",
+            "queries": []
+        }}
+
+
+        # Greetings
+        Question: "Hello"
+
+        Output:
+        {{
+            "category": "Greetings",
+            "response": "Hello! How can I help you learn about Prajakta's professional profile?",
+            "queries": []
+        }}
+
+        Question: "You are great assistant"
+        
+        Output:
+        {{
+            "category": "Greetings",
+            "response": "Thank you ! How can I help you learn more about Prajakta's professional profile?",
+            "queries": []
+        }}
+
+
+
+    """)
+</file>
+
+<file path="evidenceai/backend/app.py">
+import gradio as gr
+from model import classifier
+
+demo = gr.Interface(
+    fn=classifier,
+    inputs=[gr.Textbox(label="Question")],
+    outputs=[
+        gr.Markdown(label="Summary"), 
+        gr.Textbox(label="evidence")
+    ]
+)
+
+
+demo.launch()
+</file>
+
+<file path="evidenceai/backend/chunking.py">
+import json
+from tree_sitter import Parser
+from bs4 import BeautifulSoup
+from tree_sitter_language_pack import get_language
+from langchain_text_splitters import MarkdownHeaderTextSplitter
+
+
+
+with open("./evidence/summary/askmentor_summary.txt", "r", encoding="utf-8") as f:
+    askmentor_json = json.load(f)
+
+with open("./evidence/summary/datagenesys_summary.txt", "r", encoding="utf-8") as f:
+    datagenesys_json = json.load(f)
+
+def return_file_purpose(path):
+    actual_path = path.replace("\\", "/")
+    if "askmentor" in actual_path:
+        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        for file in askmentor_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                return (askmentor_json["project_overview"]["project_name"], file["purpose"])
+
+    if "datagenesys" in actual_path:
+            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    return (datagenesys_json["project_overview"]["project_name"],file["purpose"])
+    
+    return ("Unknown", "Unknown")
+
+
+def return_function_class_purpose(path, name, type):
+    actual_path = path.replace("\\", "/")
+    if "askmentor" in actual_path:
+        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        for file in askmentor_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                for component in file["main_classes_functions_components"]:
+                    if component["name"] == name and component["type"] == type:
+                        return component["description"]
+
+    if "datagenesys" in actual_path:
+            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    for component in file["main_classes_functions_components"]:
+                        if component["name"] == name and component["type"] == type:
+                            return component["description"]
+    return ("Unknown")
+
+
+def return_type(path, name):
+    actual_path = path.replace("\\", "/")
+    if "askmentor" in actual_path:
+        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        for file in askmentor_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                for component in file["main_classes_functions_components"]:
+                    if component["name"] == name:
+                        return component["type"]
+
+    if "datagenesys" in actual_path:
+            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    for component in file["main_classes_functions_components"]:
+                        if component["name"] == name:
+                            return component["type"]
+
+
+def return_name(node, source_byte):
+    for child in node.children:
+        if child.type == "identifier":
+            name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+            return name
+    return "Unknown"
+
+
+def create_tree(path, language):
+    current_language = get_language(language)
+    parser = Parser(current_language)
+    with open(path, "r", encoding="utf-8") as f:
+        code = f.read()
+    tree = parser.parse(bytes(code, "utf8"))
+    return tree.root_node
+
+
+
+
+########################### Chunking for python document #########################
+
+def python_chunker(path):
+    treenode = create_tree(path, "python")
+    imports = []
+    chunks = []
+    global_assignments = []
+
+    with open(path, "r",  encoding="utf-8") as f:
+        source_code = f.read()
+
+    source_byte = source_code.encode("utf-8")
+    project, purpose = return_file_purpose(path)
+
+    for node in treenode.children:
+        code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+        if node.type in ("import_from_statement", "import_statement"):
+            imports.append(code)
+        elif node.type == "function_definition":
+            function_name = None
+            for child in node.children:
+                if child.type == "identifier":
+                    function_name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+                    break
+            function_purpose = return_function_class_purpose(path, function_name, "function")
+            chunks.append({
+                "content": code,
+                "metadata":{
+                    "project" : project, 
+                    "file" : path, 
+                    "file_purpose": purpose, 
+                    "function_name" : function_name,
+                    "function_purpose" : function_purpose,
+                    "type" : "function"
+                }
+            })
+        elif node.type == "class_definition":
+            class_name = None
+            for child in node.children:
+                if child.type == "identifier":
+                    class_name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+                    break
+            class_purpose = return_function_class_purpose(path, class_name, "class")
+            chunks.append({
+                "content": code,
+                "metadata":{
+                    "project" : project, 
+                    "file" : path, 
+                    "file_purpose": purpose,
+                    "class_name" : class_name, 
+                    "class_purpose" : class_purpose,
+                    "type" : "class"
+                }
+            })
+        elif node.type == "assignment" or node.type == "if_statement":
+            code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+            global_assignments.append(code)
+        else:
+            continue
+
+    if imports:
+        chunks.append({
+            "content" : "\n".join(imports),
+            "metadata":{
+                "project" : project,
+                "file" : path, 
+                "file_purpose": purpose, 
+                "type" : "imports"
+            }
+        })
+
+    if global_assignments:
+        chunks.append({
+                "content": "\n".join(global_assignments),
+                "metadata":{
+                    "project" : project, 
+                    "file" : path, 
+                    "file_purpose": purpose, 
+                    "type" : "assignment"
+                }
+            })
+    return chunks
+
+
+
+########################### Chunking for .js document #########################
+
+def js_function_chunker(path, node, source_byte, parent_function):
+    function_useffect = []
+    function_usestate = []
+    function_other =[]
+    function_chunks = []
+    function_other_lexical = []
+
+    project, file_purpose = return_file_purpose(path)
+    function_purpose = return_function_class_purpose(path, parent_function, "component")
+
+    for child in node.children:
+        code = source_byte[child.start_byte:child.end_byte].decode("utf-8")
+        if child.type == "return_statement":
+            function_chunks.append({
+                "content" : code, 
+                "metadata":{
+                "project" : project, 
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose, 
+                "type" : "return_statement"
+                }
+            })
+        elif child.type == "expression_statement":
+            function_useffect.append(code)
+        elif child.type == "lexical_declaration":
+            declarator = child.named_children[0]
+            value = declarator.named_children[-1]
+            if value.type in ("arrow_function", "function_expression"):
+                helper_function_name = declarator.named_children[0].text.decode("utf-8")
+                helper_function_purpose = return_function_class_purpose(path, helper_function_name, "function")
+                function_chunks.append({
+                    "content": code,
+                    "metadata":{
+                        "project" : project, 
+                        "file" : path, 
+                        "file_purpose": file_purpose, 
+                        "function_name" : parent_function,
+                        "function_purpose" : function_purpose,
+                        "helper_function_name" :helper_function_name,
+                        "helper_function_purpose" :helper_function_purpose,
+                        "type" : "helper_function"
+                    }
+                })
+
+            elif value.type == "call_expression":
+                function_usestate.append(code)
+            else:
+                function_other_lexical.append(code)
+        else:
+            function_other.append(code)
+
+    if function_useffect:
+        function_chunks.append({
+            "content" : "\n".join(function_useffect), 
+            "metadata": {
+                "project" : project, 
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "type": "useffect_statements"
+            }
+        })
+
+    if function_usestate:
+        function_chunks.append({
+            "content" : "\n".join(function_usestate), 
+            "metadata": {
+                "project" : project, 
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "type": "usestate_statements"
+            }
+        })
+    if function_other:
+        function_chunks.append({
+            "content" : "\n".join(function_other), 
+            "metadata": {
+                "project" : project, 
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "type": "other_function_statements"
+            }
+        })
+    if function_other_lexical:
+        function_chunks.append({
+            "content" : "\n".join(function_other_lexical), 
+            "metadata": {
+                "project" : project, 
+                "file" : path, 
+                "file_purpose": file_purpose, 
+                "function_name" : parent_function,
+                "function_purpose" : function_purpose,
+                "type": "other_lexical_statements"
+            }
+        })
+    return function_chunks
+
+
+
+def javascript_chunker(path):
+    treenode = create_tree(path, "javascript")
+    with open(path, "r",  encoding="utf-8") as f:
+        source_code = f.read()
+
+    source_byte = source_code.encode("utf-8")
+    project, file_purpose = return_file_purpose(path)
+
+    file_imports = []
+    file_exports = []
+    file_const_var_let = []
+    file_top_level_functions = []
+    file_chunks = []
+    file_others = []
+
+    for node in treenode.children:
+        code = source_byte[node.start_byte:node.end_byte].decode("utf-8")
+        if node.type == "import_statement":
+            file_imports.append(code)
+        elif node.type == "export_statement":
+            file_exports.append(code)
+        elif node.type == "expression_statement":
+            file_top_level_functions.append(code)
+        elif node.type in ("lexical_declaration", "variable_declaration"):
+            file_const_var_let.append(code)
+        elif node.type == "function_declaration":
+            function_name = return_name(node, source_byte)
+            function_type = return_type(path, function_name)
+            if function_type == "function":
+                function_purpose = return_function_class_purpose(path, function_name, function_type)
+                file_chunks.append({
+                    "content": code,
+                    "metadata":{
+                        "project" : project, 
+                        "file" : path, 
+                        "file_purpose": file_purpose, 
+                        "function_name" : function_name,
+                        "function_purpose" : function_purpose,
+                        "type" : "function"
+                    }
+                })
+            else:
+                for child in node.children:
+                    if child.type == "statement_block":
+                        in_function_chunks = js_function_chunker(path,child, source_byte, function_name)
+                        file_chunks.extend(in_function_chunks)
+                        break
+        else:
+            file_others.append(code)
+
+    if file_imports:
+        file_chunks.append({
+            "content" : "\n".join(file_imports), 
+            "metadata": {
+                "project" : project, 
+                "file": path,
+                "file_purpose" : file_purpose,
+                "type": "imports"
+            }
+        })
+    if file_exports:
+        file_chunks.append({
+            "content" : "\n".join(file_exports),
+            "metadata": {
+                "project" : project, 
+                "file": path,
+                "file_purpose" : file_purpose,
+                "type": "exports"
+            }
+        })
+    if file_const_var_let:
+        file_chunks.append({
+            "content" : "\n".join(file_const_var_let), 
+            "metadata": {
+                "project" : project, 
+                "file": path,
+                "file_purpose" : file_purpose,
+                "type": "global_variables_constants"
+            }
+        })
+    if file_top_level_functions:
+        file_chunks.append({
+            "content" : "\n".join(file_top_level_functions), 
+            "metadata": {
+                "project" : project, 
+                "file": path,
+                "file_purpose" : file_purpose,
+                "type": "Top_level_expressions"
+            }
+        })
+    if file_others:
+        file_chunks.append({
+            "content" : "\n".join(file_others), 
+            "metadata": {
+                "project" : project, 
+                "file": path,
+                "file_purpose" : file_purpose,
+                "type": "Other_statements_in_file"
+            }
+        })
+                
+    return file_chunks
+
+
+########################### Chunking for HTML document #########################
+
+def html_chunker(path):
+    with open(path, "r",  encoding="utf-8") as f:
+        html_file = f.read()
+    soup = BeautifulSoup(html_file, "html.parser")
+    scripts = []
+    for script in soup.find_all("script"):
+        if script.string:
+            scripts.append(script.string)
+
+    for script in soup.find_all("script"):
+        script.decompose()
+
+    project, purpose = return_file_purpose(path)
+    chunks = []
+    html_chunk = {
+                "content" : str(soup), 
+                "metadata" :{
+                    "project" : project,
+                    "file" : path,
+                    "file_purpose" : purpose, 
+                    "type" : "html"
+                }
+            }
+    chunks.append(html_chunk)
+    if scripts:
+        script_chunk = {
+                    "content" : "\n".join(scripts), 
+                    "metadata" :{
+                        "project" : project,
+                        "file" : path,
+                        "file_purpose" : purpose, 
+                        "type" : "script"
+                    }
+                }
+        chunks.append(script_chunk)
+    return chunks
+
+
+
+########################### Chunking for .md document #########################
+
+
+def md_chunker(path):
+    markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on = [  ("#", "title"), ("##", "section")]
+    )
+    with open(path, "r", encoding="utf-8") as f:
+        markdown_text = f.read()
+
+    project, purpose = return_file_purpose(path)
+    documents = markdown_splitter.split_text(markdown_text)
+    chunks =[]
+    for doc in documents:
+        chunks.append({
+            "content" : doc.page_content, 
+            "metadata":{
+                "project" : project,
+                "file" : path,
+                "file_purpose" : purpose, 
+                "type" : "markdown", 
+                **doc.metadata
+            }
+        })
+   
+    return chunks
+
+
+
+def no_split_chunker(path):
+    project, purpose = return_file_purpose(path)
+    with open(path, "r", encoding="utf-8") as f:
+        page_content = f.read()
+    chunks = [{
+        "content" : page_content, 
+        "metadata" :{
+            "project" : project,
+            "file" : path,
+            "file_purpose" : purpose, 
+            "type" : "configuration"
+        }
+    }]
+    return chunks 
+
+
+def summary_chunker(path):
+    if "askmentor_summary.txt" in path.lower():
+        json_summary = askmentor_json
+    else:
+        json_summary = datagenesys_json
+
+    chunks = []
+
+    overview = json_summary["project_overview"]
+    chunks.append({
+        "content" : json.dumps(overview, indent=2) , 
+        "metadata" :{
+            "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "High-level project overview",
+            "type" :"project_summary", 
+            "source" : "Analyst"
+        }
+    })
+
+    for component, description in json_summary["architecture"].items():
+         chunks.append({
+            "content" : f"""
+            Componenet : {component}
+            Description : {json.dumps(description, indent=2)}
+            """ , 
+            "metadata" :{
+                "project" : overview["project_name"], 
+                "file" : path,
+                "file_purpose" : f"Architecture description for {component}",
+                "component" : component, 
+                "type" :"architechture",
+                "source" : "Analyst"
+                
+            }
+        })
+        
+
+    for file in json_summary["file_level_analysis"]:
+        chunks.append({
+            "content" : json.dumps(file, indent=2), 
+            "metadata" :{
+                "project" : overview["project_name"], 
+                "file" : path,
+                "file_purpose" :  f"Summary of {file['file_path']}",
+                "code_file" : file["file_path"],
+                "type" :"file_overview", 
+                "source" : "Analyst"
+                
+            }
+        })
+
+
+    relation_map = json_summary["project_relationship_map"]
+    chunks.append({
+        "content" : json.dumps(relation_map["component_relationships"], indent=2), 
+        "metadata" :{
+            "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "Shows relationships between files and how components use each other",
+            "type": "file_relationships",
+            "source" : "Analyst"
+            
+        }
+    })
+
+    chunks.append({
+        "content" : json.dumps(relation_map["data_flow"], indent=2), 
+        "metadata" :{
+            "project" : overview["project_name"], 
+            "file" : path,
+            "file_purpose" : "Explains how data moves through the application",
+            "type": "data_flow", 
+            "source" : "Analyst"
+            
+        }
+
+    })
+    return chunks
+</file>
+
+<file path="evidenceai/backend/database.py">
+import os 
+import uuid
+import chromadb
+from dotenv import load_dotenv
+from chromadb.utils import embedding_functions
+from concurrent.futures import ThreadPoolExecutor
+from chunking import python_chunker, javascript_chunker, html_chunker, md_chunker, no_split_chunker, summary_chunker
+
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+
+
+# Create database collection to store embeddingsmeb
+database_client = chromadb.PersistentClient("./portfolio_database")
+
+embedding_funct = embedding_functions.OpenAIEmbeddingFunction(
+    api_key=api_key,
+    model_name="text-embedding-3-small"
+)
+
+
+database = database_client.get_or_create_collection(
+    name="Portfolio_Evidence", 
+    metadata={"description": "Collection storing Prajakta's Portfolio"},
+    configuration={
+        "hnsw" :{"space": "cosine"},
+        "embedding_function" : embedding_funct
+    }
+)
+
+
+
+dir_ignore = {
+                ".git",
+                "node_modules",
+                "build",
+                "dist", 
+                "repomix_res",
+                "__pycache",
+                ".venv",
+            }
+
+def get_documents(root):
+    documents = []
+    for root, subdir, files in os.walk(root):
+        subdir[:] = [
+            d for d in subdir if d not in dir_ignore
+        ]
+        for file in files:
+            if file == "package-lock.json":
+                continue 
+            path = os.path.join(root, file)
+            documents.append(path)
+    return documents
+
+
+def add_chunks(chunks):
+    if len(chunks) == 0:
+        return
+    for chunk in chunks:
+        database.add(
+            ids=str(uuid.uuid4()),
+            documents=chunk["content"], 
+            metadatas=chunk["metadata"]
+        )
+
+
+def build_database():
+    project_docs = get_documents("./evidence")
+    for path in project_docs:
+        if os.path.basename(path).lower() == "dockerfile":
+            chunks = no_split_chunker(path)
+        elif path.endswith(".js"):
+            chunks = javascript_chunker(path)
+        elif path.endswith(".md"):
+            chunks = md_chunker(path)
+        elif path.endswith(".html"):
+            chunks = html_chunker(path)
+        elif path.endswith(".py"):
+            chunks = python_chunker(path)
+        elif path.endswith((".json", ".yml", ".css" )) :
+            chunks = no_split_chunker(path)
+        elif path.endswith(".txt") and "summary" in path.lower():
+            chunks = summary_chunker(path)
+        else:
+            continue
+        add_chunks(chunks)
+
+
+def run_single_query(query):
+    return database.query(
+        query_texts = [query], 
+        n_results = 15
+    )
+
+def retriever(queries):
+    retrieved_docs = []
+    seen = set()
+    seen_path = set()
+    with ThreadPoolExecutor(max_workers=len(queries)) as executor:
+        results = list(executor.map(run_single_query, queries))
+        for chunks_per_query in results:
+            ids = chunks_per_query["ids"][0]
+            documents = chunks_per_query["documents"][0]
+            metadatas = chunks_per_query["metadatas"][0]
+            distances = chunks_per_query["distances"][0]
+            for chunk_id, doc, metadata, distance in zip(ids, documents, metadatas, distances):
+                if chunk_id not in seen:
+                    if metadata["file"] not in seen_path:
+                        seen_path.add(metadata["file"])
+                    seen.add(chunk_id)
+                    retrieved_docs.append({
+                        "id": chunk_id,
+                        "content": doc,
+                        "metadata": metadata,
+                        "distance": distance
+                    })
+
+    retrieved_docs.sort(key=lambda x:x["distance"])
+    context = ""
+    for document in retrieved_docs:
+        doc_metadata = "\n".join(f"{key}:{value}" for key, value in document["metadata"].items())
+        context += f"""
+        metadata : {doc_metadata}
+        content : {document["content"]}
+        ----------------------------------------
+        """
+    return context , seen_path
+</file>
+
+<file path="evidenceai/backend/ingest.py">
+import subprocess
+from pathlib import Path 
+from database import build_database
+
+def unify_repos():
+    code_repos = {
+        "AskMentor":"./evidence/repository/askmentor",
+        "DataPredictify":"./evidence/repository/datapredictify",
+        "EvidenceAI":"./evidence/repository/EvidenceAI"
+    }
+
+    output_file = Path("./evidence/repomix_res")
+
+    for name, repo_path in code_repos:
+        output_file = output_file/f"{name}.txt"
+        subprocess.run(["npx", "repomix", repo_path, "--output", output_file],check=True)
+        print("{name} project is unified\n")
+
+
+if __name__=="__main__":
+    unify_repos()
+    build_database()
+</file>
+
+<file path="evidenceai/backend/model.py">
+import os 
+import json
+import time 
+from pathlib import Path
+from fastapi import FastAPI  
+from dotenv import load_dotenv
+from database import retriever
+from langchain_openai import ChatOpenAI
+from prompts.classifier_prompt import classifier_prompt
+from prompts.assistant_prompt import assistant_prompt
+from prompts.analyst_prompt import analyst_prompt
+from collections import deque
+from fastapi import Request
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+
+
+
+
+# Get the OpenAI API to access the LLM and embedding model
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+
+
+
+# Develope model which will act as router 
+app = FastAPI() 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+classifier_llm = ChatOpenAI(
+    model="gpt-5.4-mini",
+    temperature=0,
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+assistant_llm = ChatOpenAI(
+    model="gpt-5.6-luna",
+    temperature=0.5,
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+
+
+
+def analyst(project):
+    with open(project, "r") as f:
+        repository_file = f.read() 
+    repository = {'project': repository_file}
+    modified_prompt = analyst_prompt.invoke(repository)
+    response = assistant_llm.invoke(modified_prompt)
+    print(response.content)
+
+
+def classifier(question: str):
+    history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
+                                for h in history_queue)
+    user_question = {"question": question, "history" : history}
+    modified_prompt = classifier_prompt.invoke(user_question)
+    response = classifier_llm.invoke(modified_prompt)
+    result = json.loads(response.content)
+    if result["category"] != "Relevant":
+        yield {
+            "type": "summary",
+            "content": result["response"]
+        }
+        yield {
+            "type": "evidence",
+            "content": []
+        }
+        return
+    else:
+        queries = result["queries"]
+        
+        yield from assistant(question, queries) 
+
+
+history_queue = deque(maxlen=3)
+
+def assistant(question, queries):
+    print("I am here in assistat\n")
+    context, retrieved_paths  = retriever(queries)  
+    history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
+                        for h in history_queue)
+    inputs = {"question": question, "context":context , "history" : history}
+    agumented_prompt = assistant_prompt.invoke(inputs)
+    summary = ""
+    evidence = ""
+    section = "summary"
+    for chunk in assistant_llm.stream(agumented_prompt):
+        text = chunk.content
+        if "@" in text:
+            section = "evidence"
+            text = text.replace("@", "")
+        if section == "evidence":
+            evidence += text
+        if section == "summary":
+            summary += text
+            yield{
+                "type" : "summary", 
+                "content" : text
+            }
+
+    history_queue.append({
+        "question" : question, 
+        "assistant_response" : summary
+    })
+    evidence_json = json.loads(evidence.strip())
+    evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md"]]
+    for item in evidence_json:
+        evidence_path = Path(item["file"]).as_posix()
+        for full_path in retrieved_paths:
+            full_path_normalized = Path(full_path).as_posix()
+
+            if full_path_normalized.endswith(evidence_path):
+                item["file"] = full_path
+                break
+        file_path = Path(item["file"])
+        if file_path.exists():
+            with open(file_path, "r", encoding="utf-8") as f:
+                item["code"] = f.read()                
+        else:
+            item["code"] = None
+
+
+    yield{
+        "type" : "evidence", 
+        "content" : evidence_json
+    }
+
+    
+@app.post("/skill")
+async def skill_endpoint(request: Request):
+    print("I am here in skill endpoint\n")
+    request_data = await request.json()
+    skill = request_data["skill"]
+    queries = [
+        f"{skill} implementation",
+        f"{skill} configuration",
+        f"{skill} usage in projects"
+    ]
+
+    def stream():
+        for response in assistant( f"Explain Ptrajakta's {skill} experience", queries):
+            yield json.dumps(response) + "\n"
+
+    return StreamingResponse(
+        stream(),
+        media_type="application/json"
+    )
+
+
+@app.post("/project_skill")
+async def skill_endpoint(request: Request):
+    print("I am here in skill endpoint\n")
+    request_data = await request.json()
+    skill = request_data["skill"]
+    project = request_data["project"]
+    queries = [
+        f"{skill} implementation in project {project}",
+        f"{skill} configuration in project {project}",
+        f"{skill} usage in in project {project}"
+    ]
+
+    def stream():
+        for response in assistant( f"Explain how prajakta utilize {skill} in {project} project", queries):
+            yield json.dumps(response) + "\n"
+
+    return StreamingResponse(
+        stream(),
+        media_type="application/json"
+    )
+
+
+@app.post("/assistant") 
+async def skill_endpoint(request: Request):
+    print("I am here in skill endpoint\n")
+    request_data = await request.json()
+    question = request_data["question"]
+    def stream():
+        for response in classifier(question):
+            yield json.dumps(response) + "\n"
+
+    return StreamingResponse(
+        stream(),
+        media_type="application/json"
+    )
+</file>
+
+<file path="evidenceai/frontend/public/AskMentor.json">
+{
+    "name" : "AskMentor", 
+    "color": "rgb(76, 234, 18)", 
+    "category" : "Full Stack Development", 
+    "code": "https://github.com/ByteBelle-21/mentor",
+    "type": "Academic Project", 
+    "description" : "Full-stack discussion platform designed to help users connect, share knowledge, and engage in structured conversations. The platform supports discussion channels, nested replies, direct messaging, user profiles, and file sharing.",
+    "skills":{
+        "JavaScript": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+        "React": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
+        "Node.js": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
+        "SQL": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azuresqldatabase/azuresqldatabase-original.svg" ,
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "Docker": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"
+        },
+    "technical_implementation": {
+        "Frontend": {
+            "Component-Based UI": {
+                "description":
+                "Built the application as a React application using reusable components for authentication, channels, discussions, messaging, profiles, and navigation.",
+                "technologies": ["React", "JavaScript"]
+            },
+
+            "Client-Side Routing": {
+                "description":
+                    "Implemented navigation between application views and protected authenticated pages using React Router and authentication state.",
+                "technologies": ["React Router", "React"]
+            },
+
+            "State Management": {
+                "description":
+                    "Managed form inputs, API data, modal states, file selections, conversations, posts, and profile interactions using React Hooks.",
+                "technologies": ["React Hooks", "React"]
+            },
+
+            "UI Components": {
+                "description":
+                    "Built interactive forms, buttons, modals, navigation bars, off-canvas panels, lists, popovers, badges, and other interface elements using Bootstrap-based components.",
+                "technologies": ["React Bootstrap", "Bootstrap CSS"]
+            },
+
+            "API Integration": {
+                "description":
+                    "Connected the frontend to backend services through Axios REST API calls for authentication, channels, posts, messaging, profiles, search, and file operations.",
+                "technologies": ["Axios", "REST API"]
+            },
+
+            "File Handling": {
+                "description":
+                    "Implemented file attachment uploads using FormData and handled returned binary files using Blob and browser-generated object URLs.",
+                "technologies": ["JavaScript", "FormData", "Blob"]
+            }
+
+        },
+        "Backend": {
+            "Authentication & Authorization": {
+                "description":
+                "Implemented signup and login functionality with authentication state used to protect application routes and user-specific features.",
+                "technologies": ["Node.js", "Express", "sessionStorage"]
+                },
+            "REST API": {
+                "description":
+                    "Built REST API endpoints for authentication, channels, posts, threaded replies, direct messaging, profiles, search, and administrative operations.",
+                "technologies": ["Node.js", "Express", "REST API"]
+            },
+            "File Handling": {
+                "description":
+                    "Implemented multipart file uploads using Multer and stored file metadata and binary content in MySQL for posts and messages.",
+                "technologies": ["Multer", "Node.js", "MySQL"]
+            }
+        },
+
+        "Database": {
+            "Relational Data Model": {
+                "description":
+                    "Designed relational tables for users, discussions, replies, messages, connections, and files uploads.",
+                "technologies": ["MySQL", "SQL"]
+            },
+            "Nested Discussions": {
+                "description":
+                    "Used recursive CTEs to retrieve and structure hierarchical discussion replies.",
+                "technologies": ["MySQL", "SQL"]
+            }
+        },
+        "Infrastructure": {
+            "Containerization": {
+                "description":
+                    "Containerized the application services and database for a consistent development environment.",
+                "technologies": ["Docker", "Docker Compose"]
+            }
+        }
+    },
+    "key_features":{
+        "Discussion Channels":
+            "Explore and participate in conversations organized around different topics.",
+
+        "Threaded Discussions":
+            "Follow conversations through organized posts and nested replies.",
+
+        "Direct Messaging":
+            "Send private messages and have one-on-one conversations with other users.",
+
+        "User Profiles":
+            "View and manage user profiles, information, and activity.",
+
+        "File Sharing":
+            "Upload and share files within discussions and conversations.",
+
+        "Search":
+            "Quickly find users, discussions, and conversations across the platform.",
+
+        "Post Interactions":
+            "Like or dislike posts and engage with other users' discussions.",
+
+        "User Connections":
+            "Connect with other users and communicate within the platform.",
+
+        "Admin Management":
+            "Manage users and moderate discussions and platform content."
+    }, 
+    "data_flow": {
+        "Authentication":
+            "The user logs in or signs up through the React frontend. Axios sends the credentials to the Express backend, which validates the user or creates a new account in MySQL.",
+
+        "Session & Route Protection":
+            "After successful authentication, the frontend stores the authenticated user information in sessionStorage. App.js uses this information to protect application routes and allow access to authenticated pages.",
+
+        "Application Data Loading":
+            "Once authenticated, Channels, Profile, and Messages request the required data from the Express backend using Axios. The backend retrieves the data from MySQL and returns it to the React frontend.",
+
+        "Discussion Flow":
+            "The Channels page retrieves available channels and posts. When a channel is selected, its posts and nested replies are fetched from MySQL and rendered as threaded discussions in the React interface.",
+
+        "Post & Reply Creation":
+            "When a user creates a post or reply, the request is sent to the Express backend, which stores the content in MySQL. The frontend then refreshes the discussion to display the new content.",
+
+        "File Sharing":
+            "When a post, reply, or message contains an attachment, the frontend sends the file to the backend through the upload endpoint. The backend stores the file information in fileTable and associates it with the relevant content.",
+
+        "Messaging":
+            "The Messages page retrieves the selected user's conversation from the backend. Messages and their associated attachments are retrieved from MySQL and displayed in the conversation interface. Sending a message creates a new database record and optionally uploads an attachment.",
+
+        "Search":
+            "When a user searches for content, the selected search type determines which backend endpoint is called. The returned results are displayed in the search interface, and selecting a result navigates the user to the relevant page.",
+
+        "Profile Management":
+            "The Profile page retrieves the user's information, media links, and authored posts. Users can update their profile information and manage connected social accounts through backend API requests.",
+
+        "Administration":
+            "Administrators can view users and remove users, channels, or posts. These actions are processed by the backend and reflected in the frontend after the data is refreshed."
+    } 
+
+    }
+</file>
+
+<file path="evidenceai/frontend/public/DataPredictify.json">
+{
+    "name" : "DataPredictify", 
+    "color": "rgb(244, 200, 44)",
+    "category" : "ML Development", 
+    "code": "https://github.com/ByteBelle-21/dataGenisys",
+    "type": "Personal Project", 
+    "description" : "A Django-based data science web application that analyzes an Alzheimer's Disease dataset, performs preprocessing and encoding, generates exploratory graphs for dataset columns, and trains multiple machine learning classifiers to predict the target diagnosis from user-provided data.",
+    "skills":{
+        "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        "HTML": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg",
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "Django": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg",
+        "Pandas": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg",
+        "numpy" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg",
+        "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
+        "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
+        },
+    "technical_implementation": {
+           "Frontend": {
+                "Template-Based UI": {
+                    "description":
+                    "Built the application interface using Django templates, HTML, and CSS to display dataset information, preprocessing results, visualizations, and prediction results.",
+                    "technologies": ["Django Templates", "HTML", "CSS"]
+                    },
+
+                "Dynamic Data Visualization": {
+                    "description":
+                        "Implemented interactive graph generation where users select dataset columns and view dynamically generated visualizations without reloading the page.",
+                    "technologies": ["JavaScript", "jQuery", "AJAX", "Matplotlib", "Seaborn"]
+                },
+
+                "AJAX Interactions": {
+                    "description":
+                        "Used asynchronous requests to send dataset and prediction inputs to Django endpoints and update the interface dynamically with returned results.",
+                    "technologies": ["JavaScript", "jQuery", "AJAX"]
+                },
+
+                "Prediction Interface": {
+                    "description":
+                        "Built an interactive prediction form that accepts feature values and dynamically displays the predicted diagnosis, submitted features, model accuracies, and hyperparameters.",
+                    "technologies": ["HTML", "JavaScript", "jQuery"]
+                },
+
+                "Responsive UI": {
+                    "description":
+                        "Styled the application interface with custom CSS for navigation, tables, forms, graph containers, modals, and other interactive elements.",
+                    "technologies": ["CSS", "HTML"]
+                }
+
+            },
+
+           "Backend": {
+                "Request Handling": {
+                    "description":
+                        "Implemented Django views and URL routing to load datasets, process user requests, and coordinate data analysis, visualization, and prediction workflows.",
+                    "technologies": [
+                        "Django",
+                        "Python"
+                    ]
+                },
+
+                "AJAX API": {
+                    "description":
+                        "Implemented Django endpoints that receive asynchronous requests from the frontend and return processed data, generated graphs, predictions, and model results as JSON responses.",
+                    "technologies": [
+                        "Django",
+                        "AJAX",
+                        "JSON"
+                    ]
+                },
+
+                "Data Serialization": {
+                    "description":
+                        "Serialized processed dataframe data and preprocessing information so the cleaned dataset and feature transformations could be reused across asynchronous requests.",
+                    "technologies": [
+                        "Pandas",
+                        "JSON"
+                    ]
+                }
+            },
+
+            "Machine Learning": {
+                "Data Preprocessing": {
+                    "description":
+                        "Processed the Alzheimer’s dataset by handling missing values, removing unsuitable columns, encoding categorical and datetime-like features, and preparing the data for machine-learning models.",
+                    "technologies": [
+                        "Pandas",
+                        "NumPy",
+                        "Scikit-learn"
+                    ]
+                },
+
+                "Correlation Analysis": {
+                    "description":
+                        "Calculated correlations between dataset features to identify relationships between variables and support exploration of the dataset.",
+                    "technologies": [
+                        "Pandas",
+                        "NumPy"
+                    ]
+                },
+
+                "Data Visualization": {
+                    "description":
+                        "Generated statistical visualizations from selected dataset columns to help users explore relationships and patterns within the data.",
+                    "technologies": [
+                        "Matplotlib",
+                        "Seaborn"
+                    ]
+                },
+
+                "Model Training": {
+                    "description":
+                        "Built a classification pipeline that scaled features, split the dataset into training and testing sets, and trained multiple machine-learning models.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Pandas",
+                        "NumPy"
+                    ]
+                },
+
+                "Hyperparameter Tuning": {
+                    "description":
+                        "Used GridSearchCV to systematically tune model hyperparameters and identify optimized configurations for each classifier.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "GridSearchCV"
+                    ]
+                },
+
+                "Model Evaluation": {
+                    "description":
+                        "Compared Logistic Regression, Support Vector Machine, Decision Tree, and K-Nearest Neighbors models using accuracy and their optimized configurations.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Logistic Regression",
+                        "Support Vector Machine",
+                        "Decision Tree",
+                        "K-Nearest Neighbors"
+                    ]
+                },
+
+                "Diagnosis Prediction": {
+                    "description":
+                        "Processed user-provided feature values and used the trained classification pipeline to predict the target diagnosis and return model performance results.",
+                    "technologies": [
+                        "Scikit-learn",
+                        "Pandas",
+                        "NumPy"
+                    ]
+                }
+
+            }
+            ,
+            "Data Storage": {
+                "Application Database": {
+                    "description":
+                        "Configured SQLite as the Django application database for local application data.",
+                    "technologies": [
+                        "SQLite",
+                        "Django"
+                    ]
+                }
+            }
+        },
+    "key_features": {
+        "Dataset Insights":
+            "View dataset structure, column information, data types, and missing-value summaries after preprocessing.",
+
+        "Feature Encoding":
+            "View numerical representations of categorical and datetime values used for model training.",
+
+        "Correlation-Based Visualization":
+            "View relationships between correlated dataset columns through graphical visualizations.",
+
+        "Multi-Model Predictions":
+            "Compare predictions and performance results from four different machine learning classifiers.",
+
+        "Final Diagnosis":
+            "View the final predicted diagnosis based on the trained classification models.",
+
+        "Interactive Results":
+            "Explore preprocessing details, visualizations, model results, and predictions through the Django interface."
+        },
+    "data_flow": {
+            "Dataset Loading":
+                "Django loads the local Alzheimer’s Disease CSV dataset and verifies the expected target column.",
+
+            "Data Preprocessing":
+                "Missing values are handled, high-missingness columns are removed, and categorical and datetime features are encoded.",
+
+            "Dataset Analysis":
+                "The processed dataframe is analyzed to identify correlations between dataset columns.",
+
+            "Dataset Presentation":
+                "Dataset summaries, including column names, data types, and missing-value counts, are displayed in the Django interface.",
+
+            "Graph Generation":
+                "The browser sends the selected column to Django, which generates the graph using Matplotlib and Seaborn.",
+
+            "Model Training":
+                "Multiple machine learning classifiers are trained and optimized using GridSearchCV.",
+
+            "Model Evaluation":
+                "The trained models are evaluated using accuracy metrics, and their best parameters and results are displayed.",
+
+            "Prediction Input":
+                "The user enters feature values through the prediction form, which are aligned with the processed dataset columns.",
+
+            "Diagnosis Prediction":
+                "The trained models use the user-provided features to predict the target diagnosis.",
+
+            "Web Interface":
+                "The Django interface displays dataset insights, generated graphs, model results, and diagnosis predictions."
+        }
+
+    }
+</file>
+
+<file path="evidenceai/frontend/public/EvidenceAI.json">
+{
+    "name" : "EvidenceAI", 
+    "color": "rgb(217, 33, 33)",
+    "category" : "LLM + RAG Development", 
+    "code": "https://github.com/Prajakta-Sutar/EvidenceAI",
+    "type": "Personal Project", 
+    "description" : "An AI-powered developer portfolio that integrates an LLM-based assistant with RAG to answer questions about skills, projects, and experience, while retrieving and presenting relevant evidence from the portfolio to support its responses.",
+    "skills":{
+        "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        "JavaScript": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+        "React": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "ChromaDB": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/datatables/datatables-original.svg",
+        "OpenAI API" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
+        "FastAPI": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg",
+        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg"
+        },
+    "technical_implementation": {
+            "Frontend": {
+                "Component-Based UI": {
+                    "description":
+                        "Built the portfolio interface using reusable React components with dynamic rendering of portfolio content, conversations, responses, and supporting evidence.",
+                    "technologies": ["React", "React-Bootstrap"]
+                },
+
+                "UI Styling & Icons": {
+                    "description":
+                        "Styled the interface using custom CSS and Bootstrap components, with Google Material Icons for interface actions and visual elements.",
+                    "technologies": ["CSS", "Bootstrap", "Google Material Icons"]
+                },
+
+                "Conversation State Management": {
+                    "description":
+                        "Managed conversation history and user interactions using React state to maintain context throughout the assistant session.",
+                    "technologies": ["React", "React Hooks"]
+                },
+
+                "API Integration": {
+                    "description":
+                        "Connected the frontend to FastAPI endpoints using fetch requests to send user questions and trigger LLM-based responses when users select technology skills.",
+                    "technologies": ["React", "Fetch API", "FastAPI"]
+                },
+
+                "Streaming Response Handling": {
+                    "description":
+                        "Processed streamed backend responses to progressively display generated summaries and supporting evidence in the interface.",
+                    "technologies": ["React", "Fetch API", "Streaming API"]
+                }
+            },
+
+            "Backend": {
+                "API Service": {
+                    "description":
+                        "Built FastAPI endpoints that receive user queries and selected skills from the frontend and coordinate the assistant's retrieval and response-generation workflow.",
+                    "technologies": ["FastAPI", "Python"]
+                },
+                "RAG Pipeline Integration": {
+                    "description":
+                        "Implemented the backend workflow for query classification, parallel retrieval, context processing, and evidence-grounded response generation.",
+                    "technologies": ["OpenAI API", "ChromaDB Retriever", "Python", "LangChain", "FastAPI"]
+                },
+                "Streaming Responses": {
+                    "description":
+                        "Implemented response streaming to deliver the generated summary to the frontend before returning the supporting evidence.",
+                    "technologies": ["StreamingResponse", "FastAPI", "Python"]
+                }
+            },
+
+            "LLM Pipeline": {
+                "LLM-Based Query Classification": {
+                    "description":
+                        "Used few-shot prompting with an LLM to classify user questions and generate relevant retrieval queries for the portfolio knowledge base.",
+                    "technologies": ["LLM", "LangChain", "Few-Shot Prompting"]
+                },
+               "Semantic Retrieval": {
+                    "description":
+                        "Generated multiple retrieval queries and performed parallel semantic searches over embedded portfolio information to retrieve relevant evidence.",
+                    "technologies": ["OpenAI Embeddings", "ChromaDB", "LangChain", "Multi-threading"]
+                },
+
+                "Evidence-Grounded Generation": {
+                    "description":
+                        "Combined the user question, retrieved context, and conversation history to generate Markdown responses, streaming the summary first and supporting evidence afterward.",
+                    "technologies": ["LLM", "LangChain"]
+                }
+            },
+           "Data Storage System": {
+                "Repository Preprocessing": {
+                    "description":
+                        "Consolidated project repositories using Repomix to prepare their source files and project structure for LLM-based analysis and knowledge extraction.",
+                    "technologies": ["Repomix"]
+                },
+
+                "LLM Knowledge Extraction": {
+                    "description":
+                        "Used an LLM with custom prompting to transform repository content into structured technical knowledge covering project overview, architecture, file-level implementation, technologies, and component relationships.",
+                    "technologies": ["LLM", "LangChain", "Prompt Engineering"]
+                },
+
+                "Hybrid Chunking": {
+                    "description":
+                        "Processed the generated portfolio knowledge using a hybrid chunking strategy and attached relevant metadata to each chunk to preserve its source and context.",
+                    "technologies": [
+                        "Python",
+                        "Tree-sitter",
+                        "LangChain",
+                        "Beautiful Soup"
+                    ]
+                },
+
+                "Vector Data Storage": {
+                    "description":
+                        "Generated embeddings for the processed chunks and stored the chunks, embeddings, and associated metadata in ChromaDB to support semantic search and evidence retrieval.",
+                    "technologies": [
+                        "ChromaDB",
+                        "OpenAI Embeddings",
+                        "Python"
+                    ]
+                }
+            }
+        },
+    "key_features": {
+        "AI Portfolio Assistant": "Ask questions about Prajakta's skills, projects, experience, and technical background.",
+
+        "Project Exploration": "Explore project details, key features, technical implementation, technology stack, and data flow.",
+
+        "Skill-Based Exploration": "Select a technology from a project's tech stack to see how it was used in projects.",
+
+        "Evidence-Backed Answers": "View evidence presented by assistant to support responses to user’s questions.",
+
+        "Context-Aware Responses": "Continue conversations while the assistant uses recent questions and responses to maintain context.",
+
+        "Resume Access": "View and download Prajakta's resume for a complete overview of her qualifications and experience.",
+
+        "Contact Information": "View available contact details for professional inquiries and opportunities."
+
+        },
+   "data_flow": {
+        "Portfolio Presentation":
+            "The React interface displays the portfolio and EvidenceAI assistant side by side when the website loads.",
+
+        "Portfolio Exploration":
+            "Users navigate through the portfolio to explore background information, projects, technical skills, and other portfolio content.",
+
+        "Project Exploration":
+            "Users select a project to view its dedicated project details and explore its features, technical implementation, and data flow.",
+
+        "Global Skill Exploration":
+            "When a user selects a technology skill from the main portfolio page, the frontend sends the skill to the backend to retrieve evidence showing how it was used across projects.",
+
+        "Project-Specific Skill Exploration":
+            "When a user selects a technology skill from a project details page, the frontend sends the project and skill context to the backend to retrieve evidence specific to that project.",
+
+        "Question Submission":
+            "Users submit technical questions through the EvidenceAI assistant, while conversation history is maintained in React state.",
+
+        "Query Classification":
+            "The backend uses an LLM with few-shot prompting to classify the question and generate relevant retrieval queries.",
+
+        "Semantic Retrieval":
+            "Multiple retrieval queries are used to search the ChromaDB vector store for relevant portfolio information and supporting evidence.",
+
+        "Context Processing":
+            "Retrieved evidence is combined with the user question, conversation history, and relevant project or skill context for response generation.",
+
+        "Response Generation":
+            "The assistant LLM generates an evidence-grounded Markdown response using the retrieved portfolio information.",
+
+        "Response Streaming":
+            "The backend streams the generated summary to the React frontend first, followed by the supporting evidence."
+    }
+}
+</file>
+
+<file path="evidenceai/frontend/src/App.css">
+html{
+    scroll-behavior: smooth !important;
+}
+
+
+
+.device_not_supported{
+    background-image: linear-gradient( 
+        180deg,
+    #0d0229,
+    #06308a,
+    #023d46
+        );
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    color:white;
+}
+
+.not_supported_text{
+     animation: text_float 2s ease-in-out infinite;
+}
+
+
+@keyframes text_float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform:  translateY(-20px);
+    }
+}
+
+.landing_page{
+    background-color: rgb(2, 2, 15);
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    gap: 1.5vh;
+    overflow:hidden !important;
+}
+
+.portfolio{
+    width: 60% !important;
+    height: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background-color: rgb(9, 8, 22);
+    border: 0.1vh solid rgb(36, 39, 68);
+    border-radius: 2vh;
+}
+
+.Portfolio_section::-webkit-scrollbar, .skill_details::-webkit-scrollbar, .project_details::-webkit-scrollbar{
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+
+
+.floating_bar{
+    position: absolute !important;
+    bottom: 2vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 90%;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color:white;
+    padding: 1vh 2vh;
+    border-radius: 1vw;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(34, 34, 41) !important;
+    font-size: small;
+}
+
+
+.Portfolio_section, .skill_details, .project_details{
+    width: 100% !important;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    position: relative;
+    margin: 0% !important;
+    background-color: transparent !important;
+    overflow-y: auto !important;
+    padding-bottom: 10vw !important;
+}
+
+.skill_details, .project_details{
+    padding:2vw;
+}
+
+.introduction_panel{
+    width: 100% !important;
+}
+
+
+.robot_section{
+    width : 39% !important;
+    height: 100%;
+    border-radius: 2vh;
+    padding: 1vw !important;
+    margin: 0% !important;
+    background-color:  rgb(9, 8, 22);
+    border: 0.1vh solid rgb(36, 39, 68);
+}
+
+.nav_bar{
+    background-color: rgb(9, 8, 22);
+    padding-top: 1vh;
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: white !important; 
+}
+
+.nav-link:hover {
+    border-bottom: 1.5px solid rgb(88, 33, 217);
+}
+
+.go_back{
+    font-size: small;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: rgb(88, 33, 217);
+    margin-left: 1vw;
+}
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+}
+
+
+.headings{
+    color: white;
+}
+
+.view_all{
+    font-size: small !important;
+    color : rgb(117, 65, 238) !important;
+}
+
+
+.view_all:hover{
+    cursor:pointer;
+    transform: scale(1.05);
+     color : rgb(104, 212, 231) !important;
+}
+
+.tech_panel{
+    width:100%;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    color: white;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+
+.panel_heading{
+    display: flex !important;
+    align-items: center !important;
+}
+
+.panel_heading h6{
+    margin: 0;
+    font-weight: bold !important;
+}
+
+.stack_icon, .code_icon,.job_icon, .phone_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.tech_stack{
+    width: 100% !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2vh;
+}
+
+.project_panel{
+    width: 100% !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap:2vh;
+    margin-top: 1vh;
+}
+
+.work_panel{
+    width: 100% !important;
+    color:white !important; 
+    margin-top: 1vh;
+}
+
+.contact_panel{
+    width: 100% !important;
+    padding-bottom: 4vw;
+}
+
+.suggestion{
+    font-size: small;
+}
+
+
+
+.robot{
+    height: 100% !important;
+    display: flex;
+    position: relative;
+}
+
+
+
+.floating_item{
+    display: flex;
+    align-items: center !important;
+}
+
+.floating_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    margin-right: 1vh;
+}
+</file>
+
+<file path="evidenceai/frontend/src/App.jsx">
+import './App.css';
+import Nav from 'react-bootstrap/Nav'; 
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import { FaLinkedin } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+import Stack from 'react-bootstrap/Stack';
+import { FaDownload } from "react-icons/fa";
+import { SiLeetcode } from "react-icons/si";
+import { FaGithub } from "react-icons/fa";
+import Card from 'react-bootstrap/Card';
+import Robot from "./Robot";
+import Skills from "./Skills";
+import Projects from "./Projects";
+import Work from "./Work";
+import Contact from "./Contact";
+import Introduction from './Introduction';
+import Evidence from './Evidence';
+import ProjectDetails from './ProjectDetails';
+import { useEffect, useState } from "react";
+import Badge from 'react-bootstrap/Badge';
+
+
+function App(){
+  
+  const [isSupported, setIsSupported] = useState( window.innerWidth >= 1000 && window.innerHeight >= 600);
+  const [section, setSection] = useState("portfolio");
+  const [skill, setSkill] = useState({name:"", id:0});
+  const [project, setProject] = useState("");
+  const [evidence, setEvidence] = useState([]);
+  const [conversation, setConversation] = useState([]);
+  const [lastSection, setLastSection] = useState("portfolio");
+
+
+  useEffect(()=>{
+    const handleResize=()=>{
+        setIsSupported(    window.innerWidth >= 1000 && window.innerHeight >= 600);
+    }
+    window.addEventListener("resize", handleResize);
+    return(()=>{
+      window.removeEventListener("resize", handleResize);
+    })
+  }, []);
+
+  useEffect(()=>{
+      if(section !== "skill_section" && section !== "project_evidence" && section !== "assistant")
+          setLastSection(section);
+  }, [section]);
+
+  const handleLinks = () =>{
+      if (section === "skill_section"){
+          setSkill({name:"", id:0});
+          setProject("");
+          setEvidence([]);
+          setSection("portfolio");
+          setTimeout(() => {
+            document.getElementById("skills")?.scrollIntoView({
+              behavior: "smooth"
+            });
+          }, 100);
+      }
+      else if (section === "project_evidence"){
+        setSkill({name:"", id:0});
+        setEvidence([]);
+        setSection("project")
+      }
+      else if (section === "assistant"){
+          setEvidence([]);
+          setSection(lastSection);
+      }
+      else{
+        setSkill({name:"", id:0});
+        setProject("");
+        setEvidence([]);
+        setSection("portfolio");
+      }
+  }
+
+  const handleNavLinks=()=>{
+    setSkill({name:"", id:0});
+    setProject("");
+    setEvidence([]);
+    setSection("portfolio");
+  }
+
+  if(isSupported){
+    return(  
+      <div fluid="xl" className="landing_page">
+          <div className='portfolio'>
+            <Nav className="nav_bar" >
+                  {(section === "evidence" || section === "skill_section") && (
+                      <div className='go_back' 
+                            onClick={()=>{handleLinks()}}>
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <p style={{margin:'0'}}>Back to Portfolio</p>
+                      </div>
+                  )}
+                  {(section === "assistant") && (
+                      <div className='go_back' 
+                            onClick={()=>{handleLinks()}}>
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <p style={{margin:'0'}}>Go Back</p>
+                      </div>
+                  )}
+                  {(section === "project_evidence") && (
+                      <div className='go_back' 
+                            onClick={()=>{handleLinks()}}>
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <p style={{margin:'0'}}>Back to Project</p>
+                      </div>
+                  )}
+                  {(section === "project") && (
+                      <div className='go_back' 
+                            onClick={()=>{
+                              handleLinks();
+                              setTimeout(() => {
+                                document.getElementById("projects")?.scrollIntoView({
+                                  behavior: "smooth"
+                                });
+                              }, 100);
+                            }}>
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <p style={{margin:'0'}}>Back to Portfolio</p>
+                      </div>
+                  )}
+                  <Nav.Item className="small ms-auto" onClick={()=>
+                    {
+                      handleNavLinks();
+                      setTimeout(() => {
+                          document.getElementById("about")?.scrollIntoView({
+                            behavior: "smooth"
+                          });
+                        }, 100);
+                    }}>
+                    <Nav.Link href="#about" >About</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item className="small" onClick={()=>
+                    {
+                      handleNavLinks();
+                      setTimeout(() => {
+                          document.getElementById("skills")?.scrollIntoView({
+                            behavior: "smooth"
+                          });
+                        }, 100);
+                    }}>
+                    <Nav.Link href="#skills">Skills</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item className="small" onClick={()=>
+                    {
+                      handleNavLinks();
+                      setTimeout(() => {
+                          document.getElementById("projects")?.scrollIntoView({
+                            behavior: "smooth"
+                          });
+                        }, 100);
+                    }}>
+                    <Nav.Link href="#projects" >Projects</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item className="small" onClick={()=>
+                    {
+                      handleNavLinks();
+                      setTimeout(() => {
+                          document.getElementById("work")?.scrollIntoView({
+                            behavior: "smooth"
+                          });
+                        }, 100);
+                    }}>
+                    <Nav.Link href="#work" >Work Experince</Nav.Link>
+                  </Nav.Item>
+              </Nav>
+              {(section === "skill_section" || section === "project_evidence" || section === "assistant")  &&
+              (<Evidence className="skill_details"  evidence={evidence} />)}
+              {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
+              {section === "portfolio" && (
+              < Container className="Portfolio_section">
+                  <span id="about"></span>
+                  <Introduction className="introduction_panel" />    
+
+                  <hr className="line"/>
+
+                  <div id="skills" className=' tech_panel'>
+                    <Stack direction="horizontal" gap={2} className='panel_heading'>
+                          <span class="material-symbols-outlined stack_icon">stacks</span>
+                          <h6 className="headings">Tech Stack</h6>   
+                    </Stack>
+                    <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
+                    <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} setConversation={setConversation}/>
+                  </div>
+
+                  <hr className="line"/>
+
+                  <div id="projects" className='tech_panel'>
+                      <Stack direction="horizontal" gap={2} className='panel_heading'>
+                        <span class="material-symbols-outlined code_icon">code_blocks</span>
+                          <h6 className="headings">Featured Projects</h6>
+                      </Stack>
+                      <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
+                      <Projects className="project_panel" setSection={setSection} setProject={setProject}/>
+                  </div>
+
+                  <hr className="line"/>
+
+                  <div id='work' className=' tech_panel'>
+                    <Stack direction="horizontal" gap={2} className='panel_heading'>
+                          <span class="material-symbols-outlined job_icon">enterprise</span>
+                          <h6 className="headings">Professional Experience</h6>
+                    </Stack>
+                    <Work className="work_panel" />
+                  </div>
+              </Container>
+              )}
+              <div className='floating_bar'>
+                    <div className='floating_item'>
+                        <span className="material-symbols-outlined floating_icon" >
+                            mail
+                        </span>
+                        prajaktas.connect@gmail.com
+                    </div>
+                    <div className='floating_item'>
+                        <span className="material-symbols-outlined floating_icon">
+                            location_on
+                        </span>
+                        Canada
+                    </div>
+                    <div className='floating_item'>
+                        <span className="material-symbols-outlined floating_icon">
+                            business_center
+                        </span>
+                        Open to opportunities
+                    </div>
+                </div>
+          </div>
+          <Container className="robot_section">
+              <Robot className="robot" 
+                    selectedSkill={skill} 
+                    setEvidence={setEvidence} 
+                    conversation={conversation} 
+                    setConversation={setConversation} 
+                    section={section}
+                    setSection={setSection}
+                    project={project}
+                    lastSection={lastSection}/>
+          </Container>
+      </div>
+    )
+  }
+  else{
+    return(
+        <div className='device_not_supported'>
+            <span>
+                <Stack direction='horizontal' gap={4} className='not_supported_text'>
+                  <span class="material-symbols-outlined" style={{fontSize:"30px"}}>sync_saved_locally_off</span>
+                  <h4> Device not supported </h4>
+              </Stack>
+            </span>
+            <p style={{color:"rgb(247, 199, 56)"}}>Please use larger screen !!</p>
+
+        </div>
+    )
+  }
+}
+
+export default App;
+</file>
+
+<file path="evidenceai/frontend/src/Contact.css">
+.form_panel{
+    width: 80%;
+    margin-top: 3vw;
+    color:rgb(246, 226, 113) !important;
+}
+
+.submit_button{
+    border-color: rgb(88, 33, 217) !important;
+    background-color: rgb(88, 33, 217) !important;
+    font-size: small !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 20px rgba(98, 0, 238, 0.8), 0 0 40px rgba(73, 215, 220, 0.4); 
+} 
+
+.submit_button:hover{
+    transform: scale(1.05);
+}
+
+.form_control{ 
+    color:white !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+}
+
+.message_control{
+    resize: vertical;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: inherit;
+}
+
+.form_line{
+    background: rgb(246, 226, 113);
+    margin-top: 0 !important;
+    border: none;
+    height: 1px;
+    opacity: 0.5;
+}
+</file>
+
+<file path="evidenceai/frontend/src/Contact.jsx">
+import './Contact.css';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/esm/Button';
+
+function Contact({className}){
+    return (
+        <div className={className}>
+            <Form className='form_panel'>
+                 <Row>
+                    <Col>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label style={{fontSize:"small"}}>First name</Form.Label>
+                            <Form.Control type="text" className='form_control'/>
+                            <hr className='form_line'/>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                           <Form.Label style={{fontSize:"small"}}>Last name</Form.Label>
+                            <Form.Control type="text" className='form_control'/>
+                            <hr className='form_line'/>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{fontSize:"small"}}>Email address</Form.Label>
+                        <Form.Control type="email" className='form_control'/>
+                        <hr className='form_line'/>
+                    </Form.Group>
+                </Row>
+                <Row>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{fontSize:"small"}}>Message</Form.Label>
+                        <Form.Control 
+                            as="textarea" 
+                            rows={1}  
+                            className='form_control message_control'
+                             onInput={(e) => {
+                                e.target.style.height = "auto";
+                                e.target.style.height = `${e.target.scrollHeight}px`;
+                            }}/>
+                        <hr className='form_line'/>
+                    </Form.Group>
+                </Row>
+            </Form>
+            <Button className='submit_button'> Send message </Button>
+        </div>
+    )
+}
+
+export default Contact;
+</file>
+
+<file path="evidenceai/frontend/src/Evidence.css">
+.evidence_item{
+    color: white;
+    margin-top: 2vw;
+    margin-bottom: 4vw;
+}
+
+.evidence_heading{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.loading_text{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:large;
+    margin: 0;
+}
+
+.evidence_heading_text{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:x-large;
+}
+
+.loading_icon{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:small;
+}
+
+
+.evidence_code{
+    width: 80% !important;
+    font-size: small;
+    max-height: 40vw;
+    overflow-y: auto;
+    color: black;
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+}
+
+.evidence_code::-webkit-scrollbar{
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+.evidence_item_heading{
+    color: rgb(181, 154, 245);
+}
+
+.project_name{
+    color: rgb(181, 154, 245);
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 0.5vw;
+}
+
+.line{
+    border: 0.15vh solid rgb(143, 140, 133) !important;
+}
+</file>
+
+<file path="evidenceai/frontend/src/Evidence.jsx">
+import './Evidence.css';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Spinner from 'react-bootstrap/Spinner';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+
+function Evidence({className, evidence}){
+    const getProject=(path)=>{
+        if (path.includes("askmentor")) {
+            return "AskMentor";
+        }
+        else if (path.includes("datagenesys")) {
+            return "DataPredictify";
+        }
+        else if (path.includes("EvidenceAI")) {
+            return "EvidenceAI"
+        }
+        else{
+            return null; 
+        }
+    }
+
+    const getAbsolutePath=(path)=>{
+        return path.replace("./evidence/repository/", "");
+    }
+
+
+    return(
+        <div className={className}>
+                {evidence.length === 0 ? (
+                    <span className='evidence_heading'>
+                        <p className='loading_text'>Loading evidence....</p>
+                        <Spinner animation="border" className='loading_icon'/>
+                    </span>
+                ) : (
+                    <span className='evidence_heading'>
+                        <p className='evidence_heading_text'>Evidences to Support</p>
+                    </span>
+                )}
+                {evidence.map((item, index) => (
+                    <div className='evidence_item' key={index}>
+                        <Row>
+                            <Col className='project_name'>{getProject(item.file)} Project</Col>
+                        </Row>
+                        <Row>
+                            <Col xs="auto" className='evidence_item_heading'> # File : </Col>
+                        </Row>
+                        <Row>
+                            <Col>{getAbsolutePath(item.file)}</Col>
+                        </Row>
+                        <Row>
+                            <Col xs="auto" className='evidence_item_heading'> # Description : </Col>
+                        </Row>
+                        <Row>
+                            <Col>{item.description}</Col>
+                        </Row>
+                        <div className='evidence_code'>
+                            <SyntaxHighlighter 
+                                language="javascript"
+                                style={oneDark}
+                                showLineNumbers>
+                                {item.code}
+                            </SyntaxHighlighter>
+                        </div>
+                        <hr className="line"/>
+                    </div>
+                    
+                ))}
+        </div>
+    );
+}
+
+export default Evidence;
+</file>
+
+<file path="evidenceai/frontend/src/Introduction.css">
+.intro_panel, .about_me_panel{
+    width:100%;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    color: white;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+.name_text{
+    font-weight: bold;
+    background-image: linear-gradient( 
+        90deg,
+    #8b5cf6,
+    #2563eb,
+    #22d3ee
+        );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+
+.intro_text{
+    width: 50%;
+    font-size: small;
+}
+
+
+.resume_section{
+    display: flex;
+    flex-direction: row;
+}
+
+.resume-button{
+    border-color: rgb(88, 33, 217) !important;
+    background-color: rgb(88, 33, 217) !important;
+    font-size: small !important;
+    font-weight: bold !important;
+    display: flex !important; 
+    align-items: center !important;
+    justify-content: center !important;
+    padding-left: 1vw !important;
+    padding-right: 1vw !important;
+    margin-right: 1vw !important;
+    gap: 0.1vw;
+    box-shadow: 0 0 20px rgba(98, 0, 238, 0.8), 0 0 40px rgba(73, 215, 220, 0.4); 
+}
+
+.resume-button:hover{
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+
+.panel_heading{
+    display: flex !important;
+    align-items: center !important;
+}
+
+.panel_heading h6{
+    margin: 0;
+    font-weight: bold !important;
+}
+
+
+
+.person_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+
+.headings{
+    color: white;
+}
+
+
+.info_panel{
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+    width: 80%;
+    font-size: small;
+}
+
+.feature_panel{
+    width: 100%;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.feature_card{
+    display: flex;
+    align-items: center;
+    width:32% !important;
+    height: 4vw;
+    background-color: rgb(28, 28, 39);
+    border-radius: 0.5vh;
+    padding-left: 1vh;
+    padding-right: 1vh;
+    font-size: small;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(142, 138, 148, 0.8), 0 0 20px rgba(200, 203, 203, 0.4); 
+}
+
+.feature_card:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+    
+}
+
+.linkedin_card, .github_card, .leetcode_card{
+    display: flex;
+    align-items: center;
+    gap:1vh !important;
+}
+
+.linkedin_card:hover{
+    box-shadow: 0 0 10px rgba(30, 148, 238, 0.8), 0 0 20px rgb(157, 210, 233); 
+}
+
+.github_card:hover{
+    box-shadow: 0 0 10px rgba(233, 236, 239, 0.8), 0 0 20px rgb(245, 248, 249); 
+}
+
+
+.leetcode_card:hover{
+    box-shadow: 0 0 10px rgba(243, 183, 30, 0.8), 0 0 20px rgb(244, 212, 154); 
+}
+
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+}
+</file>
+
+<file path="evidenceai/frontend/src/Introduction.jsx">
+import './Introduction.css';
+import Button from "react-bootstrap/Button";
+import Stack from "react-bootstrap/Stack";
+import { FaGithub } from "react-icons/fa";
+
+
+function Introduction({className}){
+    return(
+        <div className={className}>
+            <div className="intro_panel">
+                    <h4 style={{fontWeight:"bold"}}>Hi, I'm</h4>
+                    <h1 className="name_text">Prajakta Sutar</h1>
+                    <h6 className="name_text"> AI and Full-Stack Developer</h6>
+                    <p className='intro_text' style={{marginBottom:"2vw"}}> 
+                    Passionate about AI, 
+                    full-stack development, and solving complex engineering 
+                    challenges, I strive to create applications that make a 
+                    meaningful impact.
+                    </p>
+                    <Button 
+                        className="resume-button" size='sm'
+                        onClick={()=>{
+                        window.open(
+                            "../public/PrajaktaSutarResume.pdf", 
+                            "_blank"
+                        )
+                        }}>
+                        <span class="material-symbols-outlined">
+                        download
+                        </span> 
+                        Download resume
+                    </Button>
+            </div>
+
+            <hr className="line"/>
+
+            <div className="about_me_panel">
+                <Stack direction="horizontal" gap={2} className='panel_heading'>
+                    <span class="material-symbols-outlined person_icon">person</span>
+                    <h6 className="headings">About Me</h6>
+                </Stack>
+                <p className="info_panel">
+                    I am a <span style={{color:"rgb(147, 107, 241)", fontWeight:"bold"}}>B.Sc. Computer Science</span> graduate from the 
+                    <span style={{color:"rgb(147, 107, 241)", fontWeight:"bold"}}> University of Saskatchewan</span>. 
+                    I have built full-stack applications, predictive machine learning models, 
+                    and AI-powered RAG systems. I also have experience in IT support, 
+                    helping users troubleshoot technical issues and work with various 
+                    technologies. I enjoy collaborating with teams, solving problems, 
+                    exchanging ideas, and building meaningful software solutions.
+                </p>
+                <Stack direction='horizontal' className='feature_panel' gap={3}>
+                        <div 
+                            className='feature_card linkedin_card'
+                            onClick={()=>{
+                            window.open(
+                                "https://www.linkedin.com/in/prajakta-sutar-usask/", 
+                                "_blank"
+                            )
+                            }}>
+                            <img 
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg"
+                            height='30vw' />
+                        <span>Linkedin</span> 
+                        </div>
+                        <div 
+                            className='feature_card github_card'
+                            onClick={()=>{
+                            window.open(
+                                "https://github.com/Prajakta-Sutar", 
+                                "_blank"
+                            )
+                            }}>
+                            <FaGithub size={28} className="github-icon" />
+                            GitHub
+                        </div>
+                        <div 
+                            className='feature_card leetcode_card'
+                            onClick={()=>{
+                            window.open(
+                                "https://leetcode.com/u/psutar-00/", 
+                                "_blank"
+                            )
+                            }}>
+                            <img 
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/leetcode/leetcode-original.svg"
+                            height="30vw" />
+                            <span>LeetCode</span>
+                        </div>
+                </Stack>
+            </div>
+        </div>
+    );
+}
+
+export default Introduction;
+</file>
+
+<file path="evidenceai/frontend/src/ProjectDetails.css">
+.project_name{
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.askmentor_intro{
+    color: white;
+    width: 70% !important;
+    font-size: small;
+}
+
+.askmentor_details{
+    width: 100%;
+    margin-top: 2vw;
+    color: white;
+    
+}
+
+.project_headings{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    font-weight: bold;
+    color: white;
+    gap: 1vh;
+    margin-bottom: 1vh;
+}
+
+.error_icon{
+    color: rgb(154, 120, 233);
+}
+
+.project_table{
+    font-size: small;
+    color: white;
+    margin-top: 3vh;
+}
+
+
+.second_col{
+    flex: 0 0 150px !important;
+    max-width: 100px !important;
+}
+
+.category{
+    background-color:rgb(31, 4, 94);
+    color: rgb(214, 202, 243);
+    padding: 0.5vh 1vh;
+    width: fit-content;
+    border-radius: 0.5vh;
+}
+
+.table_icon{
+    font-size: medium;
+}
+
+.code_link{
+    color: rgb(154, 120, 233);
+}
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+}
+
+.project_tech{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 2vh;
+}
+
+.skill_image{
+    height: 2vw !important;
+    object-fit: contain;
+    flex-shrink: 0;
+    background-color: transparent !important;
+}
+
+
+.stack_item{
+    width: fit-content;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(28, 28, 39) !important;
+    color: white !important;
+    margin: 1vh;
+    padding-top: 1vh;
+}
+
+
+.stack_item:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+
+.project_tech_features{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 2vh;
+
+}
+
+.feature{
+    width: 46% !important;
+    background-color:rgb(28, 28, 39) !important;
+    margin: 1vh;
+    padding: 1vh;
+}
+
+.feature_description{
+    margin: 0;
+    font-size: small;
+}
+
+.feature_tech_list{
+    width: 100% !important;
+    display: flex;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    margin-top: 1vh;
+}
+
+.feature_tech{
+    background-color:rgb(43, 34, 65);
+    color: rgb(154, 120, 233);
+    font-size: small;
+    padding:0.25vh 1vh;
+    margin-right: 1vh;
+    margin-bottom: 1vh;
+    border-radius: 0.5vh;
+}
+
+.implementation_category{
+    margin-bottom: 2vh;
+}
+
+.category_name{
+    font-size: medium;
+    font-weight: bold;
+    color: rgb(249, 193, 73);
+    margin-left: 1vh;
+}
+
+.key_features{
+    font-size: small;
+}
+
+.project_flow{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-bottom: 4vw;
+    margin-top: 2vw;
+}
+
+.project_flow::before{
+    content: "";
+    position: absolute;
+    left: 0.5vw;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+.flow_content{
+   width: 100%;
+    margin-left: 2vh; 
+    margin-bottom: 3vh;
+}
+
+.flow_heading{
+    margin:0;
+}
+</file>
+
+<file path="evidenceai/frontend/src/ProjectDetails.jsx">
+import './ProjectDetails.css';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+import Card from 'react-bootstrap/Card';
+import { useState, useEffect } from 'react';
+import { Icon } from '@iconify/react';
+
+function ProjectDetails({className, setSection, project, setSkill}){
+
+    const [details, setDetails] = useState(null);
+    useEffect(() => {
+        fetch(`/${project}.json`)
+            .then(response => response.json())
+            .then(data => setDetails(data))
+            .catch(error => console.error("Error getting project details:", error));
+    }, [project]);
+
+    if (!details) {
+        return (
+            <div className={className}>
+                <p>Loading project...</p>
+            </div>
+        );
+    }
+
+    const handleSelection =(selected_skill)=>{
+        setSection("project_evidence");
+            setSkill(prev => ({
+            name: selected_skill,
+            id: prev.id + 1
+        }));
+    }
+
+    return(
+        <div className={className} >
+            <div className='askmentor_intro'>
+                <p className='project_name' style={{color:details.color}}> {details.name}</p>
+                <p>{details.description}</p>
+            </div>
+            <div className='askmentor_details'>
+                <div className='project_headings'>
+                    <span className="material-symbols-outlined error_icon">error</span>
+                    <p style={{margin:"0"}}>Project details</p>
+                </div>
+                <div className='project_table'>
+                    <Row>
+                        <Col xs="auto">
+                            <span className="material-symbols-outlined table_icon">keyboard_command_key</span>
+                        </Col>
+                        <Col className='second_col'>Category</Col>
+                        <Col ><p className='category'>{details.category}</p></Col>
+                    </Row>
+                    <Row>
+                        <Col xs="auto">
+                           <span className="material-symbols-outlined table_icon">files</span>
+                        </Col>
+                         <Col className='second_col'>Type</Col>
+                        <Col><p>{details.type}</p></Col>
+                    </Row>
+                    <Row>
+                        <Col xs="auto">
+                           <span className="material-symbols-outlined table_icon">code_blocks</span>
+                        </Col>
+                         <Col className='second_col'>Code</Col>
+                        <Col className='code_link'>
+                            <p>
+                                <a onClick={()=>{window.open(`${details.code}`,"_blank")}}>
+                                    {details.code}
+                                </a>
+                            </p>
+                        </Col>
+                    </Row>            
+                </div>
+                <hr className='line'></hr>
+                <div>
+                    <div className='project_headings'>
+                        <span className="material-symbols-outlined error_icon">bookmark_stacks</span>
+                        <p style={{margin:"0"}}>Tech Stack</p>
+                    </div>
+                     <p className='suggestion'> Select a skill to see how it contributed to building {project}.</p>
+                    <div className='project_tech'>
+                        {Object.entries(details.skills).map(([name, icon]) => (
+                            <Card className='stack_item'  onClick={()=>{handleSelection(name)}}>
+                                <Card.Img variant="top" src={icon} className="skill_image"/>
+                                <Card.Body>
+                                    <Card.Text>{name}</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        ))}
+                        {(project === "EvidenceAI") &&
+                            <Card className='stack_item'  onClick={()=>{handleSelection("LangChain")}}>
+                                   <Icon icon="simple-icons:langchain" className="skill_image"/>
+                                <Card.Body>
+                                    <Card.Text>LangChain</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        }
+                    </div>
+                </div>
+                <hr className='line'></hr>
+                <div >
+                    <div className='project_headings'>
+                        <span className="material-symbols-outlined error_icon">star</span>
+                        <p style={{margin:"0"}}>Key Features</p>
+                    </div>
+                    <p className='suggestion'>Explore what you can accomplish with the {project} project.</p>
+                    <div className='key_features'>
+                        <ul>
+                            {Object.entries(details.key_features).map(([features, description])=>(
+                                <li><span style={{fontWeight:"bold"}}>{features} : </span> {description}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                <hr className='line'></hr>
+                <div>
+                    <div className='project_headings'>
+                        <span className="material-symbols-outlined error_icon">settings</span>
+                        <p style={{margin:"0"}}>How it was build</p>
+                    </div>
+                    <p className='suggestion'>Discover the technologies and engineering choices that power {project}.</p>
+                    <div className='project_tech_features'>
+                        {Object.entries(details.technical_implementation).map(
+                            ([category, implementations]) => (
+                                <div className="implementation_category" key={category}>
+                                    <p className='category_name'>{category}</p>
+                                    <div className='feature_tech_list'>
+                                        {Object.entries(implementations).map(
+                                            ([title, value]) => (
+                                                <div className="feature" key={title}>
+                                                    <p># {title}</p>
+                                                    <p className='feature_description'>{value.description}</p>
+                                                    <div className="feature_tech_list">
+                                                        {value.technologies.map((tech) => (
+                                                            <span className="feature_tech">
+                                                                {tech}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            )
+                        )}
+                    </div>
+                </div>
+                <hr className='line'></hr>
+                <div >
+                    <div className='project_headings'>
+                        <span className="material-symbols-outlined error_icon">flowsheet</span>
+                        <p style={{margin:"0"}}>Data Flow</p>
+                    </div>
+                    <p className='suggestion'>Follow how data moves through {project}, from user actions to the frontend, backend, and database.</p>
+                     <div className='project_flow'>
+                            {Object.entries(details.data_flow).map(([stage, description])=>(
+                                <div className='data_flow_timeline'>
+                                    <div className="timeline-dot"></div>
+                                    <div className='flow_content'>
+                                        <p className='flow_heading'>{stage} :</p>
+                                        <p>{description}</p>
+                                    </div>
+                                     <div className="timeline-dot"></div>
+                                </div>
+                            ))}
+                        </div>
+                </div>
+            </div>      
+        </div>
+    );
+}
+
+export default ProjectDetails;
+</file>
+
+<file path="evidenceai/frontend/src/Projects.css">
+.project_card{
+    border-radius: 0.5vh;
+    width: 48% !important;
+    padding: 1vh;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(62, 66, 101);
+}
+
+.project_card:hover{
+    cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(142, 138, 148, 0.8), 0 0 20px rgba(200, 203, 203, 0.4); 
+}
+
+.skill_name{
+    background-color: rgb(63, 63, 81);
+    color:white;
+    font-size: x-small;
+    padding: 0.5vh;
+    margin-left: 0.5vh;
+    margin-right: 0.5vh;
+    border-radius: 0.5vh;
+    width: fit-content !important;
+}
+
+.skills_row{
+    width: 100% !important;
+    padding-top: 1vh;
+    padding-left: 1vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap:1vh;
+    
+}
+</file>
+
+<file path="evidenceai/frontend/src/Projects.jsx">
+import './Projects.css';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
+
+function Projects({className, setSection, setProject}){
+    const projects = [
+        {
+            "name": "EvidenceAI",
+            "color" : "rgb(217, 33, 33)",
+            "Description": "RAG-powered engineering portfolio assistant that retrieves project evidence from code repositories and generates grounded, evidence-backed responses using LLMs.",
+            "Skills" : [
+                "Python",
+                "RAG",
+                "LLMs",
+                "LangChain",
+                "FastAPI",
+                "ChromaDB",
+                "OpenAI API",
+                "Vector Search"
+            ]
+        },
+        {
+            "name": "AskMentor",
+            "color": "rgb(76, 234, 18)", 
+            "Description": "full-stack discussion platform that enables users to create channels, share knowledge, and collaborate through posts, replies, and direct messaging.",
+            "Skills" :[
+                "React",
+                "Node.js",
+                "Express.js",
+                "MySQL",
+                "Docker",
+                "REST APIs"
+                ]
+
+        },
+        {
+            "name": "DataPredictify", 
+            "color": "rgb(244, 200, 44)",
+            "Description": "Machine learning web application that predicts disease outcomes using data preprocessing, model evaluation, and interactive visualizations.",
+            "Skills" : [
+                "Python",
+                "Django",
+                "Pandas",
+                "NumPy",
+                "Scikit-learn",
+                "MatplotLib"
+            ]
+        }
+    ]    
+    return (
+        <div className={className}>
+            {projects.map((project) => ( 
+                <div className="project_card" onClick={()=>{setSection("project"); setProject(project.name)}}>
+                    <Row>
+                        <Col xs="auto">
+                            <div style={{backgroundColor:project.color, borderRadius:"0.5vh"}}>
+                                <span class="material-symbols-outlined" 
+                                        style={{color:"black", height:"2vw", margin:"0.5vh"}} >
+                                    account_tree
+                                </span>
+                            </div>
+                        </Col>
+                        <Col>
+                            <h6>{project.name}</h6>
+                            <span style={{fontSize:"small"}}>{project.Description}</span>
+                        </Col>
+                    </Row>
+                    <Row className="skills_row">
+                        {project.Skills.map((skill) => (
+                           <span className="skill_name">{skill}</span>
+                        ))}
+                    </Row>
+                    
+                </div>
+            ))}
+        </div>
+    )
+
+}
+
+export default Projects;
+</file>
+
+<file path="evidenceai/frontend/src/Robot.css">
+.robot_nav{
+    align-items: center !important;
+    color: white;
+}
+
+.star_icon, .send_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    margin-right: 0.5vh;
+
+}
+
+.power_button{
+    background-color: transparent !important;
+    border: none !important;
+    color: white;
+    font-size: x-small !important;
+}
+
+.robot_intro{
+    font-size: small;
+    color: white;
+    width: 60% !important;
+}
+
+
+.text_div{
+    position: absolute !important;
+    bottom: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 100%;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    color:white;
+    border-radius: 1vw;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(34, 34, 41) !important;
+    font-size: small;
+}
+
+
+.assistant_text{
+    resize: none;
+    color:white !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+    max-height: 10vw;
+    overflow-y: auto !important;
+}
+
+.assistant_text:focus{
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: inherit;
+}
+
+.assistant_panel{
+    width: 100% !important;
+    flex: 1;
+    overflow-y: auto !important;
+    color: white !important;
+    padding-top: 4vw;
+    padding-bottom: 8vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.assistant_panel::-webkit-scrollbar{
+    display: none !important;
+}
+
+.user{
+    font-size: small;
+    right:0 !important;
+    align-self: flex-end;
+    margin-bottom: 30px !important;
+    margin-top: 30px !important;
+    text-align: right;
+    max-width: 80% !important;
+    background-color: rgb(28, 28, 39);
+    padding: 0.5vh 2vh;
+    border-radius: 1vh;
+}
+
+.assistant{
+    font-size: small;
+}
+
+.evidence{
+    color:rgb(238, 196, 80);
+    font-size: small;
+}
+
+.robot_figure_section{
+    width: 100%;
+    background:
+    radial-gradient(
+        circle at 50% 30%,
+        rgba(38, 14, 176, 0.22) 0%,
+        rgba(80, 50, 255, 0.08) 40%,
+        transparent 70%
+    ),
+    #030817;
+}
+
+
+.robot_moving_section{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+
+.robot_figure{
+    width: 35%;
+    left: 50%;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform:  translateY(-20px);
+    }
+}
+
+.dot_section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2vw;
+}
+
+.dot_section span{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: typing 1.4s infinite ease-in-out;
+    margin-right: 10px;
+}
+
+.first_dot{
+    animation-delay: 0s;
+}
+
+.second_dot{
+    animation-delay: 0.2s !important;
+}
+
+.third_dot{
+    animation-delay: 0.4s !important;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-6px);
+    }
+}
+</file>
+
+<file path="evidenceai/frontend/src/Robot.jsx">
+import Stack from "react-bootstrap/esm/Stack";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import './Robot.css';
+import './App.css';
+import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { useRef } from "react";
+
+function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, setSection, project, lastSection}){
+
+    const inputRef = useRef();
+    const chatRef = useRef();
+    const [curr_question, setQuestion] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const callAssistant = async (question, endpoint, message_body, fromUser) =>{
+        setIsLoading(true);
+        if (fromUser){
+            setSection(lastSection);
+            setEvidence([]);
+        }
+        setConversation(prev=>[...prev,  
+            {
+                role: "user",
+                content: question
+            }, 
+            {
+                role: "assistant",
+                content: ""
+            }
+        
+        ]);
+        const response = await fetch(
+            
+            `https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/${endpoint}`,
+            {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(message_body),
+            }
+        );
+        setIsLoading(false);
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let stream = ""
+        while (true){
+            const {value, done} = await reader.read();
+            if (done){
+                break;
+            }
+            stream  += decoder.decode(value);
+            const responses = stream.split("\n");
+            stream = responses.pop();
+            responses.forEach((res)=>{
+                if (!res){
+                    return;
+                }
+                const output = JSON.parse(res);
+                if (output.type === "summary"){
+                    setConversation(prev=>{
+                        const updated=[...prev];
+                        const last = updated[updated.length-1];
+                        updated[updated.length-1]={
+                            ...last,
+                            content: updated[updated.length-1].content + output.content
+                        };
+                        return updated;
+                    });
+                }
+                if (output.type === "evidence"){
+                    if (output.content.length > 0) {
+                        setSection("assistant");
+                        setEvidence(output.content);
+                        setConversation(prev=>[...prev,  
+                            {
+                                role: "evidence",
+                                content: "Available evidence is displayed in the left panel"
+                            }
+                        
+                        ])
+                    }
+                }
+            })
+        }
+    }
+
+    useEffect(()=>{
+        let user_question = "";
+        let rest_endpoint = "";
+        let message = {};
+
+        if (section === "portfolio" || section === "project" || section === "assistant"){
+            return; 
+        }
+        if (section === "project_evidence") {
+            if (!selectedSkill.name || !project) {
+                return;
+            }
+            user_question = `How ${selectedSkill.name} was used to build ${project}?`;
+            rest_endpoint = "project_skill";
+            message = {
+                skill: selectedSkill.name,
+                project: project
+            };
+        }
+
+        if (section === "skill_section") {
+            if (!selectedSkill.name){
+                return;
+            }
+            user_question = `Experience with ${selectedSkill.name}`;
+            rest_endpoint = "skill";
+            message = {
+                skill: selectedSkill.name
+            }
+        }
+        callAssistant(user_question, rest_endpoint, message, false);
+
+    },[selectedSkill.name, selectedSkill.id, project]);
+
+
+    const handleInput = (e) =>{
+        const textarea = e.target;
+        textarea.style.height = "auto"; 
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    useEffect(()=>{
+        if (chatRef.current){
+            chatRef.current.scrollTop = chatRef.current.scrollHeight;
+        }
+    }, [conversation]);
+
+
+    const handleKeyDown =(e)=>{
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                const query = curr_question.trim();
+                if(!query){
+                    return;
+                }
+                setQuestion("");
+                callAssistant(query, "assistant", {question: query}, true);
+
+            }
+
+    }
+
+   return(
+        <Stack className={className}>
+            <div className="robot_figure_section">
+                <Stack direction="horizontal" className="robot_nav">
+                <span class="material-symbols-outlined star_icon">stars_2</span>
+                <h6>AI Assistant</h6>
+                <p className="ms-auto power_button">Powered by LLM + RAG</p>
+                </Stack>
+                <div className="robot_intro">
+                    Ask me anything about Prajakta's experience, skills, projects and more.
+                </div>
+                <div className="robot_moving_section">
+                    <img src="./public/robot.png" className="robot_figure" />
+                </div>
+            </div>
+
+            <div className="assistant_panel" ref={chatRef}>
+                {conversation.map((message) => (
+                    <div className={message.role}>
+                        {
+                        (message.role === "assistant" && message.content === "" && isLoading)?
+                                <div className="dot_section">
+                                <span className="first_dot"></span>
+                                <span className="second_dot"></span>
+                                <span className="third_dot"></span>
+                            </div>
+                    
+                        : <ReactMarkdown
+                            components={{
+                                h1: ({ children }) => <h5>{children}</h5>,
+                                h2: ({ children }) => <h6>{children}</h6>,
+                                h3: ({ children }) => <strong>{children}</strong>,
+                            }}>
+                            {message.content}
+                        </ReactMarkdown>
+                        }
+                    </div>
+                ))}
+            </div>
+            <Form className="mt-auto text_div">
+                <Form.Control 
+                    ref={inputRef}
+                    value={curr_question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    onInput={handleInput}
+                    onKeyDown={handleKeyDown}
+                    as="textarea" 
+                    className="assistant_text"
+                    rows={1} 
+                />
+                <span class="material-symbols-outlined send_icon" 
+                      onClick={()=>{
+                        const query = curr_question;
+                        setQuestion("");
+                        callAssistant(query, "assistant", {question: query}, true)
+                    
+                    }}>
+                    send
+                </span>
+            </Form>
+        </Stack>
+   )
+}
+
+export default Robot;
+</file>
+
+<file path="evidenceai/frontend/src/Skills.css">
+.skill_image{
+    height: 2vw !important;
+    object-fit: contain;
+    flex-shrink: 0;
+    background-color: transparent !important;
+}
+
+
+
+.image_card{
+    width: fit-content;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent !important;
+    color: white !important;
+}
+
+.image_card:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+}
+</file>
+
+<file path="evidenceai/frontend/src/Skills.jsx">
+import './App.css';
+import './Skills.css';
+import Card from 'react-bootstrap/Card';
+import { Icon } from "@iconify/react";
+
+function Skills({className, setSection, setSkill}){
+    const skills ={
+        "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        "C": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg",
+        "SQL": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azuresqldatabase/azuresqldatabase-original.svg" ,
+        "HTML": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg",
+        "CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
+        "JavaScript": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+        "LLM + RAG ": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
+        "React": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
+        "Node.js": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
+        "Django": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg",
+        "FastAPI": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg",
+        "Docker": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg",
+        "Git": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg",
+        "ChromaDB": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/datatables/datatables-original.svg",
+        "Pandas": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg",
+        "numpy" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg",
+        "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
+        "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg",
+        "OpenAI API" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
+        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg"
+    };
+
+
+    const handleSelection =(selected_skill)=>{
+            setSection("skill_section");
+            setSkill(prev => ({
+                        name: selected_skill,
+                        id: prev.id + 1
+                    }));
+    }
+
+    return (
+        <div className={className}>
+            {Object.entries(skills).map(([name, icon]) => (
+                <Card className='image_card' onClick={()=>{handleSelection(name)}}>
+                    <Card.Img variant="top" src={icon} className="skill_image"/>
+                    <Card.Body>
+                        <Card.Text>{name}</Card.Text>
+                    </Card.Body>
+                </Card>
+            ))}
+            <Card className='image_card' onClick={()=>{handleSelection("LangChain")}}>
+                <Icon icon="simple-icons:langchain"  height="2vw" />
+                <Card.Body>
+                    <Card.Text className='fs-6'>LangChain</Card.Text>
+                </Card.Body>
+            </Card>
+
+        </div>
+    )
+
+}
+
+export default Skills;
+</file>
+
+<file path="evidenceai/frontend/src/Work.css">
+.work_period{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: small;
+}
+
+.work_timeline_item{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding-bottom: 4vw;
+}
+
+.work_timeline_item::before{
+    content: "";
+    position: absolute;
+    left: 0.5vw;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+.work_content{
+    width: 100%;
+    margin-left: 2vh;
+}
+
+.timeline-dot{
+    position: absolute;
+    left: 0.125vw;
+    width: 0.75vw;
+    height: 0.75vw;
+    border-radius: 50%;
+    background-color:rgb(110, 55, 241) !important;
+}
+
+
+.work_skills{
+    width: 100% !important;
+    margin-top: 1vw;
+    padding: 1vw;
+    border-radius: 1vh;
+    background-color: rgb(28, 28, 39);
+    border: 1px solid rgb(124, 119, 40);
+}
+
+.highlight{ 
+    color: rgb(144, 106, 235);
+}
+
+.bulb_icon{
+    color:rgb(249, 238, 82);
+}
+
+
+.skill_title{
+    color:rgb(249, 238, 82);
+    font-size: small;
+    font-weight: bold;
+}
+</file>
+
+<file path="evidenceai/frontend/src/Work.jsx">
+import './Work.css';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Stack from 'react-bootstrap/Stack';
+
+
+function Work({className}){
+
+    const experience = [
+        {
+            "position" : "IT Support", 
+            "period" : "Jan 2025 - June 2026",
+            "organization" : "University of Saskatchewan", 
+            "location" : "Saskatoon, SK, Canada", 
+            "responsibilities": [
+                "Provided Level 1 technical support for students, faculty, and staff, resolving hardware, software, account, and connectivity issues.",
+                "Delivered remote technical support using BeyondTrust, troubleshooting user devices and resolving issues without requiring in-person assistance.",
+                "Managed IT service requests and documented resolutions using TeamDynamix, ensuring timely issue tracking and follow-up.",
+                "Used Active Directoryto assist with user account management, password resets, and access-related requests.",
+                "Utilized Lansweeper to locate, inventory, and manage university devices during troubleshooting and asset management tasks.",
+                "Prepared, configured, deployed, and replaced desktops, laptops, monitors, and peripherals for university employees.",
+                "Processed surplus equipment by securely preparing retired devices for disposal or redistribution according to university procedures.",
+                "Set up and provided technical support for in-person, hybrid, and virtual meetings, ensuring audio, video, and conferencing systems functioned reliably.",
+                "Inspected, tested, and maintained classroom technology, including computers, projectors, displays, microphones, and videoconferencing equipment, to ensure classrooms were ready for instruction."
+            ], 
+            "skills":[ "Technical Support","Windows", 
+                        "Active Directory", 
+                        "BeyondTrust", 
+                        "TeamDynamix", 
+                        "Lansweeper", 
+                        "Device Deployment",
+                        "IT Asset Management",
+                        "AV Support",
+                        "Microsoft 365",
+                    ]
+        },
+        {
+            "position" : "Marker- Department of Mathematics and Statistics", 
+            "period" : "Sept 2024 - Apr 2026",
+            "organization" : "University of Saskatchewan", 
+            "location" : "Saskatoon, SK, Canada", 
+            "responsibilities": [
+                "Evaluated assignments and exams accurately and consistently.",
+                "Provided constructive feedback to support student learning.",
+                "Worked closely with instructors to maintain grading standards."
+                ], 
+            "skills": [
+                "Attention to Detail",
+                "Communication",
+                "Time Management",
+                "Academic Support"
+            ]
+        }
+    ] 
+    return(
+        <div className={className}>
+            {(experience).map((work)=>(
+                <div className='work_timeline_item'>
+                    <div className="timeline-dot"></div>
+                    <div className='work_content'>
+                        <Stack direction='horizontal'>
+                            <p style={{fontWeight:"bold", fontSize:"large"}}>{work.position}</p>
+                            <span className='ms-auto work_period'>
+                                <span class="material-symbols-outlined">calendar_month</span>
+                                {work.period}
+                            </span>
+                        </Stack>
+                        <Stack direction='horizontal' style={{fontSize:"small"}}>
+                            <span style={{color:"rgb(129, 81, 242) "}}> {work.organization}</span>
+                            <span className='ms-auto'> {work.location}</span>
+                        </Stack>
+                        <br/>
+                        <span>
+                            <ul>
+                                {(work.responsibilities).map((res)=>(
+                                    <li>{res}</li>
+                                ))}
+                            </ul>
+
+                        </span>
+                        <div className='work_skills'>
+                            <Row>
+                                <Col xs="auto">
+                                    <span class="material-symbols-outlined bulb_icon">lightbulb_2</span>
+                                </Col>
+                                <Col>
+                                    <span className='skill_title'> Skills Applied in the Role </span>
+                                    <br/>
+                                    {(work.skills).map((skill)=>(
+                                        <span style={{fontSize:"small", marginRight:"1vh"}}>• {skill}</span>
+                                    ))}
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>
+                    <div className="timeline-dot"></div>
+                </div>
+            ))}
+
+
+            
+        </div>
+
+    )
+}
+
+export default Work;
+</file>
+
+<file path="evidenceai/frontend/package.json">
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@iconify/react": "^6.0.2",
+    "bootstrap": "^5.3.8",
+    "react": "^19.2.8",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
+    "react-markdown": "^10.1.0",
+    "react-scrollspy": "^3.4.3",
+    "react-syntax-highlighter": "^16.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@eslint/js": "^10.0.1",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^10.8.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
+    "vite": "^8.2.0"
+  }
+}
+</file>
+
+<file path="evidenceai/README.md">
+# EvidenceAI
+
+## Current Progress
+
+- ✅ Created initial Gradio interface for testing AI assistant workflow
+- ✅ Integrated LLM-based question classification
+- ✅ Added query filtering:
+  - Irrelevant questions are handled separately
+  - Ambiguous questions request clarification
+  - Relevant questions currently not processed
+- 🚧 Working on retrieval pipeline
+  - Pipeline is working properly
+  - Assistant model is ansering the questions but quality of response is low.
+  - Retriever is pulling correct information, but incomplete 🚨🚨. Need to revise chunking.
+  - Included repomix to unified whole project repository into sigle file
+  - Produced in depth overview of each project by passing repomix output to LLM (analyst_llm).
+  - analyst_llm returns in-depth overview of projects in json format.
+  - Using different chunking statergies based on file type. 
+  - After hybrid chunking, and using same retrival as before, 
+    retrival quality has been improved significantly. 🥳🎉.
+    Retrived evidence are NOT incomplete anymore. 
+  - Retrival is retriving separate chunks from same file as evidence, 
+    instead of combining them as one🚨🚨.
+  - Query generator is creating relevant queries 🥳🎉. 
+  - Evolved query generator to return not only queries, but also instructions for final
+    LLM model. In other words, created dynamic prompting. 
+  - The response quality, format has been improved significantly after dynamic prompting 🥳🥳🥳🥳🥳🥳. 
+  - Assistant is taking too much time to response - LOOKING FOR BOTTLENECK COMPONENET
+    - Bottleneck is assisant LLM and retriever 🚨🚨.
+    - Main reason for retriver time is due to statergist model. 
+        - Combined statergist and classifier as one model. 
+        - Added parallel query execution using threads.
+        - Reduced retrieval latency from several seconds to less than 1 second 🥳🥳🥳🥳🥳🥳.
+            🔴 BEFORE -
+              Classifier: 0.740 seconds
+              Retriever inside assistant: 3.597 seconds
+              Prompt creation: 0.000 seconds
+              Final LLM: 4.762 seconds
+              Total Assistant: 8.360 seconds
+
+            🟢 AFTER -
+                Classifier: 1.332 seconds
+                Retriever inside assistant: 0.725 seconds
+                Prompt creation: 0.001 seconds
+                Final LLM: 6.965 seconds
+                Total Assistant: 7.692 seconds                
+  - Now the main bottleneck is assistant LLM 🚨🚨.
+  - Switched from gpt-5.4-mini to gpt-5.6-luna. Response quality is better and faster. 
+  - Implemented streaming for assistant LLM's response. Instead of printing whole
+  output at once, user can read the response as LLM generates 🥳🥳. 
+  - Added conversation history support to maintain context across recruiter interactions 🥳🥳.
+      - Due to histroy, LLM can understand pronounce like "it", "her" as relation to previous conversation. 
+      - Chat with LLM feels like human conversation 🥳🥳.🥳🥳.🥳🥳.🥳🥳.
+  - Assistant LLM is successfully choosing when to include evidence , when not.
+</file>
+
+</files>
