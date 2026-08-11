@@ -89,13 +89,24 @@ function ProjectDetails({className, setSection, project, setSkill}){
                             </Card>
                         ))}
                         {(project === "EvidenceAI") &&
+                        <>
                             <Card className='stack_item'  onClick={()=>{handleSelection("LangChain")}}>
                                    <Icon icon="simple-icons:langchain" className="skill_image"/>
                                 <Card.Body>
                                     <Card.Text>LangChain</Card.Text>
                                 </Card.Body>
                             </Card>
+                            <Card className='stack_item'  onClick={()=>{handleSelection("Prompt Engineering")}}>
+                                    <Icon icon="mdi:message-processing-outline" className="skill_image"/>
+                                <Card.Body>
+                                    <Card.Text>Prompt Engineering</Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </>
+
+                            
                         }
+                        
                     </div>
                 </div>
                 <hr className='line'></hr>

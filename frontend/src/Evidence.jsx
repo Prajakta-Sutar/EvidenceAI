@@ -14,7 +14,7 @@ function Evidence({className, evidence}){
         else if (path.includes("datagenesys")) {
             return "DataPredictify";
         }
-        else if (path.includes("EvidenceAI")) {
+        else if (path.includes("evidenceai")) {
             return "EvidenceAI"
         }
         else{
@@ -42,7 +42,7 @@ function Evidence({className, evidence}){
                 {evidence.map((item, index) => (
                     <div className='evidence_item' key={index}>
                         <Row>
-                            <Col className='project_name'>{getProject(item.file)} Project</Col>
+                            <Col className='curr_project_name'>{getProject(item.file)} Project</Col>
                         </Row>
                         <Row>
                             <Col xs="auto" className='evidence_item_heading'> # File : </Col>

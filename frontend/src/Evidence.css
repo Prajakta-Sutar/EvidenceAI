@@ -50,9 +50,9 @@
     color: rgb(181, 154, 245);
 }
 
-.project_name{
+.curr_project_name{
     color: rgb(181, 154, 245);
-    font-size: large;
+    font-size: medium !important;
     font-weight: bold;
     margin-bottom: 0.5vw;
 }

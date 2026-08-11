@@ -40,120 +40,35 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
-frontend/
-  public/
-    index.html
-    manifest.json
-  src/
-    App.css
-    App.js
-    App.test.js
-    channels.css
-    channels.js
-    homepage.css
-    homepage.js
-    index.css
-    index.js
-    messages.css
-    messages.js
-    navlink.js
-    profile.css
-    profile.js
-    reportWebVitals.js
-    setupTests.js
+askmentor/
+  frontend/
+    src/
+      App.css
+      App.js
+      channels.css
+      channels.js
+      homepage.css
+      homepage.js
+      index.css
+      index.js
+      messages.css
+      messages.js
+      navlink.js
+      profile.css
+      profile.js
+    dockerfile
+    package.json
+  docker-compose.yml
   dockerfile
   package.json
   README.md
-docker-compose.yml
-dockerfile
-package.json
-README.md
-server.js
+  server.js
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="frontend/public/index.html">
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet"><link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
-
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
-</html>
-</file>
-
-<file path="frontend/public/manifest.json">
-{
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-}
-</file>
-
-<file path="frontend/src/App.css">
+<file path="askmentor/frontend/src/App.css">
 .App {
   text-align: center;
 }
@@ -194,7 +109,7 @@ This section contains the contents of the repository's files.
 }
 </file>
 
-<file path="frontend/src/App.js">
+<file path="askmentor/frontend/src/App.js">
 import './App.css';
 import Homepage from './homepage';
 import Channels from './channels';
@@ -257,18 +172,7 @@ function App() {
 export default App;
 </file>
 
-<file path="frontend/src/App.test.js">
-import { render, screen } from '@testing-library/react';
-import App from './App';
-
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
-</file>
-
-<file path="frontend/src/channels.css">
+<file path="askmentor/frontend/src/channels.css">
 .channel-page{
     display: flex;
     flex-direction: row;
@@ -581,7 +485,7 @@ test('renders learn react link', () => {
 }
 </file>
 
-<file path="frontend/src/channels.js">
+<file path="askmentor/frontend/src/channels.js">
 import './channels.css';
 import Button from 'react-bootstrap/Button';
 import './homepage.css';
@@ -1706,7 +1610,7 @@ function Channels(){
 export default Channels;
 </file>
 
-<file path="frontend/src/homepage.css">
+<file path="askmentor/frontend/src/homepage.css">
 body{
     max-width: 100%;
     overflow-x: hidden;
@@ -1916,7 +1820,7 @@ body{
 }
 </file>
 
-<file path="frontend/src/homepage.js">
+<file path="askmentor/frontend/src/homepage.js">
 import './homepage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Stack from 'react-bootstrap/Stack';
@@ -2300,7 +2204,7 @@ function Homepage({giveAccess}){
 export default Homepage;
 </file>
 
-<file path="frontend/src/index.css">
+<file path="askmentor/frontend/src/index.css">
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -2316,7 +2220,7 @@ code {
 }
 </file>
 
-<file path="frontend/src/index.js">
+<file path="askmentor/frontend/src/index.js">
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -2336,7 +2240,7 @@ root.render(
 reportWebVitals();
 </file>
 
-<file path="frontend/src/messages.css">
+<file path="askmentor/frontend/src/messages.css">
 .message-page{
     display: flex;
     flex-direction: row;
@@ -2429,7 +2333,7 @@ reportWebVitals();
 }
 </file>
 
-<file path="frontend/src/messages.js">
+<file path="askmentor/frontend/src/messages.js">
 import './messages.css';
 import './channels.css';
 import './homepage.css';
@@ -2839,7 +2743,7 @@ function Messages(){
 export default Messages;
 </file>
 
-<file path="frontend/src/navlink.js">
+<file path="askmentor/frontend/src/navlink.js">
 import { useLocation , useNavigate} from 'react-router-dom'; 
 import './homepage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -3084,7 +2988,7 @@ function Navlink({removeAccess}){
 export default Navlink;
 </file>
 
-<file path="frontend/src/profile.css">
+<file path="askmentor/frontend/src/profile.css">
 .profile-page{
     display: flex;
     flex-direction: row;
@@ -3176,7 +3080,7 @@ export default Navlink;
 }
 </file>
 
-<file path="frontend/src/profile.js">
+<file path="askmentor/frontend/src/profile.js">
 import './profile.css';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
@@ -3872,31 +3776,7 @@ function Profile(){
 export default Profile;
 </file>
 
-<file path="frontend/src/reportWebVitals.js">
-const reportWebVitals = onPerfEntry => {
-  if (onPerfEntry && onPerfEntry instanceof Function) {
-    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-      getCLS(onPerfEntry);
-      getFID(onPerfEntry);
-      getFCP(onPerfEntry);
-      getLCP(onPerfEntry);
-      getTTFB(onPerfEntry);
-    });
-  }
-};
-
-export default reportWebVitals;
-</file>
-
-<file path="frontend/src/setupTests.js">
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
-</file>
-
-<file path="frontend/dockerfile">
+<file path="askmentor/frontend/dockerfile">
 FROM node:14
 WORKDIR /app
 COPY package*.json  ./
@@ -3906,7 +3786,7 @@ EXPOSE 3000
 CMD ["npm", "start"]
 </file>
 
-<file path="frontend/package.json">
+<file path="askmentor/frontend/package.json">
 {
   "name": "frontend",
   "version": "0.1.0",
@@ -3958,80 +3838,7 @@ CMD ["npm", "start"]
 }
 </file>
 
-<file path="frontend/README.md">
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-</file>
-
-<file path="docker-compose.yml">
+<file path="askmentor/docker-compose.yml">
 services:
   mysql-image:
     container_name: Database
@@ -4072,7 +3879,7 @@ services:
     command: npm start
 </file>
 
-<file path="dockerfile">
+<file path="askmentor/dockerfile">
 FROM node:14
 WORKDIR /app
 COPY package*.json  ./
@@ -4082,7 +3889,7 @@ EXPOSE 4000
 CMD ["node", "server.js"]
 </file>
 
-<file path="package.json">
+<file path="askmentor/package.json">
 {
   "dependencies": {
     "body-parser": "^1.20.3",
@@ -4094,7 +3901,30 @@ CMD ["node", "server.js"]
 }
 </file>
 
-<file path="server.js">
+<file path="askmentor/README.md">
+# AskMentor 
+
+## Project Overview
+Link to the presentation video - https://usaskca1-my.sharepoint.com/:v:/g/personal/jrg814_usask_ca/IQCecbB4i5eCRqO1kg0u9ueLAd5N65Br3uhrJ6IUWE_pBek?e=l3X15o
+
+This is personal project
+
+AskMentor is a web development project where I leverage my computer science skills to create a discussion forum website dedicated to various computer science topics, specifically designed for desktop users. This platform empowers users to initiate new discussion channels, connect with others, search for posts, users, and channels, and update their profiles. Currently, the design of this website is not responsive. 
+
+## Technology Stack
+This project utilizes a React-based frontend built with JavaScript and Bootstrap to create an interactive, responsive user interface. The frontend leverages React Router for dynamic routing and seamless navigation. For the backend, the application is developed using Node.js and Express, ensuring smooth server-side functionality. Data is managed using MySQL, providing efficient storage and retrieval.
+
+## How to run the application
+To run the application, please follow following steps :
+
+Docker is required to run this application.
+After cloning the source code, please navigate to mentor directory. 
+Run command `docker compose build`.
+Run command `docker compose up`.
+You can access the website on port 3000.
+</file>
+
+<file path="askmentor/server.js">
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -5242,22 +5072,6 @@ app.post('/deleteUser',(request,response)=>{
 app.listen(PORT,()=>{
     console.log("Server is listening on port ",PORT);
 })
-</file>
-
-<file path="README.md">
-# AskMentor 
-
-Link to the presentation video - https://usaskca1-my.sharepoint.com/:v:/g/personal/jrg814_usask_ca/IQCecbB4i5eCRqO1kg0u9ueLAd5N65Br3uhrJ6IUWE_pBek?e=l3X15o
-
-AskMentor is a web development project where I leverage my computer science skills to create a discussion forum website dedicated to various computer science topics, specifically designed for desktop users. This platform empowers users to initiate new discussion channels, connect with others, search for posts, users, and channels, and update their profiles. Currently, the design of this website is not responsive. This project utilizes a React-based frontend built with JavaScript and Bootstrap to create an interactive, responsive user interface. The frontend leverages React Router for dynamic routing and seamless navigation. For the backend, the application is developed using Node.js and Express, ensuring smooth server-side functionality. Data is managed using MySQL, providing efficient storage and retrieval.
-
-To run the application, please follow following steps :
-
-Docker is required to run this application.
-After cloning the source code, please navigate to mentor directory. 
-Run command `docker compose build`.
-Run command `docker compose up`.
-You can access the website on port 3000.
 </file>
 
 </files>

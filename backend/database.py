@@ -39,6 +39,7 @@ dir_ignore = {
                 "repomix_res",
                 "__pycache",
                 ".venv",
+                "__pycache__"
             }
 
 def get_documents(root):
@@ -52,6 +53,7 @@ def get_documents(root):
                 continue 
             path = os.path.join(root, file)
             documents.append(path)
+            print(path)
     return documents
 
 
@@ -71,7 +73,7 @@ def build_database():
     for path in project_docs:
         if os.path.basename(path).lower() == "dockerfile":
             chunks = no_split_chunker(path)
-        elif path.endswith(".js"):
+        elif path.endswith((".js", ".jsx")):
             chunks = javascript_chunker(path)
         elif path.endswith(".md"):
             chunks = md_chunker(path)
@@ -86,6 +88,7 @@ def build_database():
         else:
             continue
         add_chunks(chunks)
+        print(path)
 
 
 def run_single_query(query):
@@ -97,7 +100,6 @@ def run_single_query(query):
 def retriever(queries):
     retrieved_docs = []
     seen = set()
-    seen_path = set()
     with ThreadPoolExecutor(max_workers=len(queries)) as executor:
         results = list(executor.map(run_single_query, queries))
         for chunks_per_query in results:
@@ -107,8 +109,6 @@ def retriever(queries):
             distances = chunks_per_query["distances"][0]
             for chunk_id, doc, metadata, distance in zip(ids, documents, metadatas, distances):
                 if chunk_id not in seen:
-                    if metadata["file"] not in seen_path:
-                        seen_path.add(metadata["file"])
                     seen.add(chunk_id)
                     retrieved_docs.append({
                         "id": chunk_id,
@@ -126,7 +126,9 @@ def retriever(queries):
         content : {document["content"]}
         ----------------------------------------
         """
-    return context , seen_path
+    return context 
 
 
 
+if __name__=="__main__":
+    build_database()

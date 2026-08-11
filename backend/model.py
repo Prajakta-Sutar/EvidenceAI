@@ -46,17 +46,6 @@ assistant_llm = ChatOpenAI(
 )
 
 
-
-
-def analyst(project):
-    with open(project, "r") as f:
-        repository_file = f.read() 
-    repository = {'project': repository_file}
-    modified_prompt = analyst_prompt.invoke(repository)
-    response = assistant_llm.invoke(modified_prompt)
-    print(response.content)
-
-
 def classifier(question: str):
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                                 for h in history_queue)
@@ -84,7 +73,7 @@ history_queue = deque(maxlen=3)
 
 def assistant(question, queries):
     print("I am here in assistat\n")
-    context, retrieved_paths  = retriever(queries)  
+    context  = retriever(queries)  
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                         for h in history_queue)
     inputs = {"question": question, "context":context , "history" : history}
@@ -111,18 +100,28 @@ def assistant(question, queries):
         "assistant_response" : summary
     })
     evidence_json = json.loads(evidence.strip())
-    evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md"]]
+    evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]]
+    print("Evidence path is : \n")
     for item in evidence_json:
+        path_to_display = ""
+        full_path = ""
         evidence_path = Path(item["file"]).as_posix()
-        for full_path in retrieved_paths:
-            full_path_normalized = Path(full_path).as_posix()
-
-            if full_path_normalized.endswith(evidence_path):
-                item["file"] = full_path
-                break
-        file_path = Path(item["file"])
-        if file_path.exists():
-            with open(file_path, "r", encoding="utf-8") as f:
+        print(evidence_path, "\n")
+        if "evidenceai" in evidence_path:
+            path_to_display = "evidenceai/" +evidence_path.split("evidenceai")[1].lstrip("/")
+            full_path = Path("./evidence/repository/EVIDENCEAI/") / path_to_display
+            item["file"] = path_to_display
+        if "datagenesys" in evidence_path:
+            path_to_display = "datagenesys/" +evidence_path.split("datagenesys")[1].lstrip("/")
+            full_path = Path("./evidence/repository/DATAPREDICTIFY/") / path_to_display
+            item["file"] = path_to_display
+        if "askmentor" in evidence_path:
+            path_to_display = "askmentor/" +evidence_path.split("askmentor")[1].lstrip("/")
+            full_path = Path("./evidence/repository/ASKMENTOR/") / path_to_display
+            item["file"] = path_to_display
+            
+        if full_path.exists():
+            with open(full_path, "r", encoding="utf-8") as f:
                 item["code"] = f.read()                
         else:
             item["code"] = None

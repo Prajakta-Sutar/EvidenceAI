@@ -6,33 +6,42 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 
 
-with open("./evidence/summary/askmentor_summary.txt", "r", encoding="utf-8") as f:
+with open("./evidence/summary/askmentor.txt", "r", encoding="utf-8") as f:
     askmentor_json = json.load(f)
 
-with open("./evidence/summary/datagenesys_summary.txt", "r", encoding="utf-8") as f:
+with open("./evidence/summary/datapredictify.txt", "r", encoding="utf-8") as f:
     datagenesys_json = json.load(f)
+
+with open("./evidence/summary/evidenceai.txt", "r", encoding="utf-8") as f:
+    evidenceai_json = json.load(f)
+
 
 def return_file_purpose(path):
     actual_path = path.replace("\\", "/")
     if "askmentor" in actual_path:
-        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        file_path = "askmentor/" +actual_path.split("askmentor")[1].lstrip("/")
         for file in askmentor_json["file_level_analysis"]:
             if file["file_path"] == file_path:
                 return (askmentor_json["project_overview"]["project_name"], file["purpose"])
 
     if "datagenesys" in actual_path:
-            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            file_path = "datagenesys/"+ actual_path.split("datagenesys")[1].lstrip("/")
             for file in datagenesys_json["file_level_analysis"]:
                 if file["file_path"] == file_path:
                     return (datagenesys_json["project_overview"]["project_name"],file["purpose"])
-    
+    if "evidenceai" in actual_path:
+            file_path = "evidenceai/" + actual_path.split("evidenceai")[1].lstrip("/")
+            for file in evidenceai_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    return (datagenesys_json["project_overview"]["project_name"],file["purpose"])
+
     return ("Unknown", "Unknown")
 
 
 def return_function_class_purpose(path, name, type):
     actual_path = path.replace("\\", "/")
     if "askmentor" in actual_path:
-        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        file_path = "askmentor/" +actual_path.split("askmentor")[1].lstrip("/")
         for file in askmentor_json["file_level_analysis"]:
             if file["file_path"] == file_path:
                 for component in file["main_classes_functions_components"]:
@@ -40,8 +49,15 @@ def return_function_class_purpose(path, name, type):
                         return component["description"]
 
     if "datagenesys" in actual_path:
-            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
+            file_path = "datagenesys/"+ actual_path.split("datagenesys")[1].lstrip("/")
             for file in datagenesys_json["file_level_analysis"]:
+                if file["file_path"] == file_path:
+                    for component in file["main_classes_functions_components"]:
+                        if component["name"] == name and component["type"] == type:
+                            return component["description"]
+    if "evidenceai" in actual_path:
+            file_path = "evidenceai/" + actual_path.split("evidenceai")[1].lstrip("/")
+            for file in evidenceai_json["file_level_analysis"]:
                 if file["file_path"] == file_path:
                     for component in file["main_classes_functions_components"]:
                         if component["name"] == name and component["type"] == type:
@@ -52,7 +68,7 @@ def return_function_class_purpose(path, name, type):
 def return_type(path, name):
     actual_path = path.replace("\\", "/")
     if "askmentor" in actual_path:
-        file_path = actual_path.split("/askmentor")[1].lstrip("/")
+        file_path = "askmentor/" +actual_path.split("askmentor")[1].lstrip("/")
         for file in askmentor_json["file_level_analysis"]:
             if file["file_path"] == file_path:
                 for component in file["main_classes_functions_components"]:
@@ -60,12 +76,20 @@ def return_type(path, name):
                         return component["type"]
 
     if "datagenesys" in actual_path:
-            file_path = actual_path.split("/datagenesys")[1].lstrip("/")
-            for file in datagenesys_json["file_level_analysis"]:
-                if file["file_path"] == file_path:
-                    for component in file["main_classes_functions_components"]:
-                        if component["name"] == name:
-                            return component["type"]
+        file_path = "datagenesys/"+ actual_path.split("datagenesys")[1].lstrip("/")
+        for file in datagenesys_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                for component in file["main_classes_functions_components"]:
+                    if component["name"] == name:
+                        return component["type"]
+
+    if "evidenceai" in actual_path:
+        file_path = "evidenceai/" + actual_path.split("evidenceai")[1].lstrip("/")
+        for file in evidenceai_json["file_level_analysis"]:
+            if file["file_path"] == file_path:
+                for component in file["main_classes_functions_components"]:
+                    if component["name"] == name:
+                        return component["type"]
 
 
 def return_name(node, source_byte):
@@ -73,6 +97,7 @@ def return_name(node, source_byte):
         if child.type == "identifier":
             name = source_byte[child.start_byte:child.end_byte].decode("utf-8")
             return name
+        
     return "Unknown"
 
 
@@ -471,8 +496,10 @@ def no_split_chunker(path):
 
 
 def summary_chunker(path):
-    if "askmentor_summary.txt" in path.lower():
+    if "askmentor.txt" in path.lower():
         json_summary = askmentor_json
+    elif "evidenceai.txt" in path.lower():
+        json_summary = evidenceai_json
     else:
         json_summary = datagenesys_json
 

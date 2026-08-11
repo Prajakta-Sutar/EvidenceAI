@@ -52,6 +52,12 @@ function Skills({className, setSection, setSkill}){
                     <Card.Text className='fs-6'>LangChain</Card.Text>
                 </Card.Body>
             </Card>
+            <Card className='image_card' onClick={()=>{handleSelection("Prompt Engineering")}}>
+                <Icon icon="mdi:message-processing-outline" height="2vw" />
+                <Card.Body>
+                    <Card.Text className='fs-6'>Prompt Engineering</Card.Text>
+                </Card.Body>
+            </Card>
 
         </div>
     )
