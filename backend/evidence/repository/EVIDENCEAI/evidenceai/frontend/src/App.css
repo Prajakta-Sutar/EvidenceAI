@@ -1,0 +1,249 @@
+html{
+    scroll-behavior: smooth !important;
+}
+
+
+
+.device_not_supported{
+    background-image: linear-gradient( 
+        180deg,
+    #0d0229,
+    #06308a,
+    #023d46
+        );
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    color:white;
+}
+
+.not_supported_text{
+     animation: text_float 2s ease-in-out infinite;
+}
+
+
+@keyframes text_float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform:  translateY(-20px);
+    }
+}
+
+.landing_page{
+    background-color: rgb(2, 2, 15);
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    gap: 1.5vh;
+    overflow:hidden !important;
+}
+
+.portfolio{
+    width: 60% !important;
+    height: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background-color: rgb(9, 8, 22);
+    border: 0.1vh solid rgb(36, 39, 68);
+    border-radius: 2vh;
+}
+
+.Portfolio_section::-webkit-scrollbar, .skill_details::-webkit-scrollbar, .project_details::-webkit-scrollbar{
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+
+
+.floating_bar{
+    position: absolute !important;
+    bottom: 2vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 90%;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color:white;
+    padding: 1vh 2vh;
+    border-radius: 1vw;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(34, 34, 41) !important;
+    font-size: small;
+}
+
+
+.Portfolio_section, .skill_details, .project_details{
+    width: 100% !important;
+    flex: 1;  
+    min-height: 0;
+    box-sizing: border-box;
+    position: relative;
+    margin: 0% !important;
+    background-color: transparent !important;
+    overflow-y: auto !important;
+    padding-bottom: 10vw !important;
+}
+
+.skill_details, .project_details{
+    padding:2vw;
+}
+
+.introduction_panel{
+    width: 100% !important;
+}
+
+
+.robot_section{
+    width : 39% !important;
+    height: 100%;
+    border-radius: 2vh;
+    padding: 1vw !important;
+    margin: 0% !important;
+    background-color:  rgb(9, 8, 22);
+    border: 0.1vh solid rgb(36, 39, 68);
+}
+
+.nav_bar{
+    background-color: rgb(9, 8, 22);
+    padding-top: 1vh;
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: white !important; 
+}
+
+.nav-link:hover {
+    border-bottom: 1.5px solid rgb(88, 33, 217);
+}
+
+.go_back{
+    font-size: small;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: rgb(88, 33, 217);
+    margin-left: 1vw;
+}
+
+.line{
+    border: 0.1vh solid rgb(145, 151, 215) !important;
+}
+
+
+.headings{
+    color: white;
+}
+
+.view_all{
+    font-size: small !important;
+    color : rgb(117, 65, 238) !important;
+}
+
+
+.view_all:hover{
+    cursor:pointer;
+    transform: scale(1.05);
+     color : rgb(104, 212, 231) !important;
+}
+
+.tech_panel{
+    width:100%;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
+    color: white;
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+
+.panel_heading{
+    display: flex !important;
+    align-items: center !important;
+}
+
+.panel_heading h6{
+    margin: 0;
+    font-weight: bold !important;
+}
+
+.stack_icon, .code_icon,.job_icon, .phone_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.tech_stack{
+    width: 100% !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2vh;
+}
+
+.project_panel{
+    width: 100% !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap:2vh;
+    margin-top: 1vh;
+}
+
+.work_panel{
+    width: 100% !important;
+    color:white !important; 
+    margin-top: 1vh;
+}
+
+.contact_panel{
+    width: 100% !important;
+    padding-bottom: 4vw;
+}
+
+.suggestion{
+    font-size: small;
+}
+
+
+
+.robot{
+    height: 100% !important;
+    display: flex;
+    position: relative;
+}
+
+
+
+.floating_item{
+    display: flex;
+    align-items: center !important;
+}
+
+.floating_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    margin-right: 1vh;
+}

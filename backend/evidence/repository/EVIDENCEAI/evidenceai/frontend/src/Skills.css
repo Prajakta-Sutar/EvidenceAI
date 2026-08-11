@@ -1,0 +1,22 @@
+.skill_image{
+    height: 2vw !important;
+    object-fit: contain;
+    flex-shrink: 0;
+    background-color: transparent !important;
+}
+
+
+
+.image_card{
+    width: fit-content;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent !important;
+    color: white !important;
+}
+
+.image_card:hover{
+    transform: scale(1.2);
+    cursor: pointer;
+}

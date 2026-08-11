@@ -1,0 +1,177 @@
+.robot_nav{
+    align-items: center !important;
+    color: white;
+}
+
+.star_icon, .send_icon{
+    color:rgb(110, 55, 241) !important;
+    font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    margin-right: 0.5vh;
+
+}
+
+.power_button{
+    background-color: transparent !important;
+    border: none !important;
+    color: white;
+    font-size: x-small !important;
+}
+
+.robot_intro{
+    font-size: small;
+    color: white;
+    width: 60% !important;
+}
+
+
+.text_div{
+    position: absolute !important;
+    bottom: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 100%;
+    z-index: 10;
+    flex-direction: row;
+    align-items: center;
+    color:white;
+    border-radius: 1vw;
+    background-color: rgb(28, 28, 39);
+    border: 0.1vh solid rgb(34, 34, 41) !important;
+    font-size: small;
+}
+
+
+.assistant_text{
+    resize: none;
+    color:white !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+    max-height: 10vw;
+    overflow-y: auto !important;
+}
+
+.assistant_text:focus{
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: inherit;
+}
+
+.assistant_panel{
+    width: 100% !important;
+    flex: 1;
+    overflow-y: auto !important;
+    color: white !important;
+    padding-top: 4vw;
+    padding-bottom: 8vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.assistant_panel::-webkit-scrollbar{
+    display: none !important;
+}
+
+.user{
+    font-size: small;
+    right:0 !important;
+    align-self: flex-end;
+    margin-bottom: 30px !important;
+    margin-top: 30px !important;
+    text-align: right;
+    max-width: 80% !important;
+    background-color: rgb(28, 28, 39);
+    padding: 0.5vh 2vh;
+    border-radius: 1vh;
+}
+
+.assistant{
+    font-size: small;
+}
+
+.evidence{
+    color:rgb(238, 196, 80);
+    font-size: small;
+}
+
+.robot_figure_section{
+    width: 100%;
+    background:
+    radial-gradient(
+        circle at 50% 30%,
+        rgba(38, 14, 176, 0.22) 0%,
+        rgba(80, 50, 255, 0.08) 40%,
+        transparent 70%
+    ),
+    #030817;
+}
+
+
+.robot_moving_section{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+
+.robot_figure{
+    width: 35%;
+    left: 50%;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform:  translateY(-20px);
+    }
+}
+
+.dot_section{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2vw;
+}
+
+.dot_section span{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: typing 1.4s infinite ease-in-out;
+    margin-right: 10px;
+}
+
+.first_dot{
+    animation-delay: 0s;
+}
+
+.second_dot{
+    animation-delay: 0.2s !important;
+}
+
+.third_dot{
+    animation-delay: 0.4s !important;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-6px);
+    }
+}
+

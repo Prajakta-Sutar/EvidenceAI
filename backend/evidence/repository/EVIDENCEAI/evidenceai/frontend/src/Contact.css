@@ -1,0 +1,44 @@
+.form_panel{
+    width: 80%;
+    margin-top: 3vw;
+    color:rgb(246, 226, 113) !important;
+}
+
+.submit_button{
+    border-color: rgb(88, 33, 217) !important;
+    background-color: rgb(88, 33, 217) !important;
+    font-size: small !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 20px rgba(98, 0, 238, 0.8), 0 0 40px rgba(73, 215, 220, 0.4); 
+} 
+
+.submit_button:hover{
+    transform: scale(1.05);
+}
+
+.form_control{ 
+    color:white !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+}
+
+.message_control{
+    resize: vertical;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+    outline: none !important;
+    border-color: inherit;
+}
+
+.form_line{
+    background: rgb(246, 226, 113);
+    margin-top: 0 !important;
+    border: none;
+    height: 1px;
+    opacity: 0.5;
+}

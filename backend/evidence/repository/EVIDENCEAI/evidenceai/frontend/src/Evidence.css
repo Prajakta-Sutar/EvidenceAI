@@ -1,0 +1,62 @@
+.evidence_item{
+    color: white;
+    margin-top: 2vw;
+    margin-bottom: 4vw;
+}
+
+.evidence_heading{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.loading_text{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:large;
+    margin: 0;
+}
+
+.evidence_heading_text{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:x-large;
+}
+
+.loading_icon{
+    font-weight: bold;
+    color: rgb(247, 199, 56);
+    font-size:small;
+}
+
+
+.evidence_code{
+    width: 80% !important;
+    font-size: small;
+    max-height: 40vw;
+    overflow-y: auto;
+    color: black;
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+}
+
+.evidence_code::-webkit-scrollbar{
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+.evidence_item_heading{
+    color: rgb(181, 154, 245);
+}
+
+.project_name{
+    color: rgb(181, 154, 245);
+    font-size: large;
+    font-weight: bold;
+    margin-bottom: 0.5vw;
+}
+
+.line{
+    border: 0.15vh solid rgb(143, 140, 133) !important;
+}
