@@ -1,5 +1,7 @@
 # EvidenceAI
 
+![Portfolio](./images/portfolio.png)
+
 ## Current Progress
 
 - ✅ Created initial Gradio interface for testing AI assistant workflow
