@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 def get_modified_files():
@@ -19,19 +20,24 @@ def get_modified_files():
         text=True,
         check=True
     )
-    return result.stdout.splitlines()
+    return [ line.split("\t", 1) for line in result.stdout.splitlines()]
 
 def update_evidence():
     modified_files = get_modified_files()
-    for file in modified_files:
+    for status, file in modified_files:
         path = "./evidence/repository/EVIDENCEAI/evidenceai/" + file
-    
-        with open(f"../{file}", "r", encoding="utf-8") as f:
-            content = f.read()
+        if status in ["M", "A"]:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(f"../{file}", "r", encoding="utf-8") as f:
+                content = f.read()
 
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
+            print('Updated', file)
+
+        if status == "D":
+            if os.path.exists(path):
+                os.remove(path)
 
 
 if __name__ == "__main__":
