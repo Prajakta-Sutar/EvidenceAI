@@ -68,27 +68,25 @@ def add_chunks(chunks):
         )
 
 
-def build_database():
-    project_docs = get_documents("./evidence")
-    for path in project_docs:
-        if os.path.basename(path).lower() == "dockerfile":
-            chunks = no_split_chunker(path)
-        elif path.endswith((".js", ".jsx")):
-            chunks = javascript_chunker(path)
-        elif path.endswith(".md"):
-            chunks = md_chunker(path)
-        elif path.endswith(".html"):
-            chunks = html_chunker(path)
-        elif path.endswith(".py"):
-            chunks = python_chunker(path)
-        elif path.endswith((".json", ".yml", ".css" )) :
-            chunks = no_split_chunker(path)
-        elif path.endswith(".txt") and "summary" in path.lower():
-            chunks = summary_chunker(path)
-        else:
-            continue
-        add_chunks(chunks)
-        print(path)
+def build_database(path):
+    if os.path.basename(path).lower() == "dockerfile":
+        chunks = no_split_chunker(path)
+    elif path.endswith((".js", ".jsx")):
+        chunks = javascript_chunker(path)
+    elif path.endswith(".md"):
+        chunks = md_chunker(path)
+    elif path.endswith(".html"):
+        chunks = html_chunker(path)
+    elif path.endswith(".py"):
+        chunks = python_chunker(path)
+    elif path.endswith((".json", ".yml", ".css" )) :
+        chunks = no_split_chunker(path)
+    elif path.endswith(".txt") and "summary" in path.lower():
+        chunks = summary_chunker(path)
+    else:
+        "non recognizable file detected"
+    add_chunks(chunks)
+    print("file added ", path)
 
 
 def run_single_query(query):
@@ -129,35 +127,6 @@ def retriever(queries):
     return context 
 
 
-def update_resume():
-    resume_path = "./evidence/resume.md"
-
-    # 1. Remove existing resume chunks
-    results = database.get()
-
-    ids_to_delete = []
-
-    for chunk_id, metadata in zip(
-        results["ids"],
-        results["metadatas"]
-    ):
-        if metadata["file"].endswith("resume.md"):
-            ids_to_delete.append(chunk_id)
-
-    if ids_to_delete:
-        database.delete(ids=ids_to_delete)
-        print(f"Deleted {len(ids_to_delete)} old resume chunks")
-
-    # 2. Create new chunks from modified resume
-    chunks = md_chunker(resume_path)
-
-    # 3. Add new chunks
-    add_chunks(chunks)
-
-    print("Resume updated successfully")
 
 
-
-
-if __name__=="__main__":
-    update_resume()
+    
