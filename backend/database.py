@@ -10,7 +10,6 @@ from chunking import python_chunker, javascript_chunker, html_chunker, md_chunke
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-
 # Create database collection to store embeddingsmeb
 database_client = chromadb.PersistentClient("./portfolio_database")
 
