@@ -11,6 +11,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
     const inputRef = useRef();
     const chatRef = useRef();
+    const isEvidenceStatementShown = useRef(false);
     const [curr_question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -74,17 +75,33 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
                         return;
                     }
-                    if (output.content.length > 0) {
-                        setSection("assistant");
-                        setEvidence(output.content);
-                        setConversation(prev=>[...prev,  
-                            {
-                                role: "evidence",
-                                content: "Available evidence is displayed in the left panel"
-                            }
-                        
-                        ])
-                    }
+                    
+                    setSection("assistant");
+                    setEvidence(prev=>{
+                        if( !isEvidenceStatementShown.current){
+                            isEvidenceStatementShown.current = true;
+                            setConversation(prevConversation => [
+                                ...prevConversation,
+                                {
+                                    role: "evidence",
+                                    content: "Available evidence is displayed in the left panel"
+                                }
+                            ]);
+                        }
+
+                        const prevIndex = prev.findIndex(item=> item.file === output.content.file);
+                        if (prevIndex !== -1){
+                            const updated=[...prev];
+                            updated[prevIndex]={
+                                ...updated[prevIndex],
+                                description: updated[prevIndex].description + "\n"+ output.content.description
+                            };
+                            return updated;
+                        }
+                        else{
+                            return [...prev, output.content]
+                        }
+                    });
                 }
             })
         }

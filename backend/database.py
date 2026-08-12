@@ -129,6 +129,35 @@ def retriever(queries):
     return context 
 
 
+def update_resume():
+    resume_path = "./evidence/resume.md"
+
+    # 1. Remove existing resume chunks
+    results = database.get()
+
+    ids_to_delete = []
+
+    for chunk_id, metadata in zip(
+        results["ids"],
+        results["metadatas"]
+    ):
+        if metadata["file"].endswith("resume.md"):
+            ids_to_delete.append(chunk_id)
+
+    if ids_to_delete:
+        database.delete(ids=ids_to_delete)
+        print(f"Deleted {len(ids_to_delete)} old resume chunks")
+
+    # 2. Create new chunks from modified resume
+    chunks = md_chunker(resume_path)
+
+    # 3. Add new chunks
+    add_chunks(chunks)
+
+    print("Resume updated successfully")
+
+
+
 
 if __name__=="__main__":
-    build_database()
+    update_resume()

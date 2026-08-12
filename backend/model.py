@@ -101,42 +101,36 @@ def assistant(question, queries):
     })
     evidence_json = json.loads(evidence.strip())
     evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]]
-    print("Evidence path is : \n")
-    evidence_by_file = {}
     for item in evidence_json:
         path_to_display = ""
         full_path = ""
+        project=""
         evidence_path = Path(item["file"]).as_posix()
-        print(evidence_path, "\n")
         if "evidenceai" in evidence_path:
             path_to_display = "evidenceai/" +evidence_path.split("evidenceai")[1].lstrip("/")
             full_path = Path("./evidence/repository/EVIDENCEAI/") / path_to_display
-            item["file"] = path_to_display
+            project = "EvidenceAI"
         if "datagenesys" in evidence_path:
             path_to_display = "datagenesys/" +evidence_path.split("datagenesys")[1].lstrip("/")
             full_path = Path("./evidence/repository/DATAPREDICTIFY/") / path_to_display
-            item["file"] = path_to_display
+            project = "DataPredictify"
         if "askmentor" in evidence_path:
             path_to_display = "askmentor/" +evidence_path.split("askmentor")[1].lstrip("/")
             full_path = Path("./evidence/repository/ASKMENTOR/") / path_to_display
-            item["file"] = path_to_display
+            project = "AskMentor"
 
-        if full_path in evidence_by_file:
-            evidence_by_file[full_path]["description"] += ("\n"+item["description"])
-        else:
-            if full_path.exists():
-                with open(full_path, "r", encoding="utf-8") as f:
-                    code = f.read()  
-            evidence_by_file[full_path] = {
-                "file" : path_to_display, 
-                "description" : item["description"],
-                "code": code
-            }             
-    evidence_list = list(evidence_by_file.values())
-    yield{
-        "type" : "evidence", 
-        "content" : evidence_list
-    }
+        if full_path.exists():
+            with open(full_path, "r", encoding="utf-8") as f:
+                code = f.read()  
+        yield{
+            "type" : "evidence", 
+            "content" : {
+                "file" : path_to_display,
+                "description": item["description"],
+                "code": code,
+                "project": project
+            }
+        }
 
     
 @app.post("/skill")

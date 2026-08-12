@@ -4,9 +4,11 @@ import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useEffectEvent, useState } from 'react';
 
 
 function Evidence({className, evidence}){
+    const [codeEvidence, setCodeEvidence] = useState({});
     const getProject=(path)=>{
         if (path.includes("askmentor")) {
             return "AskMentor";
@@ -21,11 +23,6 @@ function Evidence({className, evidence}){
             return null; 
         }
     }
-
-    const getAbsolutePath=(path)=>{
-        return path.replace("./evidence/repository/", "");
-    }
-
 
     return(
         <div className={className}>
@@ -42,13 +39,13 @@ function Evidence({className, evidence}){
                 {evidence.map((item, index) => (
                     <div className='evidence_item' key={index}>
                         <Row>
-                            <Col className='curr_project_name'>{getProject(item.file)} Project</Col>
+                            <Col className='curr_project_name'>{item.project} Project</Col>
                         </Row>
                         <Row>
                             <Col xs="auto" className='evidence_item_heading'> # File : </Col>
                         </Row>
                         <Row>
-                            <Col>{getAbsolutePath(item.file)}</Col>
+                            <Col>{(item.file)}</Col>
                         </Row>
                         <Row>
                             <Col xs="auto" className='evidence_item_heading'> # Description : </Col>
