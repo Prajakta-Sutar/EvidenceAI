@@ -28,7 +28,7 @@ def update_evidence():
         path = "./evidence/repository/EVIDENCEAI/evidenceai/" + file
         if status in ["M", "A"]:
             os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(f"../{file}", "r", encoding="utf-8") as f:
+            with open(file, "r", encoding="utf-8") as f:
                 content = f.read()
 
             with open(path, "w", encoding="utf-8") as f:
