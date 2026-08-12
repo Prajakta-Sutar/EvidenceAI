@@ -1,0 +1,14 @@
+name: evidence sync
+on:
+    push:
+        branches:
+            - main
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Workflow Check
+              run: echo "Workflow is running"
+
+
+
