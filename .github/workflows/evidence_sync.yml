@@ -4,11 +4,19 @@ on:
         branches:
             - main
 jobs:
-    test:
+    detect-changes:
         runs-on: ubuntu-latest
         steps:
-            - name: Workflow Check
-              run: echo "Workflow is running"
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 2
+
+            - name: Print modified files
+              run: | 
+                echo "modified files: " 
+                git diff --diff-filter=M --name-only HEAD~1 HEAD -- frontend/ backend/
+                |
 
 
 
