@@ -14,8 +14,6 @@ jobs:
 
             - name: Print modified files
               run: | 
-                echo "modified files: " 
-                git diff --diff-filter=M --name-only HEAD^ HEAD -- frontend/ backend/
                 python3 backend/update_evidence.py
                 
 
