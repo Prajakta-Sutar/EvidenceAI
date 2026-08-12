@@ -5,7 +5,19 @@ from database import build_database
 
 def get_modified_files():
     result = subprocess.run(
-        ["git", "diff", "--diff-filter=M", "--name-only", "HEAD^", "HEAD", "--", "frontend/", "backend/"],
+        [
+        "git",
+        "diff",
+        "--name-status",
+        "HEAD^",
+        "HEAD",
+        "--",
+        "frontend/src",
+        "backend/",
+        ":!backend/__pycache/",
+        ":!backend/evidence/",
+        ":!backend/portfolio_database/"
+    ],
         capture_output =True, 
         text=True,
         check=True
@@ -22,16 +34,7 @@ def update_evidence():
 
         with open(path, "w", encoding="utf-8") as f:
             f.write(content)
-
-        database.delete(
-            where={"file": path}
-        )
-
-        build_database(path)
         
-        
-
-
 
 
 if __name__ == "__main__":
