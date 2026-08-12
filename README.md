@@ -70,6 +70,6 @@
       - Implemented support for answering questions submitted directly through the assistant's text input.
       - When relevant evidence is unavailable, the evidence panel remains closed.
       - LLM do not provide answers for irrelevant questions or questions asking for personal information. 
-
+      - ✅ ✅ Implemented evidence streaming to display supporting evidence progressively and improve perceived response speed.
 
   -🚧🚧🚧🚧 Currently working on deployment. 
