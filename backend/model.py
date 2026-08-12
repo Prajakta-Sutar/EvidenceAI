@@ -54,7 +54,7 @@ def classifier(question: str):
     response = classifier_llm.invoke(modified_prompt)
     result = json.loads(response.content)
     if result["category"] != "Relevant":
-        yield {
+        yield { 
             "type": "summary",
             "content": result["response"]
         }
@@ -64,15 +64,13 @@ def classifier(question: str):
         }
         return
     else:
-        queries = result["queries"]
-        
+        queries = result["queries"]    
         yield from assistant(question, queries) 
 
 
 history_queue = deque(maxlen=3)
 
 def assistant(question, queries):
-    print("I am here in assistat\n")
     context  = retriever(queries)  
     history = "\n".join(f"User : {h['question']}, Your Response : {h['assistant_response']}" 
                         for h in history_queue)
@@ -135,7 +133,6 @@ def assistant(question, queries):
     
 @app.post("/skill")
 async def skill_endpoint(request: Request):
-    print("I am here in skill endpoint\n")
     request_data = await request.json()
     skill = request_data["skill"]
     if skill.lower() == "c" or skill.lower() == "git":
@@ -161,7 +158,6 @@ async def skill_endpoint(request: Request):
 
 @app.post("/project_skill")
 async def skill_endpoint(request: Request):
-    print("I am here in skill endpoint\n")
     request_data = await request.json()
     skill = request_data["skill"]
     project = request_data["project"]
