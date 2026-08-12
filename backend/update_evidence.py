@@ -1,7 +1,4 @@
 import subprocess
-from database import database
-from database import build_database
-
 
 def get_modified_files():
     result = subprocess.run(
