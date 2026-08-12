@@ -15,7 +15,7 @@ jobs:
             - name: Print modified files
               run: | 
                 echo "modified files: " 
-                git diff --diff-filter=M --name-only HEAD~1 HEAD -- frontend/ backend/
+                git diff --diff-filter=M --name-only HEAD^ HEAD -- frontend/ backend/
                 |
 
 
