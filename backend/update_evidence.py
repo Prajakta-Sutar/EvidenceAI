@@ -25,7 +25,7 @@ def get_modified_files():
 def update_evidence():
     modified_files = get_modified_files()
     for status, file in modified_files:
-        path = "./evidence/repository/EVIDENCEAI/evidenceai/" + file
+        path = "./backend/evidence/repository/EVIDENCEAI/evidenceai/" + file
         if status in ["M", "A"]:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(file, "r", encoding="utf-8") as f:
