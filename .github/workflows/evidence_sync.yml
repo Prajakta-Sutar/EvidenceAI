@@ -16,7 +16,7 @@ jobs:
               run: | 
                 echo "modified files: " 
                 git diff --diff-filter=M --name-only HEAD^ HEAD -- frontend/ backend/
-                |
+                
 
 
 
