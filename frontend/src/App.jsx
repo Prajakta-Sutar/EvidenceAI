@@ -28,7 +28,7 @@ function App(){
   const [skill, setSkill] = useState({name:"", id:0});
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
-  const intro_message = "Hello, I am just testing the workflow"
+  const testing = "Hello Testing workflow"
   const [conversation, setConversation] = useState([]);
   const [lastSection, setLastSection] = useState("portfolio");
 
