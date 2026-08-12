@@ -17,6 +17,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
         setIsLoading(true);
+        isEvidenceStatementShown.current = false;
         if (fromUser){
             setSection(lastSection);
             setEvidence([]);
@@ -72,6 +73,9 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     });
                 }
                 if (output.type === "evidence"){
+                    if (Array.isArray(output.content) && output.content.length === 0){
+                        return;
+                    }
                     if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
                         return;
                     }
@@ -182,9 +186,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                 callAssistant(query, "assistant", {question: query}, true);
 
             }
-
     }
-
    return(
         <Stack className={className}>
             <div className="robot_figure_section">
