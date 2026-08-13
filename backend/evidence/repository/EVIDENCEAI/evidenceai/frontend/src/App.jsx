@@ -24,6 +24,7 @@ import Badge from 'react-bootstrap/Badge';
 function App(){
   
   const [isSupported, setIsSupported] = useState( window.innerWidth >= 1000 && window.innerHeight >= 600);
+  const [isHorizontal , setIsHorizontal] = useState(window.innerWidth > window.innerHeight);
   const [section, setSection] = useState("portfolio");
   const [skill, setSkill] = useState({name:"", id:0});
   const [project, setProject] = useState("");
@@ -34,7 +35,8 @@ function App(){
 
   useEffect(()=>{
     const handleResize=()=>{
-        setIsSupported(    window.innerWidth >= 1000 && window.innerHeight >= 600);
+        setIsSupported( window.innerWidth >= 1000 && window.innerHeight >= 600);
+        setIsHorizontal(window.innerWidth > window.innerHeight);
     }
     window.addEventListener("resize", handleResize);
     return(()=>{
@@ -83,7 +85,7 @@ function App(){
     setSection("portfolio");
   }
 
-  if(isSupported){
+  if(isSupported && isHorizontal){
     return(  
       <div fluid="xl" className="landing_page">
           <div className='portfolio'>
@@ -183,7 +185,7 @@ function App(){
                           <span class="material-symbols-outlined stack_icon">stacks</span>
                           <h6 className="headings">Tech Stack</h6>   
                     </Stack>
-                    <p className='suggestion'>Select a skill to see projects and evidence demonstrating my experience.</p>
+                    <p className='suggestion'>Select a skill and see what the assistant has to say about my experience.</p>
                     <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} setConversation={setConversation}/>
                   </div>
 
@@ -243,6 +245,20 @@ function App(){
           </Container>
       </div>
     )
+  }
+  else if(isSupported && !isHorizontal){
+      return(
+        <div className='device_not_supported'>
+            <span>
+                <Stack direction='horizontal' gap={4} className='not_supported_text'>
+                  <span class="material-symbols-outlined" style={{fontSize:"30px"}}>mobile_lock_landscape</span>
+                  <h4> Screen Orientation Not Supported </h4>
+              </Stack>
+            </span>
+            <p style={{color:"rgb(247, 199, 56)"}}>Please rotate your device to landscape mode !!</p>
+
+        </div>
+      )
   }
   else{
     return(

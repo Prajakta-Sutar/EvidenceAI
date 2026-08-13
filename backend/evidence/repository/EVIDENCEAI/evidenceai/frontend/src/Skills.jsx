@@ -24,17 +24,23 @@ function Skills({className, setSection, setSkill}){
         "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
         "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg",
         "OpenAI API" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
-        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg"
+        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg",
+        "GitHub Actions" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg"
     };
 
 
     const handleSelection =(selected_skill)=>{
+        if (selected_skill.toLowerCase() === "c" || selected_skill.toLowerCase() === "git") {
+            setSection("portfolio");
+        } else {
             setSection("skill_section");
-            setSkill(prev => ({
-                        name: selected_skill,
-                        id: prev.id + 1
-                    }));
-    }
+        }
+        
+        setSkill(prev => ({
+                    name: selected_skill,
+                    id: prev.id + 1
+                }));
+}
 
     return (
         <div className={className}>
@@ -52,7 +58,12 @@ function Skills({className, setSection, setSkill}){
                     <Card.Text className='fs-6'>LangChain</Card.Text>
                 </Card.Body>
             </Card>
-
+            <Card className='image_card' onClick={()=>{handleSelection("Prompt Engineering")}}>
+                <Icon icon="mdi:message-processing-outline" height="2vw" />
+                <Card.Body>
+                    <Card.Text className='fs-6'>Prompt Engineering</Card.Text>
+                </Card.Body>
+            </Card>
         </div>
     )
 
