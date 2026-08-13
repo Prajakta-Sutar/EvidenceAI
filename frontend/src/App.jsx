@@ -196,6 +196,7 @@ function App(){
                       <Projects className="project_panel" setSection={setSection} setProject={setProject}/>
                   </div>
                   <hr className="line"/>
+
                   <div id='work' className=' tech_panel'>
                     <Stack direction="horizontal" gap={2} className='panel_heading'>
                           <span class="material-symbols-outlined job_icon">enterprise</span>
