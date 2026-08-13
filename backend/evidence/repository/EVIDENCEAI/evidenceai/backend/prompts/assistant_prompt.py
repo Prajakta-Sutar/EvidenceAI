@@ -41,6 +41,11 @@ assistant_prompt = PromptTemplate.from_template(
 
             []
 
+
+            CRITICAL RULES: 
+            - after marker @, only output JSON array. 
+            - Do not add any explaination before and after JSON array.
+            - JSON should be valid and complete. 
     
     1. Summary:
         - Write a complete recruiter-facing answer, not a short response.
