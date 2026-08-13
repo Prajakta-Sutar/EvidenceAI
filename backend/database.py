@@ -80,7 +80,7 @@ def build_database(path):
     elif path.endswith(".txt") and "summary" in path.lower():
         chunks = summary_chunker(path)
     else:
-        "non recognizable file detected"
+        return
     add_chunks(chunks)
     print("file added ", path)
 
@@ -127,3 +127,5 @@ if __name__ == "__main__":
     document_paths = get_documents("./evidence")
     for path in document_paths:
         build_database(path)
+
+    
