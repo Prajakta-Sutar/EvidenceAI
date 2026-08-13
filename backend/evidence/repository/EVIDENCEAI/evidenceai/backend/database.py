@@ -10,7 +10,6 @@ from chunking import python_chunker, javascript_chunker, html_chunker, md_chunke
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-
 # Create database collection to store embeddingsmeb
 database_client = chromadb.PersistentClient("./portfolio_database")
 
@@ -39,6 +38,7 @@ dir_ignore = {
                 "repomix_res",
                 "__pycache",
                 ".venv",
+                "__pycache__"
             }
 
 def get_documents(root):
@@ -66,26 +66,25 @@ def add_chunks(chunks):
         )
 
 
-def build_database():
-    project_docs = get_documents("./evidence")
-    for path in project_docs:
-        if os.path.basename(path).lower() == "dockerfile":
-            chunks = no_split_chunker(path)
-        elif path.endswith(".js"):
-            chunks = javascript_chunker(path)
-        elif path.endswith(".md"):
-            chunks = md_chunker(path)
-        elif path.endswith(".html"):
-            chunks = html_chunker(path)
-        elif path.endswith(".py"):
-            chunks = python_chunker(path)
-        elif path.endswith((".json", ".yml", ".css" )) :
-            chunks = no_split_chunker(path)
-        elif path.endswith(".txt") and "summary" in path.lower():
-            chunks = summary_chunker(path)
-        else:
-            continue
-        add_chunks(chunks)
+def build_database(path):
+    if os.path.basename(path).lower() == "dockerfile":
+        chunks = no_split_chunker(path)
+    elif path.endswith((".js", ".jsx")):
+        chunks = javascript_chunker(path)
+    elif path.endswith(".md"):
+        chunks = md_chunker(path)
+    elif path.endswith(".html"):
+        chunks = html_chunker(path)
+    elif path.endswith(".py"):
+        chunks = python_chunker(path)
+    elif path.endswith((".json", ".yml", ".css" )) :
+        chunks = no_split_chunker(path)
+    elif path.endswith(".txt") and "summary" in path.lower():
+        chunks = summary_chunker(path)
+    else:
+        "non recognizable file detected"
+    add_chunks(chunks)
+    print("file added ", path)
 
 
 def run_single_query(query):
@@ -97,7 +96,6 @@ def run_single_query(query):
 def retriever(queries):
     retrieved_docs = []
     seen = set()
-    seen_path = set()
     with ThreadPoolExecutor(max_workers=len(queries)) as executor:
         results = list(executor.map(run_single_query, queries))
         for chunks_per_query in results:
@@ -107,8 +105,6 @@ def retriever(queries):
             distances = chunks_per_query["distances"][0]
             for chunk_id, doc, metadata, distance in zip(ids, documents, metadatas, distances):
                 if chunk_id not in seen:
-                    if metadata["file"] not in seen_path:
-                        seen_path.add(metadata["file"])
                     seen.add(chunk_id)
                     retrieved_docs.append({
                         "id": chunk_id,
@@ -126,7 +122,10 @@ def retriever(queries):
         content : {document["content"]}
         ----------------------------------------
         """
-    return context , seen_path
+    return context 
 
 
-
+if __name__ == "__main__":
+    document_paths = get_documents("./evidence")
+    for path in document_paths:
+        build_database(path)
