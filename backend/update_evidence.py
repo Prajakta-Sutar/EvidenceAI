@@ -12,7 +12,7 @@ def get_modified_files():
         "--",
         "frontend/src",
         "backend/",
-        ".github/",
+        ".github/workflows",
         ":!frontend/public",
         ":!frontend/src/assets",
         ":!backend/__pycache/",

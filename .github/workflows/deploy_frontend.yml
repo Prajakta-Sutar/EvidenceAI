@@ -1,5 +1,4 @@
 name: EvidenceAI Frontend Deployment
-
 on:
     push:
         branches: 
@@ -7,7 +6,6 @@ on:
         paths:
             - "frontend/**"
             - ".github/workflows/deploy_frontend.yml"
-
 jobs:
     deploy:
         runs-on: ubuntu-latest
