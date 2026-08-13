@@ -152,12 +152,23 @@ analyst_prompt = PromptTemplate.from_template(
             }}
             ],
             "data_flow": [
-            "User submits signup/login on Homepage -> axios POST to server.js -> server validates against MySQL -> frontend stores session_user and possibly isAdmin -> App routing unlocks protected pages.",
-            "Channels page loads session_user -> fetches current user details and connections -> fetches channel list -> user selects a channel -> posts are retrieved and displayed with nested replies and files.",
-            "Creating a post or reply in Channels -> server inserts post -> frontend optionally uploads files -> server stores files in fileTable -> frontend refreshes channel data.",
-            "Messages page loads session_user and selected conversation partner -> fetches messages and attached files -> user sends message -> server inserts message and frontend uploads attachments if present.",
-            "Search in Navlink -> backend queries by search type -> user navigates to chosen entity -> route state is passed to channels or messages to display the target.",
-            "Profile page loads current user and suggestion lists -> user can edit profile fields or add/remove media -> admin mode changes the sidebar to list all users and enable deletions."
+            "User submits signup/login on Homepage -> axios POST to server.js -> server 
+            validates against MySQL -> frontend stores session_user and possibly 
+            isAdmin -> App routing unlocks protected pages.",
+            "Channels page loads session_user -> fetches current user details 
+            and connections -> fetches channel list -> user selects a channel 
+            -> posts are retrieved and displayed with nested replies and files.",
+            "Creating a post or reply in Channels -> server inserts post -> 
+            frontend optionally uploads files -> server stores files in 
+            fileTable -> frontend refreshes channel data.",
+            "Messages page loads session_user and selected conversation 
+            partner -> fetches messages and attached files -> user sends 
+            message -> server inserts message and frontend uploads attachments if present.",
+            "Search in Navlink -> backend queries by search type -> user
+              navigates to chosen entity -> route state is passed to channels or messages to display the target.",
+            "Profile page loads current user and suggestion lists -> user 
+            can edit profile fields or add/remove media -> admin mode changes 
+            the sidebar to list all users and enable deletions."
             ]
         }}
     
@@ -240,12 +251,23 @@ analyst_prompt = PromptTemplate.from_template(
             }}
             ],
             "data_flow": [
-            "User submits signup/login on Homepage -> axios POST to server.js -> server validates against MySQL -> frontend stores session_user and possibly isAdmin -> App routing unlocks protected pages.",
-            "Channels page loads session_user -> fetches current user details and connections -> fetches channel list -> user selects a channel -> posts are retrieved and displayed with nested replies and files.",
-            "Creating a post or reply in Channels -> server inserts post -> frontend optionally uploads files -> server stores files in fileTable -> frontend refreshes channel data.",
-            "Messages page loads session_user and selected conversation partner -> fetches messages and attached files -> user sends message -> server inserts message and frontend uploads attachments if present.",
-            "Search in Navlink -> backend queries by search type -> user navigates to chosen entity -> route state is passed to channels or messages to display the target.",
-            "Profile page loads current user and suggestion lists -> user can edit profile fields or add/remove media -> admin mode changes the sidebar to list all users and enable deletions."
+            "User submits signup/login on Homepage -> axios POST to server.js -> 
+            server validates against MySQL -> frontend stores session_user and 
+            possibly isAdmin -> App routing unlocks protected pages.",
+            "Channels page loads session_user -> fetches current user details 
+            and connections -> fetches channel list -> user selects a channel -> 
+            posts are retrieved and displayed with nested replies and files.",
+            "Creating a post or reply in Channels -> server inserts post -> 
+            frontend optionally uploads files -> server stores files in fileTable -> 
+            frontend refreshes channel data.",
+            "Messages page loads session_user and selected conversation partner -> 
+            fetches messages and attached files -> user sends message -> server 
+            inserts message and frontend uploads attachments if present.",
+            "Search in Navlink -> backend queries by search type -> user navigates 
+            to chosen entity -> route state is passed to channels or messages to display the target.",
+            "Profile page loads current user and suggestion lists -> user can 
+            edit profile fields or add/remove media -> admin mode changes the 
+            sidebar to list all users and enable deletions."
             ]
         }}      
     
