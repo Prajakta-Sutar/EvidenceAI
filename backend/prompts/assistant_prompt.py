@@ -134,9 +134,6 @@ assistant_prompt = PromptTemplate.from_template(
                 - Career goals
                 - Behavioral questions
         
-            - CRITICAL - 
-                - Return ALL evidence that is relevant to the user's question. 
-                - Do not limit the number of evidence items.
        
     """
 )
