@@ -204,7 +204,7 @@ function Robot({className, selectedSkill, setEvidence,
                     Ask me anything about Prajakta's experience, skills, projects and more.
                 </div>
                 <div className="robot_moving_section">
-                    <img src="./public/robot.png" className="robot_figure" />
+                    <img src="/robot.png" className="robot_figure" />
                 </div>
             </div>
             <div className="assistant_panel" ref={chatRef}>
