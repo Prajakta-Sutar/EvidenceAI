@@ -21,7 +21,7 @@ function Introduction({className}){
                         className="resume-button" size='sm'
                         onClick={()=>{
                         window.open(
-                            "../public/PrajaktaSutarResume.pdf", 
+                            "/PrajaktaSutarResume.pdf", 
                             "_blank"
                         )
                         }}>
