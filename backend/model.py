@@ -179,7 +179,6 @@ async def skill_endpoint(request: Request):
 
 @app.post("/assistant") 
 async def skill_endpoint(request: Request):
-    print("I am here in skill endpoint\n")
     request_data = await request.json()
     question = request_data["question"]
     def stream():
