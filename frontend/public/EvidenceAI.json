@@ -127,6 +127,14 @@
                         "GitHub Actions",
                         "Python"
                     ]
+                }, 
+                "Frontend Deployment": {
+                    "description":
+                        "Implemented a GitHub Actions CI/CD workflow that automatically installs dependencies, builds the Vite React frontend, and deploys the production build to GitHub Pages whenever frontend changes are pushed to the main branch.",
+                    "technologies": [
+                        "GitHub Actions",
+                        "GitHub Pages"
+                    ]
                 }
             }
         },
