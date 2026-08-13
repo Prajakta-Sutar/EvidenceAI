@@ -9,6 +9,15 @@ import { Icon } from '@iconify/react';
 function ProjectDetails({className, setSection, project, setSkill}){
 
     const [details, setDetails] = useState(null);
+
+    const handleSelection =(selected_skill)=>{
+        setSection("project_evidence");
+            setSkill(prev => ({
+            name: selected_skill,
+            id: prev.id + 1
+        }));
+    }
+
     useEffect(() => {
         fetch(`/${project}.json`)
             .then(response => response.json())
@@ -22,14 +31,6 @@ function ProjectDetails({className, setSection, project, setSkill}){
                 <p>Loading project...</p>
             </div>
         );
-    }
-
-    const handleSelection =(selected_skill)=>{
-        setSection("project_evidence");
-            setSkill(prev => ({
-            name: selected_skill,
-            id: prev.id + 1
-        }));
     }
 
     return(
@@ -89,24 +90,21 @@ function ProjectDetails({className, setSection, project, setSkill}){
                             </Card>
                         ))}
                         {(project === "EvidenceAI") &&
-                        <>
-                            <Card className='stack_item'  onClick={()=>{handleSelection("LangChain")}}>
-                                   <Icon icon="simple-icons:langchain" className="skill_image"/>
-                                <Card.Body>
-                                    <Card.Text>LangChain</Card.Text>
-                                </Card.Body>
-                            </Card>
-                            <Card className='stack_item'  onClick={()=>{handleSelection("Prompt Engineering")}}>
-                                    <Icon icon="mdi:message-processing-outline" className="skill_image"/>
-                                <Card.Body>
-                                    <Card.Text>Prompt Engineering</Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </>
-
-                            
-                        }
-                        
+                            <>
+                                <Card className='stack_item'  onClick={()=>{handleSelection("LangChain")}}>
+                                    <Icon icon="simple-icons:langchain" className="skill_image"/>
+                                    <Card.Body>
+                                        <Card.Text>LangChain</Card.Text>
+                                    </Card.Body>
+                                </Card>
+                                <Card className='stack_item'  onClick={()=>{handleSelection("Prompt Engineering")}}>
+                                        <Icon icon="mdi:message-processing-outline" className="skill_image"/>
+                                    <Card.Body>
+                                        <Card.Text>Prompt Engineering</Card.Text>
+                                    </Card.Body>
+                                </Card>
+                            </>                     
+                        }       
                     </div>
                 </div>
                 <hr className='line'></hr>
@@ -163,7 +161,10 @@ function ProjectDetails({className, setSection, project, setSkill}){
                         <span className="material-symbols-outlined error_icon">flowsheet</span>
                         <p style={{margin:"0"}}>Data Flow</p>
                     </div>
-                    <p className='suggestion'>Follow how data moves through {project}, from user actions to the frontend, backend, and database.</p>
+                    <p className='suggestion'>
+                        Follow how data moves through {project}, from user actions to the frontend, 
+                        backend, and database.
+                    </p>
                      <div className='project_flow'>
                             {Object.entries(details.data_flow).map(([stage, description])=>(
                                 <div className='data_flow_timeline'>
@@ -181,5 +182,4 @@ function ProjectDetails({className, setSection, project, setSkill}){
         </div>
     );
 }
-
 export default ProjectDetails;

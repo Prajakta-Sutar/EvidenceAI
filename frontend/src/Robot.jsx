@@ -15,6 +15,25 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
     const [curr_question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleInput = (e) =>{
+        const textarea = e.target;
+        textarea.style.height = "auto"; 
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    const handleKeyDown =(e)=>{
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const query = curr_question.trim();
+            if(!query){
+                return;
+            }
+            setQuestion("");
+            callAssistant(query, "assistant", {question: query}, true);
+
+        }
+    }
+
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
         setIsLoading(true);
         isEvidenceStatementShown.current = false;
@@ -161,32 +180,12 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
     },[selectedSkill.name, selectedSkill.id, project]);
 
-
-    const handleInput = (e) =>{
-        const textarea = e.target;
-        textarea.style.height = "auto"; 
-        textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-
     useEffect(()=>{
         if (chatRef.current){
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
     }, [conversation]);
 
-
-    const handleKeyDown =(e)=>{
-            if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                const query = curr_question.trim();
-                if(!query){
-                    return;
-                }
-                setQuestion("");
-                callAssistant(query, "assistant", {question: query}, true);
-
-            }
-    }
    return(
         <Stack className={className}>
             <div className="robot_figure_section">
@@ -202,7 +201,6 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     <img src="./public/robot.png" className="robot_figure" />
                 </div>
             </div>
-
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>

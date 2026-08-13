@@ -40,7 +40,7 @@ function Skills({className, setSection, setSkill}){
                     name: selected_skill,
                     id: prev.id + 1
                 }));
-}
+    }
 
     return (
         <div className={className}>
