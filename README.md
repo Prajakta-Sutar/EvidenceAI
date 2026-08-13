@@ -73,3 +73,5 @@
       - ✅ ✅ Implemented evidence streaming to display supporting evidence progressively and improve perceived response speed.
 
   -🚧🚧🚧🚧 Currently working on deployment. 
+      - Deployed frontend on GitHub Pages. 
+      
