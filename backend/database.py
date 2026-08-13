@@ -10,7 +10,7 @@ from chunking import python_chunker, javascript_chunker, html_chunker, md_chunke
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
-# Create database collection to store embeddingsmeb
+# Create database collection to store embeddings
 database_client = chromadb.PersistentClient("./portfolio_database")
 
 embedding_funct = embedding_functions.OpenAIEmbeddingFunction(
@@ -27,8 +27,6 @@ database = database_client.get_or_create_collection(
         "embedding_function" : embedding_funct
     }
 )
-
-
 
 dir_ignore = {
                 ".git",

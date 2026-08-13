@@ -111,9 +111,6 @@ def create_tree(path, language):
 
 
 
-
-########################### Chunking for python document #########################
-
 def python_chunker(path):
     treenode = create_tree(path, "python")
     imports = []
@@ -197,7 +194,6 @@ def python_chunker(path):
 
 
 
-########################### Chunking for .js document #########################
 
 def js_function_chunker(path, node, source_byte, parent_function):
     function_useffect = []
@@ -409,8 +405,6 @@ def javascript_chunker(path):
     return file_chunks
 
 
-########################### Chunking for HTML document #########################
-
 def html_chunker(path):
     with open(path, "r",  encoding="utf-8") as f:
         html_file = f.read()
@@ -448,9 +442,6 @@ def html_chunker(path):
         chunks.append(script_chunk)
     return chunks
 
-
-
-########################### Chunking for .md document #########################
 
 
 def md_chunker(path):

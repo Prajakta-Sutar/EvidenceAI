@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from prompts.analyst_prompt import analyst_prompt
 
-
-
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 

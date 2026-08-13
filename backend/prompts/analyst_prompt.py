@@ -26,7 +26,10 @@ analyst_prompt = PromptTemplate.from_template(
     {{
      "project_overview": {{
         "project_name": "AskMentor",
-        "Description": "A desktop-oriented discussion forum for computer science topics where users can create channels, publish posts and replies, attach files, search content and people, manage profiles, and send direct messages.",
+        "Description": 
+            "A desktop-oriented discussion forum for computer science topics where users 
+            can create channels, publish posts and replies, attach files, search content 
+            and people, manage profiles, and send direct messages.",
         "main_features": [
             "User signup and login",
             "Channel creation and browsing",
@@ -97,7 +100,9 @@ analyst_prompt = PromptTemplate.from_template(
             {{
             "name": "NaN_handler",
             "type": "function",
-            "description": "Processes missing values in a dataset using imputation strategies and performs column cleaning based on missing value thresholds."
+            "description": 
+                "Processes missing values in a dataset using imputation strategies 
+                and performs column cleaning based on missing value thresholds."
             }},
             {{
             "name": "remove_high_missing_columns",
@@ -135,7 +140,9 @@ analyst_prompt = PromptTemplate.from_template(
             {{
                 "source": "frontend/src/Channels.jsx",
                 "destination": "backend/server.js",
-                "how": "Channels component sends API requests to backend endpoints to retrieve and update channel and post data."
+                "how": 
+                    "Channels component sends API requests to backend endpoints 
+                    to retrieve and update channel and post data."
         
             }},
             {{
@@ -161,7 +168,10 @@ analyst_prompt = PromptTemplate.from_template(
     {{
         "project_overview": {{
             "project_name": "AskMentor",
-            "Description": "A desktop-oriented discussion forum for computer science topics where users can create channels, publish posts and replies, attach files, search content and people, manage profiles, and send direct messages.",
+            "Description": 
+                "A desktop-oriented discussion forum for computer science topics where users 
+                can create channels, publish posts and replies, attach files, search content 
+                and people, manage profiles, and send direct messages.",
             "main_features": [
                 "User signup and login",
                 "Channel creation and browsing",
@@ -197,12 +207,15 @@ analyst_prompt = PromptTemplate.from_template(
                 {{
                 "name": "NaN_handler",
                 "type": "function",
-                "description": "Processes missing values in a dataset using imputation strategies and performs column cleaning based on missing value thresholds."
+                "description": 
+                    "Processes missing values in a dataset using imputation strategies and 
+                    performs column cleaning based on missing value thresholds."
                 }},
                 {{
                 "name": "remove_high_missing_columns",
                 "type": "function",
-                "description": "Identifies and removes columns that contain missing values above the configured threshold."
+                "description": 
+                    "Identifies and removes columns that contain missing values above the configured threshold."
                 }}
             ],
             "technologies_used": [
@@ -216,7 +229,8 @@ analyst_prompt = PromptTemplate.from_template(
             {{
                 "source": "frontend/src/Channels.jsx",
                 "destination": "backend/server.js",
-                "how": "Channels component sends API requests to backend endpoints to retrieve and update channel and post data."
+                "how": "Channels component sends API requests to backend endpoints to retrieve 
+                        and update channel and post data."
         
             }},
             {{

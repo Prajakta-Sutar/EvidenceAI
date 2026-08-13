@@ -98,7 +98,8 @@ assistant_prompt = PromptTemplate.from_template(
 
         
         Evidence Selection rules :
-            - Include evidence only when the question requires technical verification or implementation details.
+            - Include evidence only when the question requires technical verification 
+              or implementation details.
             - Include evidence for -
                 - Technology question :
                     - Does she have docker experience ?
@@ -107,16 +108,23 @@ assistant_prompt = PromptTemplate.from_template(
                 - Implementation questions :
                     - How did she implemented frontend ?
                     - How she created graphs ?
-                - Project implementation :
-                    - Tell me about askmetor project ?
-                    - How data flow in data predictify ?
-                    - What are main componenets of this project ?
+                - Specific project implementation :
+                    - how did she build frontend of askmentor ?
+                    - how she created graphs in data predictify?
+                    - How she stored data in evidenceAI?
+                    - How did she use axios in askmentor. 
+                    
             - Do not include evidence for -
                 - General introductions -
                     - Tell me about her ?
                     - Why should we hire you ?
                     - Tell me about her background. 
                     - What are her skills ?
+                - General project question -
+                    - Tell me about askmentor project 
+                    - How data flows in datapredictify project.
+                    - what are main componenets of askmentor. 
+                    - When did she built in this project.
                 - Career goals
                 - Behavioral questions
         
