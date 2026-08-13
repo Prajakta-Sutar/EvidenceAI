@@ -24,7 +24,8 @@ function Skills({className, setSection, setSkill}){
         "Scikit-learn": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scikitlearn/scikitlearn-original.svg", 
         "MatplotLib": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg",
         "OpenAI API" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/openapi/openapi-original.svg",
-        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg"
+        "Tree-sitter" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sourcetree/sourcetree-original.svg",
+        "GitHub Actions" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg"
     };
 
 
@@ -63,7 +64,6 @@ function Skills({className, setSection, setSkill}){
                     <Card.Text className='fs-6'>Prompt Engineering</Card.Text>
                 </Card.Body>
             </Card>
-
         </div>
     )
 
