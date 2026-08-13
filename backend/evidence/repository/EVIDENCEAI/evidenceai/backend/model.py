@@ -98,26 +98,41 @@ def assistant(question, queries):
         "assistant_response" : summary
     })
     evidence_json = json.loads(evidence.strip())
-    evidence_json = [ item for item in evidence_json if Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]]
+    evidence_json = [ 
+                        item for item in evidence_json 
+                        if item.get("file") and Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]
+                    ]
+
+    if evidence_json:
+        yield {
+            "type": "evidence_arriving",
+            "content": "yes"
+        }
+    else:
+        yield {
+            "type": "evidence_arriving",
+            "content": "no"
+        }
+
     for item in evidence_json:
         path_to_display = ""
-        full_path = ""
+        full_path = None
         project=""
         evidence_path = Path(item["file"]).as_posix()
         if "evidenceai" in evidence_path:
             path_to_display = "evidenceai/" +evidence_path.split("evidenceai")[1].lstrip("/")
             full_path = Path("./evidence/repository/EVIDENCEAI/") / path_to_display
             project = "EvidenceAI"
-        if "datagenesys" in evidence_path:
+        elif "datagenesys" in evidence_path:
             path_to_display = "datagenesys/" +evidence_path.split("datagenesys")[1].lstrip("/")
             full_path = Path("./evidence/repository/DATAPREDICTIFY/") / path_to_display
             project = "DataPredictify"
-        if "askmentor" in evidence_path:
+        elif "askmentor" in evidence_path:
             path_to_display = "askmentor/" +evidence_path.split("askmentor")[1].lstrip("/")
             full_path = Path("./evidence/repository/ASKMENTOR/") / path_to_display
             project = "AskMentor"
 
-        if full_path.exists():
+        if full_path and full_path.exists():
             with open(full_path, "r", encoding="utf-8") as f:
                 code = f.read()  
         yield{
@@ -130,7 +145,6 @@ def assistant(question, queries):
             }
         }
 
-    
 @app.post("/skill")
 async def skill_endpoint(request: Request):
     request_data = await request.json()

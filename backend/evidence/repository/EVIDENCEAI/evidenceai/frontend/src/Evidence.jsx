@@ -4,9 +4,11 @@ import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useEffectEvent, useState } from 'react';
 
 
 function Evidence({className, evidence}){
+    const [codeEvidence, setCodeEvidence] = useState({});
     const getProject=(path)=>{
         if (path.includes("askmentor")) {
             return "AskMentor";
@@ -14,7 +16,7 @@ function Evidence({className, evidence}){
         else if (path.includes("datagenesys")) {
             return "DataPredictify";
         }
-        else if (path.includes("EvidenceAI")) {
+        else if (path.includes("evidenceai")) {
             return "EvidenceAI"
         }
         else{
@@ -22,33 +24,25 @@ function Evidence({className, evidence}){
         }
     }
 
-    const getAbsolutePath=(path)=>{
-        return path.replace("./evidence/repository/", "");
-    }
-
-
     return(
         <div className={className}>
-                {evidence.length === 0 ? (
-                    <span className='evidence_heading'>
-                        <p className='loading_text'>Loading evidence....</p>
-                        <Spinner animation="border" className='loading_icon'/>
-                    </span>
-                ) : (
-                    <span className='evidence_heading'>
-                        <p className='evidence_heading_text'>Evidences to Support</p>
-                    </span>
-                )}
+                <span className='evidence_heading'>
+                    <p className='evidence_heading_text'>Evidences to Support</p>
+                    <p className='suggestion'> 
+                        Only a few code files are displayed as evidence, 
+                        rather than all the relevant code files. These are verified from Prajakta’s portfolio!
+                    </p>
+                </span>
                 {evidence.map((item, index) => (
                     <div className='evidence_item' key={index}>
                         <Row>
-                            <Col className='project_name'>{getProject(item.file)} Project</Col>
+                            <Col className='curr_project_name'>{item.project} Project</Col>
                         </Row>
                         <Row>
                             <Col xs="auto" className='evidence_item_heading'> # File : </Col>
                         </Row>
                         <Row>
-                            <Col>{getAbsolutePath(item.file)}</Col>
+                            <Col>{(item.file)}</Col>
                         </Row>
                         <Row>
                             <Col xs="auto" className='evidence_item_heading'> # Description : </Col>
