@@ -118,6 +118,16 @@
                         "Python"
                     ]
                 }
+            },
+            "CI/CD & Automation": {
+                "File Change Detection": {
+                    "description":
+                        "Used GitHub Actions to detect changes in project source files and trigger the appropriate workflow to keep the evidence used by the RAG system up to date.",
+                    "technologies": [
+                        "GitHub Actions",
+                        "Python"
+                    ]
+                }
             }
         },
     "key_features": {
