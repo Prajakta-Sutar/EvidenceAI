@@ -27,7 +27,6 @@ def analyst(project, name):
     output_file = output_dir / f"{name}.txt"
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(response.content)
-    print(f"{name} analysis saved.")
 
 
 def unify_repos():
@@ -42,9 +41,7 @@ def unify_repos():
     for name, repo_path in code_repos. items():
         output_file = output_repo/f"{name}.txt"
         subprocess.run(["npx", "repomix", repo_path, "--output", output_file],check=True)
-        print(f"{name} project is unified\n")
         analyst(output_file,name)
-
 
 if __name__=="__main__":
     unify_repos()

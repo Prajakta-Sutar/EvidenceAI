@@ -52,7 +52,6 @@ def get_documents(root):
                 continue 
             path = os.path.join(root, file)
             documents.append(path)
-            print(path)
     return documents
 
 
@@ -126,6 +125,7 @@ def retriever(queries):
     return context 
 
 
-
-
-    
+if __name__ == "__main__":
+    document_paths = get_documents("./evidence")
+    for path in document_paths:
+        build_database(path)
