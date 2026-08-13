@@ -12,8 +12,9 @@ def get_modified_files():
         "--",
         "frontend/src",
         "backend/",
-        "frontend/public",
         ".github/",
+        ":!frontend/public",
+        ":!frontend/src/assets",
         ":!backend/__pycache/",
         ":!backend/evidence/",
         ":!backend/portfolio_database/"
