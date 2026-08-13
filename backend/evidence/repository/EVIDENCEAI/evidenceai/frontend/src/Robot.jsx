@@ -11,11 +11,32 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
     const inputRef = useRef();
     const chatRef = useRef();
+    const isEvidenceStatementShown = useRef(false);
     const [curr_question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleInput = (e) =>{
+        const textarea = e.target;
+        textarea.style.height = "auto"; 
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    const handleKeyDown =(e)=>{
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const query = curr_question.trim();
+            if(!query){
+                return;
+            }
+            setQuestion("");
+            callAssistant(query, "assistant", {question: query}, true);
+
+        }
+    }
+
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
         setIsLoading(true);
+        isEvidenceStatementShown.current = false;
         if (fromUser){
             setSection(lastSection);
             setEvidence([]);
@@ -71,17 +92,39 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     });
                 }
                 if (output.type === "evidence"){
-                    if (output.content.length > 0) {
-                        setSection("assistant");
-                        setEvidence(output.content);
-                        setConversation(prev=>[...prev,  
-                            {
-                                role: "evidence",
-                                content: "Available evidence is displayed in the left panel"
-                            }
-                        
-                        ])
+                    if (Array.isArray(output.content) && output.content.length === 0){
+                        return;
                     }
+                    if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
+                        return;
+                    }
+                    
+                    setSection("assistant");
+                    setEvidence(prev=>{
+                        if( !isEvidenceStatementShown.current){
+                            isEvidenceStatementShown.current = true;
+                            setConversation(prevConversation => [
+                                ...prevConversation,
+                                {
+                                    role: "evidence",
+                                    content: "Available evidence is displayed in the left panel"
+                                }
+                            ]);
+                        }
+
+                        const prevIndex = prev.findIndex(item=> item.file === output.content.file);
+                        if (prevIndex !== -1){
+                            const updated=[...prev];
+                            updated[prevIndex]={
+                                ...updated[prevIndex],
+                                description: updated[prevIndex].description + "\n"+ output.content.description
+                            };
+                            return updated;
+                        }
+                        else{
+                            return [...prev, output.content]
+                        }
+                    });
                 }
             })
         }
@@ -92,7 +135,23 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
         let rest_endpoint = "";
         let message = {};
 
-        if (section === "portfolio" || section === "project" || section === "assistant"){
+        if (section === "portfolio"){
+            if (!selectedSkill?.name) {
+                return;
+            }
+            if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
+                user_question = `Experience with ${selectedSkill.name}`;
+                rest_endpoint = "skill";
+                message = {
+                    skill: selectedSkill.name
+                };
+
+                callAssistant(user_question, rest_endpoint, message, false);
+            }
+            return;
+        }
+
+        if (section === "project" || section === "assistant"){
             return; 
         }
         if (section === "project_evidence") {
@@ -121,33 +180,11 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
 
     },[selectedSkill.name, selectedSkill.id, project]);
 
-
-    const handleInput = (e) =>{
-        const textarea = e.target;
-        textarea.style.height = "auto"; 
-        textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-
     useEffect(()=>{
         if (chatRef.current){
             chatRef.current.scrollTop = chatRef.current.scrollHeight;
         }
     }, [conversation]);
-
-
-    const handleKeyDown =(e)=>{
-            if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                const query = curr_question.trim();
-                if(!query){
-                    return;
-                }
-                setQuestion("");
-                callAssistant(query, "assistant", {question: query}, true);
-
-            }
-
-    }
 
    return(
         <Stack className={className}>
@@ -164,7 +201,6 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     <img src="./public/robot.png" className="robot_figure" />
                 </div>
             </div>
-
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
                     <div className={message.role}>

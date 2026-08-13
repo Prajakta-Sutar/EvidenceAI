@@ -32,23 +32,6 @@ function App(){
   const [conversation, setConversation] = useState([]);
   const [lastSection, setLastSection] = useState("portfolio");
 
-
-  useEffect(()=>{
-    const handleResize=()=>{
-        setIsSupported( window.innerWidth >= 1000 && window.innerHeight >= 600);
-        setIsHorizontal(window.innerWidth > window.innerHeight);
-    }
-    window.addEventListener("resize", handleResize);
-    return(()=>{
-      window.removeEventListener("resize", handleResize);
-    })
-  }, []);
-
-  useEffect(()=>{
-      if(section !== "skill_section" && section !== "project_evidence" && section !== "assistant")
-          setLastSection(section);
-  }, [section]);
-
   const handleLinks = () =>{
       if (section === "skill_section"){
           setSkill({name:"", id:0});
@@ -84,6 +67,22 @@ function App(){
     setEvidence([]);
     setSection("portfolio");
   }
+
+  useEffect(()=>{
+    const handleResize=()=>{
+        setIsSupported( window.innerWidth >= 1000 && window.innerHeight >= 600);
+        setIsHorizontal(window.innerWidth > window.innerHeight);
+    }
+    window.addEventListener("resize", handleResize);
+    return(()=>{
+      window.removeEventListener("resize", handleResize);
+    })
+  }, []);
+
+  useEffect(()=>{
+      if(section !== "skill_section" && section !== "project_evidence" && section !== "assistant")
+          setLastSection(section);
+  }, [section]);
 
   if(isSupported && isHorizontal){
     return(  
@@ -172,14 +171,13 @@ function App(){
               </Nav>
               {(section === "skill_section" || section === "project_evidence" || section === "assistant")  &&
               (<Evidence className="skill_details"  evidence={evidence} />)}
-              {section === "project" && (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
+              {section === "project" && 
+              (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
               {section === "portfolio" && (
               < Container className="Portfolio_section">
                   <span id="about"></span>
                   <Introduction className="introduction_panel" />    
-
                   <hr className="line"/>
-
                   <div id="skills" className=' tech_panel'>
                     <Stack direction="horizontal" gap={2} className='panel_heading'>
                           <span class="material-symbols-outlined stack_icon">stacks</span>
@@ -188,9 +186,7 @@ function App(){
                     <p className='suggestion'>Select a skill and see what the assistant has to say about my experience.</p>
                     <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} setConversation={setConversation}/>
                   </div>
-
                   <hr className="line"/>
-
                   <div id="projects" className='tech_panel'>
                       <Stack direction="horizontal" gap={2} className='panel_heading'>
                         <span class="material-symbols-outlined code_icon">code_blocks</span>
@@ -199,9 +195,7 @@ function App(){
                       <p className='suggestion'> Explore each project to discover the technologies, solutions, and ideas behind my work.</p>
                       <Projects className="project_panel" setSection={setSection} setProject={setProject}/>
                   </div>
-
                   <hr className="line"/>
-
                   <div id='work' className=' tech_panel'>
                     <Stack direction="horizontal" gap={2} className='panel_heading'>
                           <span class="material-symbols-outlined job_icon">enterprise</span>

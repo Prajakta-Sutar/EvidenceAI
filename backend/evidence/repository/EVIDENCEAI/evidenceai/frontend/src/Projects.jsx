@@ -71,8 +71,7 @@ function Projects({className, setSection, setProject}){
                         {project.Skills.map((skill) => (
                            <span className="skill_name">{skill}</span>
                         ))}
-                    </Row>
-                    
+                    </Row>                   
                 </div>
             ))}
         </div>
