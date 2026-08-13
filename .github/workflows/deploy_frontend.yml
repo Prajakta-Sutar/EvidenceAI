@@ -1,0 +1,45 @@
+name: EvidenceAI Frontend Deployment
+
+on:
+    push:
+        branches: 
+            - main
+        paths:
+            - "frontend/**"
+            - ".github/workflows/deploy_frontend.yml"
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            
+            - name: setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: 22
+                cache: npm 
+                cache-dependency-path: frontend/package-lock.json
+
+            - name: Install dependencies
+              working-directory: frontend
+              run: npm ci
+            
+            - name: Build frontend
+              working-directory: frontend
+              run: npm run build
+            
+            - name: Deployment to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                    personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+                    external_repository: Prajakta-Sutar/prajakta-sutar.github.io
+                    publish_dir: ./frontend/dist
+                    publish_branch: main
+              
+
+
+
+
+    
