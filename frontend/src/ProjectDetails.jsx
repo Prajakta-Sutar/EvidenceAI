@@ -4,15 +4,15 @@ import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon } from '@iconify/react'; 
 
-function ProjectDetails({className, setSection, project, setSkill}){
+function ProjectDetails({className, setQuestionFrom, project, setSkill}){
 
     const [details, setDetails] = useState(null);
 
     const handleSelection =(selected_skill)=>{
-        setSection("project_evidence");
-            setSkill(prev => ({
+        setQuestionFrom("project_page");
+        setSkill(prev => ({
             name: selected_skill,
             id: prev.id + 1
         }));

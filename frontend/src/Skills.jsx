@@ -3,7 +3,7 @@ import './Skills.css';
 import Card from 'react-bootstrap/Card';
 import { Icon } from "@iconify/react";
 
-function Skills({className, setSection, setSkill}){
+function Skills({className, setQuestionFrom, setSkill}){
     const skills ={
         "Python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
         "C": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg",
@@ -30,12 +30,7 @@ function Skills({className, setSection, setSkill}){
 
 
     const handleSelection =(selected_skill)=>{
-        if (selected_skill.toLowerCase() === "c" || selected_skill.toLowerCase() === "git") {
-            setSection("portfolio");
-        } else {
-            setSection("skill_section");
-        }
-        
+        setQuestionFrom("tech_stack");
         setSkill(prev => ({
                     name: selected_skill,
                     id: prev.id + 1

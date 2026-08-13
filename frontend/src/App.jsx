@@ -27,44 +27,45 @@ function App(){
   const [isHorizontal , setIsHorizontal] = useState(window.innerWidth > window.innerHeight);
   const [section, setSection] = useState("portfolio");
   const [skill, setSkill] = useState({name:"", id:0});
+  const [questionFrom, setQuestionFrom] = useState("");
   const [project, setProject] = useState("");
   const [evidence, setEvidence] = useState([]);
   const [conversation, setConversation] = useState([]);
   const [lastSection, setLastSection] = useState("portfolio");
 
   const handleLinks = () =>{
-      if (section === "skill_section"){
-          setSkill({name:"", id:0});
+      setSkill({name:"", id:0});
+      setEvidence([]);
+      if (section === "assistant"){
+          setSection(lastSection);
+          if (questionFrom !== "project_page"){
+              setProject("");
+          }
+          if (questionFrom === "tech_stack"){
+              setTimeout(() => {
+                  document.getElementById("skills")?.scrollIntoView({
+                    behavior: "smooth"
+                  });
+              }, 100);
+          }
+      }
+      if (section === "project"){
           setProject("");
-          setEvidence([]);
           setSection("portfolio");
           setTimeout(() => {
-            document.getElementById("skills")?.scrollIntoView({
-              behavior: "smooth"
-            });
+              document.getElementById("projects")?.scrollIntoView({
+                behavior: "smooth"
+              });
           }, 100);
       }
-      else if (section === "project_evidence"){
-        setSkill({name:"", id:0});
-        setEvidence([]);
-        setSection("project")
-      }
-      else if (section === "assistant"){
-          setEvidence([]);
-          setSection(lastSection);
-      }
-      else{
-        setSkill({name:"", id:0});
-        setProject("");
-        setEvidence([]);
-        setSection("portfolio");
-      }
+      setQuestionFrom("");
   }
 
   const handleNavLinks=()=>{
     setSkill({name:"", id:0});
     setProject("");
     setEvidence([]);
+    setQuestionFrom("");
     setSection("portfolio");
   }
 
@@ -80,7 +81,7 @@ function App(){
   }, []);
 
   useEffect(()=>{
-      if(section !== "skill_section" && section !== "project_evidence" && section !== "assistant")
+      if(section !== "assistant")
           setLastSection(section);
   }, [section]);
 
@@ -89,13 +90,6 @@ function App(){
       <div fluid="xl" className="landing_page">
           <div className='portfolio'>
             <Nav className="nav_bar" >
-                  {(section === "evidence" || section === "skill_section") && (
-                      <div className='go_back' 
-                            onClick={()=>{handleLinks()}}>
-                            <span class="material-symbols-outlined">arrow_back</span>
-                            <p style={{margin:'0'}}>Back to Portfolio</p>
-                      </div>
-                  )}
                   {(section === "assistant") && (
                       <div className='go_back' 
                             onClick={()=>{handleLinks()}}>
@@ -103,23 +97,9 @@ function App(){
                             <p style={{margin:'0'}}>Go Back</p>
                       </div>
                   )}
-                  {(section === "project_evidence") && (
-                      <div className='go_back' 
-                            onClick={()=>{handleLinks()}}>
-                            <span class="material-symbols-outlined">arrow_back</span>
-                            <p style={{margin:'0'}}>Back to Project</p>
-                      </div>
-                  )}
                   {(section === "project") && (
                       <div className='go_back' 
-                            onClick={()=>{
-                              handleLinks();
-                              setTimeout(() => {
-                                document.getElementById("projects")?.scrollIntoView({
-                                  behavior: "smooth"
-                                });
-                              }, 100);
-                            }}>
+                            onClick={()=>{ handleLinks(); }}>
                             <span class="material-symbols-outlined">arrow_back</span>
                             <p style={{margin:'0'}}>Back to Portfolio</p>
                       </div>
@@ -169,10 +149,10 @@ function App(){
                     <Nav.Link href="#work" >Work Experince</Nav.Link>
                   </Nav.Item>
               </Nav>
-              {(section === "skill_section" || section === "project_evidence" || section === "assistant")  &&
+              {(section === "assistant")  &&
               (<Evidence className="skill_details"  evidence={evidence} />)}
               {section === "project" && 
-              (<ProjectDetails className="project_details" setSection={setSection} project={project} setSkill={setSkill}/>)}
+              (<ProjectDetails className="project_details" setQuestionFrom={setQuestionFrom} project={project} setSkill={setSkill}/>)}
               {section === "portfolio" && (
               < Container className="Portfolio_section">
                   <span id="about"></span>
@@ -184,7 +164,7 @@ function App(){
                           <h6 className="headings">Tech Stack</h6>   
                     </Stack>
                     <p className='suggestion'>Select a skill and see what the assistant has to say about my experience.</p>
-                    <Skills className="tech_stack" setSection={setSection} setSkill={setSkill} setConversation={setConversation}/>
+                    <Skills className="tech_stack" setQuestionFrom={setQuestionFrom} setSkill={setSkill}/>
                   </div>
                   <hr className="line"/>
                   <div id="projects" className='tech_panel'>
@@ -236,7 +216,8 @@ function App(){
                     section={section}
                     setSection={setSection}
                     project={project}
-                    lastSection={lastSection}/>
+                    lastSection={lastSection}
+                    questionFrom={questionFrom}/>
           </Container>
       </div>
     )

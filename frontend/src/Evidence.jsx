@@ -26,16 +26,13 @@ function Evidence({className, evidence}){
 
     return(
         <div className={className}>
-                {evidence.length === 0 ? (
-                    <span className='evidence_heading'>
-                        <p className='loading_text'>Loading evidence....</p>
-                        <Spinner animation="border" className='loading_icon'/>
-                    </span>
-                ) : (
-                    <span className='evidence_heading'>
-                        <p className='evidence_heading_text'>Evidences to Support</p>
-                    </span>
-                )}
+                <span className='evidence_heading'>
+                    <p className='evidence_heading_text'>Evidences to Support</p>
+                    <p className='suggestion'> 
+                        Only a few code files are displayed as evidence, 
+                        rather than all the relevant code files. These are verified from Prajakta’s portfolio!
+                    </p>
+                </span>
                 {evidence.map((item, index) => (
                     <div className='evidence_item' key={index}>
                         <Row>

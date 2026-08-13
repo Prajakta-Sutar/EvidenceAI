@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useRef } from "react";
 
-function Robot({className, selectedSkill, setEvidence, conversation, setConversation, section, setSection, project, lastSection}){
+function Robot({className, selectedSkill, setEvidence, 
+                conversation, setConversation, section, 
+                setSection, project, lastSection, questionFrom}){
 
     const inputRef = useRef();
     const chatRef = useRef();
@@ -35,8 +37,8 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
     }
 
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
-        setIsLoading(true);
         isEvidenceStatementShown.current = false;
+        setIsLoading(true);
         if (fromUser){
             setSection(lastSection);
             setEvidence([]);
@@ -91,6 +93,18 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                         return updated;
                     });
                 }
+                if (output.type === "evidence_arriving"){
+                    if(output.content == "yes"){
+                        setConversation(prevConversation => [
+                            ...prevConversation,
+                            {
+                                role: "evidence",
+                                content: "Available evidence is loading ....",
+                                id: "loading_evidence"
+                            }
+                        ]);
+                    }
+                }
                 if (output.type === "evidence"){
                     if (Array.isArray(output.content) && output.content.length === 0){
                         return;
@@ -100,18 +114,19 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                     }
                     
                     setSection("assistant");
-                    setEvidence(prev=>{
-                        if( !isEvidenceStatementShown.current){
-                            isEvidenceStatementShown.current = true;
-                            setConversation(prevConversation => [
-                                ...prevConversation,
-                                {
-                                    role: "evidence",
-                                    content: "Available evidence is displayed in the left panel"
-                                }
-                            ]);
-                        }
-
+                    setIsLoading(false);
+                    setConversation(prevConversation => {
+                            if (prevConversation.length === 0) {
+                                    return prevConversation;
+                            }
+                            const updated = [...prevConversation];
+                            updated[updated.length - 1] = {
+                                ...updated[updated.length - 1],
+                                content: "Available evidence is displayed in the left panel"
+                            };
+                            return updated;
+                        });
+                    setEvidence(prev=>{                
                         const prevIndex = prev.findIndex(item=> item.file === output.content.file);
                         if (prevIndex !== -1){
                             const updated=[...prev];
@@ -135,26 +150,7 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
         let rest_endpoint = "";
         let message = {};
 
-        if (section === "portfolio"){
-            if (!selectedSkill?.name) {
-                return;
-            }
-            if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
-                user_question = `Experience with ${selectedSkill.name}`;
-                rest_endpoint = "skill";
-                message = {
-                    skill: selectedSkill.name
-                };
-
-                callAssistant(user_question, rest_endpoint, message, false);
-            }
-            return;
-        }
-
-        if (section === "project" || section === "assistant"){
-            return; 
-        }
-        if (section === "project_evidence") {
+        if (questionFrom === "project_page") {
             if (!selectedSkill.name || !project) {
                 return;
             }
@@ -164,21 +160,31 @@ function Robot({className, selectedSkill, setEvidence, conversation, setConversa
                 skill: selectedSkill.name,
                 project: project
             };
+            callAssistant(user_question, rest_endpoint, message, false);
         }
 
-        if (section === "skill_section") {
+        if (questionFrom === "tech_stack") {
             if (!selectedSkill.name){
                 return;
             }
-            user_question = `Experience with ${selectedSkill.name}`;
-            rest_endpoint = "skill";
-            message = {
-                skill: selectedSkill.name
+             if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
+                user_question = `Experience with ${selectedSkill.name}`;
+                rest_endpoint = "skill";
+                message = {
+                    skill: selectedSkill.name
+                };
+                callAssistant(user_question, rest_endpoint, message, false);
             }
-        }
-        callAssistant(user_question, rest_endpoint, message, false);
-
-    },[selectedSkill.name, selectedSkill.id, project]);
+            else{
+                user_question = `Experience with ${selectedSkill.name}`;
+                rest_endpoint = "skill";
+                message = {
+                    skill: selectedSkill.name
+                }
+                callAssistant(user_question, rest_endpoint, message, false);
+            }}
+            
+    },[selectedSkill.name, selectedSkill.id]);
 
     useEffect(()=>{
         if (chatRef.current){
