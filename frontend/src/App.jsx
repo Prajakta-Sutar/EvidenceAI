@@ -32,9 +32,10 @@ function App(){
   const [evidence, setEvidence] = useState([]);
   const robotMessage = {
       "role": "assistant",
-      "content": "Hello, **I’m EvidenceAI! 👋**How can I help you learn more about Prajakta’s skills, experience, and projects?"
+      "content": "Hello 👋, **I’m EvidenceAI.**\nHow can I help you learn more about Prajakta’s skills, experience, and projects? "
   }
-  const [conversation, setConversation] = useState([robotMessagecl]);
+ 
+  const [conversation, setConversation] = useState([robotMessage]);
   const [lastSection, setLastSection] = useState("portfolio");
 
   const handleLinks = () =>{
