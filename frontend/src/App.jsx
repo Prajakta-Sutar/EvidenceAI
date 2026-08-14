@@ -34,7 +34,7 @@ function App(){
       "role": "assistant",
       "content": "Hello, **I’m EvidenceAI! 👋**How can I help you learn more about Prajakta’s skills, experience, and projects?"
   }
-  const [conversation, setConversation] = useState([robotMessage]);
+  const [conversation, setConversation] = useState([robotMessagecl]);
   const [lastSection, setLastSection] = useState("portfolio");
 
   const handleLinks = () =>{
