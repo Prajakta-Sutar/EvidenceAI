@@ -206,6 +206,11 @@ function Robot({className, selectedSkill, setEvidence,
                 <div className="robot_moving_section">
                     <img src="/robot.png" className="robot_figure" />
                 </div>
+                 <div className="stars">
+                    {Array.from({ length: 20 }).map((_, index) => (
+                        <span key={index} className="star"></span>
+                    ))}
+                </div>
             </div>
             <div className="assistant_panel" ref={chatRef}>
                 {conversation.map((message) => (
