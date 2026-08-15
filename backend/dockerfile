@@ -4,4 +4,4 @@ COPY backend_requirements.txt .
 RUN pip install --no-cache-dir -r backend_requirements.txt
 COPY . .
 CMD EXPOSE 8080
-CMD ["sh", "-c", "uvicorn model:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["sh", "-c", "uvicorn model:app --host 0.0.0.0 --port ${PORT:-8080}"] 
