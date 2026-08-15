@@ -103,7 +103,7 @@ def assistant(question, queries):
                         if item.get("file") and Path(item["file"]).suffix not in [".pdf", ".txt", ".md", ".json"]
                     ]
 
-    if evidence_json:
+    if evidence_json and len(evidence_json) > 0:
         yield {
             "type": "evidence_arriving",
             "content": "yes"

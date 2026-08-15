@@ -94,7 +94,7 @@ function Robot({className, selectedSkill, setEvidence,
                     });
                 }
                 if (output.type === "evidence_arriving"){
-                    if(output.content == "yes"){
+                    if(output.content === "yes"){
                         setConversation(prevConversation => [
                             ...prevConversation,
                             {
