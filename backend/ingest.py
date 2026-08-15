@@ -33,9 +33,7 @@ def unify_repos():
         "datapredictify":"./evidence/repository/DATAPREDICTIFY",
         "evidenceai":"./evidence/repository/EVIDENCEAI"
     }
-
     output_repo = Path("./evidence/repomix_res")
-
     for name, repo_path in code_repos. items():
         output_file = output_repo/f"{name}.txt"
         subprocess.run(["npx", "repomix", repo_path, "--output", output_file],check=True)
