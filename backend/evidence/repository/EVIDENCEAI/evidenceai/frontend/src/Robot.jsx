@@ -56,7 +56,7 @@ function Robot({className, selectedSkill, setEvidence,
         ]);
         const response = await fetch(
             
-            `https://jubilant-goggles-p747rw6796727r54-8000.app.github.dev/${endpoint}`,
+            `https://evidenceai-751576477136.northamerica-northeast2.run.app/${endpoint}`,
             {
             method: "POST",
             headers: {
