@@ -22,7 +22,7 @@ def get_modified_files():
     ], 
         capture_output =True, 
         text=True,
-        check=True
+        check=True 
     )
     return [ line.split("\t", 1) for line in result.stdout.splitlines()]
 
