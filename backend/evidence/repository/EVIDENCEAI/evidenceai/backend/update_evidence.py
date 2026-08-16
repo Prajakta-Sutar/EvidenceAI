@@ -12,13 +12,14 @@ def get_modified_files():
         "--",
         "frontend/src",
         "backend/",
+        "cloudrun.yaml",
         ".github/workflows",
         ":!frontend/public",
         ":!frontend/src/assets",
         ":!backend/__pycache/",
         ":!backend/evidence/",
         ":!backend/portfolio_database/"
-    ],
+    ], 
         capture_output =True, 
         text=True,
         check=True
