@@ -27,7 +27,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 app = FastAPI() 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://prajakta-sutar.github.io"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
