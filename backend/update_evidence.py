@@ -19,7 +19,7 @@ def get_modified_files():
         ":!backend/__pycache/",
         ":!backend/evidence/",
         ":!backend/portfolio_database/"
-    ],
+    ], 
         capture_output =True, 
         text=True,
         check=True
