@@ -18,7 +18,8 @@ function Projects({className, setSection, setProject}){
                 "ChromaDB",
                 "OpenAI API",
                 "Vector Search",
-                "GitHub Actions"
+                "GitHub Actions", 
+                "Google Cloud"
             ]
         },
         {
