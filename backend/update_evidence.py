@@ -12,6 +12,7 @@ def get_modified_files():
         "--",
         "frontend/src",
         "backend/",
+        "cloudrun.yaml",
         ".github/workflows",
         ":!frontend/public",
         ":!frontend/src/assets",
