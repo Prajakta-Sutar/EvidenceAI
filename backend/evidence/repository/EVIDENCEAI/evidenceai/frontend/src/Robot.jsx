@@ -154,7 +154,7 @@ function Robot({className, selectedSkill, setEvidence,
                         const updated = [...prevConversation];
                         updated[0] = {
                             role: "assistant",
-                            content: "Hello 👋, **I’m EvidenceAI.**\n\nHow can I help you learn more about Prajakta’s skills, experience, and projects?"
+                            content: "Hello 👋, **I’m EvidenceAI.**  \nHow can I help you learn more about Prajakta’s skills, experience, and projects?"
                         };
                         return updated;
                     });
