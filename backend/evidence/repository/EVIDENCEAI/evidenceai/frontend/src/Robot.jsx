@@ -13,9 +13,7 @@ function Robot({className, selectedSkill, setEvidence,
 
     const inputRef = useRef();
     const chatRef = useRef();
-    const isEvidenceStatementShown = useRef(false);
     const [curr_question, setQuestion] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
 
     const handleInput = (e) =>{
         const textarea = e.target;
@@ -37,8 +35,6 @@ function Robot({className, selectedSkill, setEvidence,
     }
 
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
-        isEvidenceStatementShown.current = false;
-        setIsLoading(true);
         if (fromUser){
             setSection(lastSection);
             setEvidence([]);
@@ -65,7 +61,7 @@ function Robot({className, selectedSkill, setEvidence,
             body: JSON.stringify(message_body),
             }
         );
-        setIsLoading(false);
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
         let stream = ""
@@ -114,7 +110,6 @@ function Robot({className, selectedSkill, setEvidence,
                     }
                     
                     setSection("assistant");
-                    setIsLoading(false);
                     setConversation(prevConversation => {
                             if (prevConversation.length === 0) {
                                     return prevConversation;
