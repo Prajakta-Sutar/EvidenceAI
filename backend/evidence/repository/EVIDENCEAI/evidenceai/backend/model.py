@@ -155,9 +155,8 @@ async def skill_endpoint(request: Request):
         ]
     else:
         queries = [
-            f"{skill} implementation",
-            f"{skill} configuration",
-            f"{skill} usage in projects"
+            f"{skill} implementation code in Prajakta's projects",
+            f"how {skill} is actually used in Prajakta's code"
         ]
 
     def stream():
@@ -177,7 +176,6 @@ async def skill_endpoint(request: Request):
     project = request_data["project"]
     queries = [
         f"{skill} implementation in project {project}",
-        f"{skill} configuration in project {project}",
         f"{skill} usage in in project {project}"
     ]
 

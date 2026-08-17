@@ -102,10 +102,21 @@ assistant_prompt = PromptTemplate.from_template(
                 "strong evidence"
                 "important evidence"
 
-        
+        CRITICAL : when question is about technical skill
+            - Evidence must show actual implementation, configuration, 
+            or technical usage of the requested skill.
+            - Do NOT select a file simply because:
+                - the skill name appears in it
+                - it contains an import
+                - it contains a URL related to the skill
+                - it links to GitHub
+                - it mentions the technology in a comment or text
+                - it is part of a project that uses the technology elsewhere
+            - Prefer code that directly demonstrates the requested skill.
+            
         Evidence Selection rules :
             - Include evidence only when the question requires technical verification 
-              or implementation details.
+            or implementation details.
             - Include evidence for -
                 - Technology question :
                     - Does she have docker experience ?
@@ -134,9 +145,6 @@ assistant_prompt = PromptTemplate.from_template(
                 - Career goals
                 - Behavioral questions
         
-            - CRITICAL - 
-                - Return ALL evidence that is relevant to the user's question. 
-                - Do not limit the number of evidence items.
        
     """
 )
