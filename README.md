@@ -1,5 +1,9 @@
 # EvidenceAI
 
+## Live Application
+
+https://prajakta-sutar.github.io/
+
 ## Application Screenshots
 
 ![](./images/1.jpeg)
@@ -72,6 +76,9 @@
       - LLM do not provide answers for irrelevant questions or questions asking for personal information. 
       - ✅ ✅ Implemented evidence streaming to display supporting evidence progressively and improve perceived response speed.
 
-  -🚧🚧🚧🚧 Currently working on deployment. 
+  - Deployment
       - Deployed frontend on GitHub Pages. 
-      
+      - Containerized backend with Docker  and deployed it on Google Cloud Run. 
+      - Integrated the GitHub Pages frontend with the Cloud Run backend API.
+
+
