@@ -94,6 +94,20 @@
     font-size: small;
 }
 
+.waking_assistant{
+    font-size: small;
+    animation: wakingUp 1.3s ease-in-out infinite;
+}
+
+@keyframes wakingUp {
+    0%, 100% {
+        opacity: 0.45;
+    }
+    30% {
+        opacity: 1;
+    }
+}
+
 .evidence{
     color:rgb(238, 196, 80);
     font-size: small;

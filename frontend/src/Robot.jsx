@@ -15,6 +15,7 @@ function Robot({className, selectedSkill, setEvidence,
     const chatRef = useRef();
     const [curr_question, setQuestion] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isAssistantReady, setAssistantReady] = useState(false);
 
     const handleInput = (e) =>{
         const textarea = e.target;
@@ -53,7 +54,6 @@ function Robot({className, selectedSkill, setEvidence,
         
         ]);
         const response = await fetch(
-            
             `https://evidenceai-751576477136.northamerica-northeast2.run.app/${endpoint}`,
             {
             method: "POST",
@@ -141,6 +141,32 @@ function Robot({className, selectedSkill, setEvidence,
             })
         }
     }
+
+    useEffect(()=>{
+        if(!isAssistantReady){
+             fetch("https://evidenceai-751576477136.northamerica-northeast2.run.app/")
+             .then(response=>{
+                if (response.ok){
+                    setConversation(prevConversation => {
+                        if (prevConversation.length === 0) {
+                                return prevConversation;
+                        }
+                        const updated = [...prevConversation];
+                        updated[0] = {
+                            role: "assistant",
+                            content: "Hello 👋, **I’m EvidenceAI.**\nHow can I help you learn more about Prajakta’s skills, experience, and projects?"
+                        };
+                        return updated;
+                    });
+                    setAssistantReady(true);
+                }
+
+             })
+             .catch(error=>{
+                console.error("Error while waking up the assistant");
+             }) 
+        }
+    },[]);
 
     useEffect(()=>{
         let user_question = "";
