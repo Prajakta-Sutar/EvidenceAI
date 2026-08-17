@@ -32,7 +32,7 @@ function App(){
   const [evidence, setEvidence] = useState([]);
   const robotMessage = {
       "role": "waking_assistant",
-      "content": "✨ Waking up AI Assistant ....."
+      "content": "✨ Initializing AI Assistant ....."
   }
  
   const [conversation, setConversation] = useState([robotMessage]);
