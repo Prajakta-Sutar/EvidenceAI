@@ -33,6 +33,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def health_check():
+    return{
+        "status": "ok"
+    }
+
 classifier_llm = ChatOpenAI(
     model="gpt-5.4-mini",
     temperature=0,
@@ -201,7 +207,5 @@ async def skill_endpoint(request: Request):
         stream(),
         media_type="application/json"
     )
-
-
 
 
