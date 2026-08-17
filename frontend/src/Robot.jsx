@@ -14,6 +14,7 @@ function Robot({className, selectedSkill, setEvidence,
     const inputRef = useRef();
     const chatRef = useRef();
     const [curr_question, setQuestion] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInput = (e) =>{
         const textarea = e.target;
@@ -35,6 +36,7 @@ function Robot({className, selectedSkill, setEvidence,
     }
 
     const callAssistant = async (question, endpoint, message_body, fromUser) =>{
+        setIsLoading(true);
         if (fromUser){
             setSection(lastSection);
             setEvidence([]);
@@ -61,7 +63,7 @@ function Robot({className, selectedSkill, setEvidence,
             body: JSON.stringify(message_body),
             }
         );
-
+        setIsLoading(false);
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
         let stream = ""
@@ -105,7 +107,7 @@ function Robot({className, selectedSkill, setEvidence,
                     if (Array.isArray(output.content) && output.content.length === 0){
                         return;
                     }
-                    if (selectedSkill.name.toLowerCase() === "c" || selectedSkill.name.toLowerCase() === "git"){
+                    if (selectedSkill.name.toLowerCase() === "c"){
                         return;
                     }
                     
