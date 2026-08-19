@@ -136,6 +136,16 @@
                         "GitHub Actions",
                         "GitHub Pages"
                     ]
+                },
+                "Backend Deployment": {
+                    "description":
+                    "Implemented a CI/CD pipeline using Google Cloud Build to automatically build the FastAPI backend into a Docker container and deploy it to Google Cloud Run.",
+
+                    "technologies": [
+                        "Google Cloud Build",
+                        "Google Cloud Run",
+                         "Docker"
+                    ]
                 }
             }
         },
