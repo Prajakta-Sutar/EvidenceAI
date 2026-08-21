@@ -13,15 +13,12 @@ function Work({className}){
             "organization" : "University of Saskatchewan", 
             "location" : "Saskatoon, SK, Canada", 
             "responsibilities": [
-                "Provided Level 1 technical support for students, faculty, and staff, resolving hardware, software, account, and connectivity issues.",
-                "Delivered remote technical support using BeyondTrust, troubleshooting user devices and resolving issues without requiring in-person assistance.",
-                "Managed IT service requests and documented resolutions using TeamDynamix, ensuring timely issue tracking and follow-up.",
-                "Used Active Directoryto assist with user account management, password resets, and access-related requests.",
-                "Utilized Lansweeper to locate, inventory, and manage university devices during troubleshooting and asset management tasks.",
-                "Prepared, configured, deployed, and replaced desktops, laptops, monitors, and peripherals for university employees.",
+                "Provided Level 1 technical support to students, faculty, and staff, resolving hardware, software, account, and connectivity issues.",
+                "Delivered remote technical support using BeyondTrust, managed IT service requests, and documented resolutions in TeamDynamix to ensure timely issue tracking and follow-up.",
+                "Used Active Directory to assist with user account management, password resets, and access-related requests.",
+                "Utilized Lansweeper to locate, inventory, and manage university devices during troubleshooting and asset management activities.",
                 "Processed surplus equipment by securely preparing retired devices for disposal or redistribution according to university procedures.",
-                "Set up and provided technical support for in-person, hybrid, and virtual meetings, ensuring audio, video, and conferencing systems functioned reliably.",
-                "Inspected, tested, and maintained classroom technology, including computers, projectors, displays, microphones, and videoconferencing equipment, to ensure classrooms were ready for instruction."
+                "Inspected, tested, and maintained classroom technology, including computers, projectors, displays, microphones, and videoconferencing equipment, ensuring classrooms were ready for instruction."
             ], 
             "skills":[ "Technical Support","Windows", 
                         "Active Directory", 
