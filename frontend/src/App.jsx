@@ -23,6 +23,7 @@ import Badge from 'react-bootstrap/Badge';
 
 function App(){
   
+  const MAINTENANCE_MODE = true; 
   const [isSupported, setIsSupported] = useState( window.innerWidth >= 1000 && window.innerHeight >= 600);
   const [isHorizontal , setIsHorizontal] = useState(window.innerWidth > window.innerHeight);
   const [section, setSection] = useState("portfolio");
@@ -90,7 +91,22 @@ function App(){
           setLastSection(section);
   }, [section]);
 
-  if(isSupported && isHorizontal){
+  if(MAINTENANCE_MODE){
+      return(
+        <div className='device_not_supported'>
+            <span>
+                <Stack direction='horizontal' gap={4} className='not_supported_text'>
+                  <span class="material-symbols-outlined" style={{fontSize:"30px"}}>handyman</span>
+                  <h4> I'll Be Back Soon!!! </h4>
+              </Stack>
+            </span>
+            <p style={{color:"rgb(247, 199, 56)"}}>Something new is in the works. Stay tuned!</p>
+            <p style={{color:"rgb(247, 199, 56)"}}>- Prajakta</p>
+
+        </div>
+      )
+  }
+  else if(isSupported && isHorizontal){
     return(  
       <div fluid="xl" className="landing_page">
           <div className='portfolio'>
