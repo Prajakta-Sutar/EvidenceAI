@@ -102,7 +102,7 @@ function App(){
             </span>
             <p style={{color:"rgb(247, 199, 56)"}}>Something new is in the works. Stay tuned!</p>
             <p style={{color:"rgb(247, 199, 56)"}}>- Prajakta</p>
-        </div>
+        </div> 
       )
   }
   else if(isSupported && isHorizontal){
